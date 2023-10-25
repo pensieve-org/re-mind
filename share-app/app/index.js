@@ -1,11 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Link } from "expo-router";
+import Title from "../components/Title";
 
 export default function Page() {
   return (
     <View style={styles.container}>
       <View style={styles.main}>
-        <Text style={styles.title}>Navigation</Text>
+        <Title style={styles.title} size={16}>
+          RE:MIND
+        </Title>
         <Link style={styles.subtitle} href="/page1">
           page 1
         </Link>
