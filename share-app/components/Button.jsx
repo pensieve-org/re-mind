@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Pressable } from "react-native";
+import { StyleSheet, Pressable, View } from "react-native";
 import { Link } from "expo-router";
 import Body from "./Body";
 
@@ -17,11 +17,13 @@ const Button: React.FC<ButtonProps> = ({
   route,
 }) => {
   return (
-    <Link href={route} asChild>
-      <Pressable onPress={onPress} style={styles.button}>
-        <Body size={textSize}>{children}</Body>
-      </Pressable>
-    </Link>
+    <View style={styles.container}>
+      <Link href={route} asChild>
+        <Pressable onPress={onPress} style={styles.button}>
+          <Body size={textSize}>{children}</Body>
+        </Pressable>
+      </Link>
+    </View>
   );
 };
 
@@ -36,5 +38,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderWidth: 1,
     borderColor: "#FFFF",
+  },
+  container: {
+    width: "100%",
+    paddingVertical: 10,
   },
 });
