@@ -2,6 +2,8 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import { Link } from "expo-router";
 import Header from "../components/Header";
 import Body from "../components/Body";
+import Input from "../components/Input";
+import Button from "../components/Button";
 
 export default function Page() {
   return (
@@ -11,9 +13,16 @@ export default function Page() {
         routeLeft="/"
       />
       <View style={styles.container}>
-        <Body style={styles.subtitle} size={35}>
+        <View style={{ paddingVertical: 50, paddingTop: 100 }}>
+          <Body style={styles.subtitle} size={35}>
+            login
+          </Body>
+        </View>
+        <Input placeholder="enter username/email" label="username/email" />
+        <Input placeholder="enter password" label="password" type="password" />
+        <Button route="" fill="white" textColor="black">
           login
-        </Body>
+        </Button>
       </View>
     </View>
   );

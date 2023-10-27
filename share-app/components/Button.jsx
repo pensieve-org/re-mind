@@ -16,7 +16,7 @@ const Button: React.FC<ButtonProps> = ({
   textSize = 16,
   children,
   onPress,
-  route,
+  route = "",
   fill = "transparent",
   textColor = "white",
 }) => {
@@ -42,7 +42,7 @@ export default Button;
 const styles = StyleSheet.create({
   button: {
     width: "100%",
-    height: 50,
+    height: 55,
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
