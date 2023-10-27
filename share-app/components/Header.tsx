@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -25,33 +26,36 @@ const Header: React.FC<HeaderProps> = ({
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <View style={styles.inLine}>
-        <View style={[styles.iconWrapper, { left: 20 }]}>
-          {imageLeft && (
-            <Link href={routeLeft} asChild>
-              <TouchableOpacity onPress={onPressLeft}>
-                {imageLeft}
-              </TouchableOpacity>
-            </Link>
-          )}
-        </View>
+    <>
+      <StatusBar style="light" />
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.inLine}>
+          <View style={[styles.iconWrapper, { left: 20 }]}>
+            {imageLeft && (
+              <Link href={routeLeft} asChild>
+                <TouchableOpacity onPress={onPressLeft}>
+                  {imageLeft}
+                </TouchableOpacity>
+              </Link>
+            )}
+          </View>
 
-        <View style={styles.titleWrapper}>
-          <Title size={30}>re:mind</Title>
-        </View>
+          <View style={styles.titleWrapper}>
+            <Title size={30}>re:mind</Title>
+          </View>
 
-        <View style={[styles.iconWrapper, { right: 20 }]}>
-          {imageRight && (
-            <Link href={routeRight} asChild>
-              <TouchableOpacity onPress={onPressRight}>
-                {imageRight}
-              </TouchableOpacity>
-            </Link>
-          )}
+          <View style={[styles.iconWrapper, { right: 20 }]}>
+            {imageRight && (
+              <Link href={routeRight} asChild>
+                <TouchableOpacity onPress={onPressRight}>
+                  {imageRight}
+                </TouchableOpacity>
+              </Link>
+            )}
+          </View>
         </View>
       </View>
-    </View>
+    </>
   );
 };
 

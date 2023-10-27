@@ -1,5 +1,6 @@
 import { StyleSheet, Text, Image, View } from "react-native";
 import { Link } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import Title from "../components/Title";
 import Body from "../components/Body";
 import Button from "../components/Button";
@@ -7,6 +8,7 @@ import Button from "../components/Button";
 export default function Page() {
   return (
     <View style={styles.container}>
+      <StatusBar style="light" />
       <Title size={55}>re:mind</Title>
       <Body size={20}>memory capture</Body>
 
