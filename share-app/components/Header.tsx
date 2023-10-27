@@ -15,6 +15,8 @@ interface HeaderProps {
   imageRight?: React.ReactNode;
 }
 
+const margin = 28;
+
 const Header: React.FC<HeaderProps> = ({
   onPressLeft,
   onPressRight,
@@ -30,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({
       <StatusBar style="light" />
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.inLine}>
-          <View style={[styles.iconWrapper, { left: 20 }]}>
+          <View style={[styles.iconWrapper, { left: margin }]}>
             {imageLeft && (
               <Link href={routeLeft} asChild>
                 <TouchableOpacity onPress={onPressLeft}>
@@ -44,7 +46,7 @@ const Header: React.FC<HeaderProps> = ({
             <Title size={30}>re:mind</Title>
           </View>
 
-          <View style={[styles.iconWrapper, { right: 20 }]}>
+          <View style={[styles.iconWrapper, { right: margin }]}>
             {imageRight && (
               <Link href={routeRight} asChild>
                 <TouchableOpacity onPress={onPressRight}>

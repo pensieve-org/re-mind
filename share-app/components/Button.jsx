@@ -22,19 +22,12 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <Link href={route} asChild>
-        <Pressable
-          onPress={onPress}
-          style={{
-            width: "100%",
-            height: 50,
-            justifyContent: "center",
-            alignItems: "center",
-            borderWidth: 1,
-            borderColor: "#FFFFFF",
-            backgroundColor: fill,
-          }}
-        >
+      <Link
+        style={[styles.button, { backgroundColor: fill }]}
+        href={route}
+        asChild
+      >
+        <Pressable onPress={onPress}>
           <Body style={{ color: textColor }} size={textSize}>
             {children}
           </Body>
@@ -47,6 +40,14 @@ const Button: React.FC<ButtonProps> = ({
 export default Button;
 
 const styles = StyleSheet.create({
+  button: {
+    width: "100%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#FFFFFF",
+  },
   container: {
     width: "100%",
     paddingVertical: 10,

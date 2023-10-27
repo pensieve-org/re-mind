@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, Image } from "react-native";
 import { Link } from "expo-router";
 import Header from "../components/Header";
+import Body from "../components/Body";
 
 export default function Page() {
   return (
@@ -10,11 +11,9 @@ export default function Page() {
         routeLeft="/"
       />
       <View style={styles.container}>
-        <Text style={styles.title}>Page 1</Text>
-        <Text style={styles.subtitle}>This is the first page</Text>
-        <Link style={styles.link} href="/">
-          back
-        </Link>
+        <Body style={styles.subtitle} size={35}>
+          login
+        </Body>
       </View>
     </View>
   );
@@ -23,21 +22,12 @@ export default function Page() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    marginHorizontal: 20,
-  },
-  title: {
-    fontSize: 64,
-    fontWeight: "bold",
-    color: "#FFF",
+    alignItems: "flex-start",
+    marginHorizontal: 28,
   },
   subtitle: {
-    fontSize: 36,
-    color: "#FFF",
-  },
-  link: {
-    fontSize: 36,
-    color: "blue",
-    textDecorationLine: "underline",
+    justifyContent: "flex-start",
+    textAlign: "left",
+    fontWeight: 600,
   },
 });
