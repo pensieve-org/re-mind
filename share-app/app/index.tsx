@@ -13,8 +13,8 @@ export default function Page() {
       <Image style={styles.image} source={require("../assets/logo.png")} />
 
       <View style={styles.buttonContainer}>
-        <Button route="/page1">login</Button>
-        <Button route="/page2">sign up</Button>
+        <Button route="/login">login</Button>
+        <Button route="/signup">sign up</Button>
       </View>
     </View>
   );
@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    // marginHorizontal: "auto",
     backgroundColor: "black",
   },
   buttonContainer: {

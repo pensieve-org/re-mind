@@ -1,9 +1,14 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import { Link } from "expo-router";
+import Header from "../components/Header";
 
 export default function Page() {
   return (
-    <View style={styles.container}>
+    <View style={{ flex: 1 }}>
+      <Header
+        imageLeft={<Image source={require("../assets/arrow-left.png")} />}
+        routeLeft="/"
+      />
       <View style={styles.main}>
         <Text style={styles.title}>Page 1</Text>
         <Text style={styles.subtitle}>This is the first page</Text>
