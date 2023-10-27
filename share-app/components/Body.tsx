@@ -1,13 +1,16 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, TextStyle } from "react-native";
 
 interface TitleProps {
   size?: number;
   children?: React.ReactNode;
+  style?: TextStyle;
 }
 
-const Body: React.FC<TitleProps> = ({ size = 16, children }) => {
-  return <Text style={[styles.text, { fontSize: size }]}>{children}</Text>;
+const Body: React.FC<TitleProps> = ({ style, size = 16, children }) => {
+  return (
+    <Text style={[styles.text, style, { fontSize: size }]}>{children}</Text>
+  );
 };
 
 export default Body;

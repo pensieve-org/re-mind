@@ -6,8 +6,10 @@ import Body from "./Body";
 interface ButtonProps {
   textSize?: number;
   children?: React.ReactNode;
-  onPress?: () => void; // Updated type for onPress
-  route?: String;
+  onPress?: () => void;
+  route?: string;
+  fill?: string;
+  textColor?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -15,12 +17,27 @@ const Button: React.FC<ButtonProps> = ({
   children,
   onPress,
   route,
+  fill = "transparent",
+  textColor = "white",
 }) => {
   return (
     <View style={styles.container}>
       <Link href={route} asChild>
-        <Pressable onPress={onPress} style={styles.button}>
-          <Body size={textSize}>{children}</Body>
+        <Pressable
+          onPress={onPress}
+          style={{
+            width: "100%",
+            height: 50,
+            justifyContent: "center",
+            alignItems: "center",
+            borderWidth: 1,
+            borderColor: "#FFFFFF",
+            backgroundColor: fill,
+          }}
+        >
+          <Body style={{ color: textColor }} size={textSize}>
+            {children}
+          </Body>
         </Pressable>
       </Link>
     </View>
@@ -30,15 +47,6 @@ const Button: React.FC<ButtonProps> = ({
 export default Button;
 
 const styles = StyleSheet.create({
-  button: {
-    width: "100%",
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#FFFF",
-  },
   container: {
     width: "100%",
     paddingVertical: 10,
