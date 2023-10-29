@@ -30,7 +30,7 @@ export default function Login() {
     <View style={{ backgroundColor: "#000", flex: 1 }}>
       <Header
         imageLeft={<Image source={require("../assets/arrow-left.png")} />}
-        routeLeft="/"
+        onPressLeft={() => router.replace("/")}
       />
       {error && <Alert text="Invalid email or password" />}
       <View style={styles.container}>

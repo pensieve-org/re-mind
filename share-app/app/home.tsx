@@ -1,15 +1,45 @@
-import { StyleSheet, Text, View } from "react-native";
-import { Link } from "expo-router";
+import { StyleSheet, Image, View } from "react-native";
+import { router } from "expo-router";
+import Header from "../components/Header";
+import Body from "../components/Body";
 
 export default function Home() {
   return (
-    <View style={styles.container}>
-      <View style={styles.main}>
-        <Text style={styles.title}>Page 2</Text>
-        <Text style={styles.subtitle}>This is the second page</Text>
-        <Link style={styles.link} href="/">
-          back
-        </Link>
+    <View style={{ backgroundColor: "#000", flex: 1 }}>
+      <Header
+        imageLeft={
+          <View
+            style={{
+              width: 30,
+              height: 30,
+              borderRadius: 100,
+              backgroundColor: "blue",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Body
+              style={{
+                textAlign: "center",
+              }}
+            >
+              E
+            </Body>
+          </View>
+        }
+        onPressLeft={() => router.replace("/")}
+        imageRight={<Image source={require("../assets/plus.png")} />}
+      />
+      <View style={styles.container}>
+        <Body style={styles.subtitle} size={23}>
+          memories
+        </Body>
+        <Body style={styles.subtitle} size={20}>
+          ongoing
+        </Body>
+        <Body style={styles.subtitle} size={20}>
+          past
+        </Body>
       </View>
     </View>
   );
@@ -18,26 +48,13 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    padding: 24,
-  },
-  main: {
-    flex: 1,
-    justifyContent: "center",
-    maxWidth: 960,
-    marginHorizontal: "auto",
-  },
-  title: {
-    fontSize: 64,
-    fontWeight: "bold",
+    alignItems: "flex-start",
+    marginHorizontal: 28,
   },
   subtitle: {
-    fontSize: 36,
-    color: "#38434D",
-  },
-  link: {
-    fontSize: 36,
-    color: "blue",
-    textDecorationLine: "underline",
+    justifyContent: "flex-start",
+    textAlign: "left",
+    fontWeight: 600,
+    paddingVertical: 16,
   },
 });

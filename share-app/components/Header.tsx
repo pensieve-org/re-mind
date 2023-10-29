@@ -2,15 +2,12 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Link } from "expo-router";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Title from "./Title";
 
 interface HeaderProps {
   onPressLeft?: () => void;
   onPressRight?: () => void;
-  routeLeft?: string;
-  routeRight?: string;
   imageLeft?: React.ReactNode;
   imageRight?: React.ReactNode;
 }
@@ -20,8 +17,6 @@ const margin = 28;
 const Header: React.FC<HeaderProps> = ({
   onPressLeft,
   onPressRight,
-  routeLeft = "",
-  routeRight = "",
   imageLeft,
   imageRight,
 }) => {
@@ -34,11 +29,9 @@ const Header: React.FC<HeaderProps> = ({
         <View style={styles.inLine}>
           <View style={[styles.iconWrapper, { left: margin }]}>
             {imageLeft && (
-              <Link href={routeLeft} asChild>
-                <TouchableOpacity onPress={onPressLeft}>
-                  {imageLeft}
-                </TouchableOpacity>
-              </Link>
+              <TouchableOpacity onPress={onPressLeft}>
+                {imageLeft}
+              </TouchableOpacity>
             )}
           </View>
 
@@ -48,11 +41,9 @@ const Header: React.FC<HeaderProps> = ({
 
           <View style={[styles.iconWrapper, { right: margin }]}>
             {imageRight && (
-              <Link href={routeRight} asChild>
-                <TouchableOpacity onPress={onPressRight}>
-                  {imageRight}
-                </TouchableOpacity>
-              </Link>
+              <TouchableOpacity onPress={onPressRight}>
+                {imageRight}
+              </TouchableOpacity>
             )}
           </View>
         </View>
