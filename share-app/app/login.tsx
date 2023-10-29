@@ -1,26 +1,58 @@
+import React, { useState } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import Header from "../components/Header";
 import Body from "../components/Body";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import LoginValidation from "../services/auth.login";
+import Alert from "../components/Alert";
 
-export default function Page() {
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  const handleLogin = async () => {
+    setError(false);
+    setIsLoading(true);
+    const isValidlogin = await LoginValidation(email, password);
+    setIsLoading(false);
+    if (isValidlogin) {
+      router.replace("home");
+    } else {
+      setError(true);
+    }
+  };
+
   return (
     <View style={{ backgroundColor: "#000", flex: 1 }}>
       <Header
         imageLeft={<Image source={require("../assets/arrow-left.png")} />}
         routeLeft="/"
       />
+      {error && <Alert text="Invalid email or password" />}
       <View style={styles.container}>
-        <View style={{ paddingVertical: 50, paddingTop: 100 }}>
+        <View style={{ paddingVertical: 50, paddingTop: error ? 50 : 100 }}>
           <Body style={styles.subtitle} size={35}>
             login
           </Body>
         </View>
-        <Input placeholder="enter username/email" label="username/email" />
-        <Input placeholder="enter password" label="password" type="password" />
-        <Button route="" fill="white" textColor="black">
+        <Input
+          placeholder="enter email"
+          label="email"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <Input
+          placeholder="enter password"
+          label="password"
+          type="password"
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Button fill="white" textColor="black" onPress={handleLogin}>
           login
         </Button>
       </View>

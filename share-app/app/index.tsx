@@ -1,5 +1,5 @@
 import { StyleSheet, Text, Image, View } from "react-native";
-import { Link } from "expo-router";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Title from "../components/Title";
 import Body from "../components/Body";
@@ -15,8 +15,8 @@ export default function Page() {
       <Image style={styles.image} source={require("../assets/logo.png")} />
 
       <View style={styles.buttonContainer}>
-        <Button route="/login">login</Button>
-        <Button route="/signup">sign up</Button>
+        <Button onPress={() => router.replace("/login")}>login</Button>
+        <Button onPress={() => router.replace("/signup")}>sign up</Button>
       </View>
     </View>
   );
