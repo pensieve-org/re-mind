@@ -1,13 +1,16 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, TextStyle } from "react-native";
 
-interface TitleProps {
+interface BodyProps {
   size?: number;
   children?: React.ReactNode;
+  style?: TextStyle;
 }
 
-const Body: React.FC<TitleProps> = ({ size = 16, children }) => {
-  return <Text style={[styles.text, { fontSize: size }]}>{children}</Text>;
+const Body: React.FC<BodyProps> = ({ style, size = 16, children }) => {
+  return (
+    <Text style={[styles.text, style, { fontSize: size }]}>{children}</Text>
+  );
 };
 
 export default Body;
@@ -15,9 +18,9 @@ export default Body;
 const styles = StyleSheet.create({
   text: {
     alignItems: "center",
-    fontWeight: "300",
+    fontWeight: "400",
     fontFamily: "Montserrat",
     color: "#FFFF",
-    letterSpacing: 1,
+    letterSpacing: -0.408,
   },
 });

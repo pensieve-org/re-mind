@@ -12,3 +12,14 @@ npx create-expo-app -e with-router
 
 - [Expo Router: Docs](https://expo.github.io/router)
 - [Expo Router: Repo](https://github.com/expo/router)
+
+## Login details
+
+For a successful login, use any email from this list in the 'email address' field with any password:
+
+- <george.bluth@reqres.in>
+- <janet.weaver@reqres.in>
+- <emma.wong@reqres.in>
+- <eve.holt@reqres.in>
+- <charles.morris@reqres.in>
+- <tracey.ramos@reqres.in>

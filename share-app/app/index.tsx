@@ -1,5 +1,6 @@
-import { StyleSheet, Text, Image, View } from "react-native";
-import { Link } from "expo-router";
+import { StyleSheet, Image, View } from "react-native";
+import { router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import Title from "../components/Title";
 import Body from "../components/Body";
 import Button from "../components/Button";
@@ -7,14 +8,15 @@ import Button from "../components/Button";
 export default function Page() {
   return (
     <View style={styles.container}>
+      <StatusBar style="light" />
       <Title size={55}>re:mind</Title>
       <Body size={20}>memory capture</Body>
 
       <Image style={styles.image} source={require("../assets/logo.png")} />
 
       <View style={styles.buttonContainer}>
-        <Button route="/page1">login</Button>
-        <Button route="/page2">sign up</Button>
+        <Button onPress={() => router.replace("/login")}>login</Button>
+        <Button onPress={() => router.replace("/signup")}>sign up</Button>
       </View>
     </View>
   );
@@ -25,7 +27,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    // marginHorizontal: "auto",
     backgroundColor: "black",
   },
   buttonContainer: {

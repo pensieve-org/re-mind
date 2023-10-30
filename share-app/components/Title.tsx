@@ -6,7 +6,7 @@ interface TitleProps {
   children?: React.ReactNode;
 }
 
-const Title: React.FC<TitleProps> = ({ size = 16, children }) => {
+const Title: React.FC<TitleProps> = ({ size = 55, children }) => {
   return <Text style={[styles.text, { fontSize: size }]}>{children}</Text>;
 };
 
@@ -15,9 +15,9 @@ export default Title;
 const styles = StyleSheet.create({
   text: {
     alignItems: "center",
-    fontWeight: "300",
+    fontWeight: "400",
     fontFamily: "Montserrat",
     color: "#FFFF",
-    letterSpacing: 4,
+    letterSpacing: -0.408,
   },
 });

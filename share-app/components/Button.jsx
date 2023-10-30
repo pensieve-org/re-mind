@@ -1,28 +1,32 @@
 import React from "react";
 import { StyleSheet, Pressable, View } from "react-native";
-import { Link } from "expo-router";
 import Body from "./Body";
 
 interface ButtonProps {
   textSize?: number;
   children?: React.ReactNode;
-  onPress?: () => void; // Updated type for onPress
-  route?: String;
+  onPress?: () => void;
+  fill?: string;
+  textColor?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
   textSize = 16,
   children,
   onPress,
-  route,
+  fill = "transparent",
+  textColor = "white",
 }) => {
   return (
     <View style={styles.container}>
-      <Link href={route} asChild>
-        <Pressable onPress={onPress} style={styles.button}>
-          <Body size={textSize}>{children}</Body>
-        </Pressable>
-      </Link>
+      <Pressable
+        style={[styles.button, { backgroundColor: fill }]}
+        onPress={onPress}
+      >
+        <Body style={{ color: textColor }} size={textSize}>
+          {children}
+        </Body>
+      </Pressable>
     </View>
   );
 };
@@ -32,12 +36,11 @@ export default Button;
 const styles = StyleSheet.create({
   button: {
     width: "100%",
-    height: 50,
+    height: 55,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: "#FFFF",
+    borderColor: "#FFFFFF",
   },
   container: {
     width: "100%",
