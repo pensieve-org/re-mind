@@ -1,12 +1,9 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, TextStyle } from "react-native";
 import { TextInput as PaperTextInput } from "react-native-paper";
 import Body from "./Body";
 import theme from "../assets/theme";
-import { useFonts, Montserrat_400Regular } from "@expo-google-fonts/montserrat";
-import * as SplashScreen from "expo-splash-screen";
 
-SplashScreen.preventAutoHideAsync();
 interface InputProps {
   label?: string;
   placeholder?: string;
@@ -29,28 +26,10 @@ const Input: React.FC<InputProps> = ({
   const [revealContent, setRevealContent] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  const [loadedFonts] = useFonts({
-    MontserratRegular: Montserrat_400Regular,
-  });
-
-  const onLayoutRootView = useCallback(async () => {
-    if (loadedFonts) {
-      await SplashScreen.hideAsync();
-    }
-  }, [loadedFonts]);
-
-  if (!loadedFonts) {
-    return null;
-  }
-  const textStyle: TextStyle = {
-    fontFamily: "MontserratRegular",
-  };
-
   const Label = (
     <Body
       style={[
         styles.textInput,
-        textStyle,
         { color: !isFocused ? theme.PLACEHOLDER : theme.TEXT },
       ]}
     >
@@ -59,7 +38,7 @@ const Input: React.FC<InputProps> = ({
   );
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
+    <View style={styles.container}>
       <PaperTextInput
         label={Label}
         testID="inputTest"
@@ -75,7 +54,7 @@ const Input: React.FC<InputProps> = ({
         onChangeText={onChangeText}
         error={error}
         secureTextEntry={type === "password" && !revealContent}
-        style={[styles.textInput, textStyle]}
+        style={styles.textInput}
         textColor={theme.TEXT}
         theme={{
           colors: {
@@ -105,6 +84,7 @@ const styles = StyleSheet.create({
     width: "90%",
     paddingLeft: 8,
     fontSize: 16,
+    fontFamily: "MontserratRegular",
   },
 });
 

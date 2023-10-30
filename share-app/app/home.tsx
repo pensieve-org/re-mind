@@ -47,7 +47,7 @@ export default function Home() {
         <View style={{ paddingVertical: 10 }}>
           <Subtitle size={20}>past</Subtitle>
         </View>
-        // TODO: render profile picture image
+        {/* TODO: render profile picture image */}
         <View>
           <Subtitle size={20}>{profilePicture}</Subtitle>
         </View>
