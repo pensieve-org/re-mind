@@ -18,7 +18,7 @@ export default function Page() {
 
       <View style={styles.buttonContainer}>
         <Button onPress={() => router.replace("/login")}>login</Button>
-        <Button onPress={() => router.replace("/signup")}>sign up</Button>
+        <Button onPress={() => router.replace("/register")}>sign up</Button>
       </View>
     </View>
   );

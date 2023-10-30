@@ -10,22 +10,28 @@ import Alert from "../components/Alert";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
+import registerUser from "../services/auth.register";
 
-export default function Login() {
+const Register = () => {
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  const handleLogin = async () => {
-    setError(false);
-    setIsLoading(true);
-    const isValidlogin = await LoginValidation(email, password);
-    setIsLoading(false);
-    if (isValidlogin) {
-      router.replace("home");
-    } else {
-      setError(true);
+  const handleRegister = async () => {
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      await registerUser({ name, email, password });
+      alert("User registered successfully");
+      router.replace("login");
+    } catch (error) {
+      alert(error.message);
     }
   };
 
@@ -42,9 +48,14 @@ export default function Login() {
 
       <View style={styles.container}>
         <View style={{ paddingVertical: 50, paddingTop: 30 }}>
-          <Subtitle>login</Subtitle>
+          <Subtitle>register</Subtitle>
         </View>
-
+        <Input
+          placeholder="enter name"
+          label="name"
+          value={name}
+          onChangeText={setName}
+        />
         <Input
           placeholder="enter email"
           label="email"
@@ -58,13 +69,22 @@ export default function Login() {
           value={password}
           onChangeText={setPassword}
         />
-        <Button fill="white" textColor="black" onPress={handleLogin}>
-          login
+        <Input
+          placeholder="enter password"
+          label="confirm password"
+          type="password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+        <Button fill="white" textColor="black" onPress={handleRegister}>
+          register
         </Button>
       </View>
     </View>
   );
-}
+};
+
+export default Register;
 
 const styles = StyleSheet.create({
   page: {
