@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import Body from "../components/Body";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING } from "../assets/constants";
+import Subtitle from "../components/Subtitle";
 
 export default function Home() {
   return (
@@ -33,15 +34,15 @@ export default function Home() {
         imageRight={<Image source={require("../assets/plus.png")} />}
       />
       <View style={styles.container}>
-        <Body style={styles.subtitle} size={23}>
-          memories
-        </Body>
-        <Body style={styles.subtitle} size={20}>
-          ongoing
-        </Body>
-        <Body style={styles.subtitle} size={20}>
-          past
-        </Body>
+        <View style={{ paddingVertical: 10 }}>
+          <Subtitle size={23}>memories</Subtitle>
+        </View>
+        <View style={{ paddingVertical: 10 }}>
+          <Subtitle size={20}>ongoing</Subtitle>
+        </View>
+        <View style={{ paddingVertical: 10 }}>
+          <Subtitle size={20}>past</Subtitle>
+        </View>
       </View>
     </View>
   );
@@ -54,13 +55,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: "flex-start",
     marginHorizontal: HORIZONTAL_PADDING,
-  },
-  subtitle: {
-    justifyContent: "flex-start",
-    textAlign: "left",
-    fontWeight: 600,
-    paddingVertical: 16,
   },
 });

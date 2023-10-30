@@ -9,6 +9,7 @@ import LoginValidation from "../services/auth.login";
 import Alert from "../components/Alert";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING } from "../assets/constants";
+import Subtitle from "../components/Subtitle";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -41,10 +42,9 @@ export default function Login() {
 
       <View style={styles.container}>
         <View style={{ paddingVertical: 50, paddingTop: 50 }}>
-          <Body style={styles.subtitle} size={35}>
-            login
-          </Body>
+          <Subtitle>login</Subtitle>
         </View>
+
         <Input
           placeholder="enter email"
           label="email"
@@ -75,11 +75,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "flex-start",
     marginHorizontal: HORIZONTAL_PADDING,
-  },
-  subtitle: {
-    justifyContent: "flex-start",
-    textAlign: "left",
-    fontWeight: 600,
   },
   alertContainer: {
     alignItems: "center",
