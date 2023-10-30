@@ -12,6 +12,7 @@ import { HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
 import registerUser from "../services/auth.register";
 
+// TODO: Use Formik
 const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -22,12 +23,16 @@ const Register = () => {
 
   const handleRegister = async () => {
     if (password !== confirmPassword) {
+      // TODO: Use Alert component instead
       alert("Passwords do not match");
       return;
     }
 
     try {
-      await registerUser({ name, email, password });
+      setIsLoading(true);
+      await registerUser({ email, password });
+      setIsLoading(false);
+      // TODO: Use Alert component instead, add a wait
       alert("User registered successfully");
       router.replace("login");
     } catch (error) {
