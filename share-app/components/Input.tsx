@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { TextInput as PaperTextInput } from "react-native-paper";
 import Body from "./Body";
+import theme from "../assets/theme";
 
 interface InputProps {
   label?: string;
@@ -11,7 +12,6 @@ interface InputProps {
   onBlur?: Function;
   error?: boolean;
   type?: "text" | "password";
-  testId?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -27,7 +27,12 @@ const Input: React.FC<InputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
 
   const Label = (
-    <Body style={[styles.textInput, { color: !isFocused ? "gray" : "white" }]}>
+    <Body
+      style={[
+        styles.textInput,
+        { color: !isFocused ? theme.PLACEHOLDER : theme.TEXT },
+      ]}
+    >
       {label}
     </Body>
   );
@@ -39,7 +44,7 @@ const Input: React.FC<InputProps> = ({
         testID="inputTest"
         mode="flat"
         placeholder={placeholder}
-        placeholderTextColor={"gray"}
+        placeholderTextColor={theme.PLACEHOLDER}
         onBlur={(event) => {
           setIsFocused(false);
           onBlur?.(event);
@@ -50,12 +55,12 @@ const Input: React.FC<InputProps> = ({
         error={error}
         secureTextEntry={type === "password" && !revealContent}
         style={styles.textInput}
-        textColor="white"
+        textColor={theme.TEXT}
         theme={{
           colors: {
-            primary: "white",
-            secondary: "gray",
-            error: "red",
+            primary: theme.TEXT,
+            secondary: theme.PLACEHOLDER,
+            error: theme.ERROR_TEXT,
           },
         }}
         underlineStyle={{ display: "none" }}
@@ -70,7 +75,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 55,
     borderWidth: 1,
-    borderColor: "white",
+    borderColor: theme.PRIMARY,
     flexDirection: "row",
     alignItems: "center",
   },

@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Title from "./Title";
+import theme from "../assets/theme";
 
 interface HeaderProps {
   onPressLeft?: () => void;
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     paddingVertical: 10,
-    backgroundColor: "black",
+    backgroundColor: theme.BACKGROUND,
   },
   inLine: {
     flexDirection: "row",

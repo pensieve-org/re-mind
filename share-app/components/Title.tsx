@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, Text } from "react-native";
+import theme from "../assets/theme";
 
 interface TitleProps {
   size?: number;
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontWeight: "400",
     fontFamily: "Montserrat",
-    color: "#FFFF",
+    color: theme.TEXT,
     letterSpacing: -0.408,
   },
 });

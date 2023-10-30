@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Pressable, View } from "react-native";
 import Body from "./Body";
+import theme from "../assets/theme";
 
 interface ButtonProps {
   textSize?: number;
@@ -15,7 +16,7 @@ const Button: React.FC<ButtonProps> = ({
   children,
   onPress,
   fill = "transparent",
-  textColor = "white",
+  textColor = theme.TEXT,
 }) => {
   return (
     <View style={styles.container}>
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "#FFFFFF",
+    borderColor: theme.PRIMARY,
   },
   container: {
     width: "100%",

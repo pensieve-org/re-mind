@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import Body from "./Body";
+import theme from "../assets/theme";
 
 const Alert = ({ text }) => {
   return (
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: theme.ERROR_BACKGROUND,
     padding: 16,
     paddingHorizontal: 50,
     height: 80,
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   text: {
-    color: "black",
+    color: theme.ERROR_TEXT,
   },
 });
 

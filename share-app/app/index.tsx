@@ -4,10 +4,12 @@ import { StatusBar } from "expo-status-bar";
 import Title from "../components/Title";
 import Body from "../components/Body";
 import Button from "../components/Button";
+import theme from "../assets/theme";
+import { HORIZONTAL_PADDING } from "../assets/constants";
 
 export default function Page() {
   return (
-    <View style={styles.container}>
+    <View style={styles.page}>
       <StatusBar style="light" />
       <Title size={55}>re:mind</Title>
       <Body size={20}>memory capture</Body>
@@ -23,15 +25,15 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  page: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "black",
+    backgroundColor: theme.BACKGROUND,
   },
   buttonContainer: {
     width: "100%",
-    paddingHorizontal: 20,
+    paddingHorizontal: HORIZONTAL_PADDING,
   },
   image: {
     // width: 100, // Set your desired width

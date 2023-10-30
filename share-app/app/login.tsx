@@ -7,6 +7,8 @@ import Input from "../components/Input";
 import Button from "../components/Button";
 import LoginValidation from "../services/auth.login";
 import Alert from "../components/Alert";
+import theme from "../assets/theme";
+import { HORIZONTAL_PADDING } from "../assets/constants";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -27,7 +29,7 @@ export default function Login() {
   };
 
   return (
-    <View style={{ backgroundColor: "#000", flex: 1 }}>
+    <View style={styles.page}>
       <Header
         imageLeft={<Image source={require("../assets/arrow-left.png")} />}
         onPressLeft={() => router.replace("/")}
@@ -65,10 +67,14 @@ export default function Login() {
 }
 
 const styles = StyleSheet.create({
+  page: {
+    backgroundColor: theme.BACKGROUND,
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: "flex-start",
-    marginHorizontal: 28,
+    marginHorizontal: HORIZONTAL_PADDING,
   },
   subtitle: {
     justifyContent: "flex-start",
