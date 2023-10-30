@@ -1,4 +1,4 @@
-import { StyleSheet, Text, Image, View } from "react-native";
+import { StyleSheet, Image, View } from "react-native";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Title from "../components/Title";

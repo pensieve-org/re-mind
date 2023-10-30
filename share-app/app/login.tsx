@@ -32,9 +32,13 @@ export default function Login() {
         imageLeft={<Image source={require("../assets/arrow-left.png")} />}
         onPressLeft={() => router.replace("/")}
       />
-      {error && <Alert text="Invalid email or password" />}
+
+      <View style={styles.alertContainer}>
+        {error && <Alert text="Invalid email or password" />}
+      </View>
+
       <View style={styles.container}>
-        <View style={{ paddingVertical: 50, paddingTop: error ? 50 : 100 }}>
+        <View style={{ paddingVertical: 50, paddingTop: 50 }}>
           <Body style={styles.subtitle} size={35}>
             login
           </Body>
@@ -70,5 +74,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     textAlign: "left",
     fontWeight: 600,
+  },
+  alertContainer: {
+    alignItems: "center",
+    height: 80,
   },
 });

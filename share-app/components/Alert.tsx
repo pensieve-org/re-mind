@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 16,
     paddingHorizontal: 50,
+    height: 80,
   },
   iconContainer: {
     flex: 1,
