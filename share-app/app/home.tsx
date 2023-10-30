@@ -1,3 +1,4 @@
+import React, { useState, useContext } from "react";
 import { StyleSheet, Image, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
@@ -5,8 +6,11 @@ import Body from "../components/Body";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
+import { UserContext } from "./_layout";
 
 export default function Home() {
+  const { name, profilePicture } = useContext(UserContext);
+
   return (
     <View style={styles.page}>
       <Header
@@ -26,7 +30,7 @@ export default function Home() {
                 textAlign: "center",
               }}
             >
-              E
+              {name[0]}
             </Body>
           </View>
         }
@@ -42,6 +46,10 @@ export default function Home() {
         </View>
         <View style={{ paddingVertical: 10 }}>
           <Subtitle size={20}>past</Subtitle>
+        </View>
+        {/* TODO: render profile picture image */}
+        <View>
+          <Subtitle size={20}>{profilePicture}</Subtitle>
         </View>
       </View>
     </View>

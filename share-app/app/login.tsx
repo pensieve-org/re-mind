@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import React, { useState, useContext } from "react";
+import { StyleSheet, View, Image } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import Body from "../components/Body";
+import { UserContext } from "./_layout";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import LoginValidation from "../services/auth.login";
@@ -16,6 +17,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
+  const { setName, setProfilePicture } = useContext(UserContext);
 
   const handleLogin = async () => {
     setError(false);
@@ -23,6 +25,8 @@ export default function Login() {
     const isValidlogin = await LoginValidation(email, password);
     setIsLoading(false);
     if (isValidlogin) {
+      setName("Ethan");
+      setProfilePicture("https://reqres.in/img/faces/7-image.jpg");
       router.replace("home");
     } else {
       setError(true);
