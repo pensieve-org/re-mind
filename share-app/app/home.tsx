@@ -20,18 +20,25 @@ export default function Home() {
               width: 30,
               height: 30,
               borderRadius: 100,
-              backgroundColor: "blue",
+              backgroundColor: profilePicture ? "transparent" : "blue",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <Body
-              style={{
-                textAlign: "center",
-              }}
-            >
-              {name[0]}
-            </Body>
+            {profilePicture ? (
+              <Image
+                source={{ uri: profilePicture }}
+                style={{ width: 30, height: 30, borderRadius: 100 }}
+              />
+            ) : (
+              <Body
+                style={{
+                  textAlign: "center",
+                }}
+              >
+                {name[0]}
+              </Body>
+            )}
           </View>
         }
         onPressLeft={() => router.replace("/")}
@@ -46,13 +53,6 @@ export default function Home() {
         </View>
         <View style={{ paddingVertical: 10 }}>
           <Subtitle size={20}>past</Subtitle>
-        </View>
-        {/* TODO: render profile picture image */}
-        <View style={{ paddingVertical: 10, borderRadius: 100 }}>
-          <Image
-            source={{ uri: profilePicture }}
-            style={{ width: 30, height: 30 }}
-          />
         </View>
       </View>
     </View>
