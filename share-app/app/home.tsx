@@ -48,8 +48,11 @@ export default function Home() {
           <Subtitle size={20}>past</Subtitle>
         </View>
         {/* TODO: render profile picture image */}
-        <View>
-          <Subtitle size={20}>{profilePicture}</Subtitle>
+        <View style={{ paddingVertical: 10, borderRadius: 100 }}>
+          <Image
+            source={{ uri: profilePicture }}
+            style={{ width: 30, height: 30 }}
+          />
         </View>
       </View>
     </View>

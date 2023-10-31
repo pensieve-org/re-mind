@@ -11,6 +11,7 @@ import Alert from "../components/Alert";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
+import { fetchUserDetails } from "../services/user.service";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -21,12 +22,14 @@ export default function Login() {
 
   const handleLogin = async () => {
     setError(false);
+    // TODO: add a loading animation
     setIsLoading(true);
     const isValidlogin = await LoginValidation(email, password);
+    const userDetails = await fetchUserDetails(email);
     setIsLoading(false);
     if (isValidlogin) {
-      setName("Ethan");
-      setProfilePicture("https://reqres.in/img/faces/7-image.jpg");
+      setName(userDetails.first_name);
+      setProfilePicture(userDetails.avatar);
       router.replace("home");
     } else {
       setError(true);
