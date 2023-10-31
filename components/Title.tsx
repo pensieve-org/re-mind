@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TextStyle } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import theme from "../assets/theme";
 
 interface TitleProps {
@@ -8,12 +8,7 @@ interface TitleProps {
 }
 
 const Title: React.FC<TitleProps> = ({ size = 55, children }) => {
-  const textStyle: TextStyle = {
-    fontSize: size,
-    fontFamily: "MontserratRegular",
-  };
-
-  return <Text style={[styles.text, textStyle]}>{children}</Text>;
+  return <Text style={[styles.text, { fontSize: size }]}>{children}</Text>;
 };
 
 export default Title;
@@ -22,5 +17,6 @@ const styles = StyleSheet.create({
   text: {
     color: theme.TEXT,
     letterSpacing: -0.408,
+    fontFamily: "MontserratRegular",
   },
 });

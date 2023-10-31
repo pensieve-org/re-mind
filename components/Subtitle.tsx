@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, TextStyle } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import theme from "../assets/theme";
 
 interface SubtitleProps {
@@ -8,12 +8,7 @@ interface SubtitleProps {
 }
 
 const Subtitle: React.FC<SubtitleProps> = ({ size = 35, children }) => {
-  const textStyle: TextStyle = {
-    fontSize: size,
-    fontFamily: "MontserratSemiBold",
-  };
-
-  return <Text style={[styles.text, textStyle]}>{children}</Text>;
+  return <Text style={[styles.text, { fontSize: size }]}>{children}</Text>;
 };
 
 export default Subtitle;
@@ -22,5 +17,6 @@ const styles = StyleSheet.create({
   text: {
     color: theme.TEXT,
     letterSpacing: -0.408,
+    fontFamily: "MontserratSemiBold",
   },
 });
