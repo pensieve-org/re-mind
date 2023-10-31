@@ -9,9 +9,11 @@ import Button from "../components/Button";
 import LoginValidation from "../services/auth.login";
 import Alert from "../components/Alert";
 import theme from "../assets/theme";
-import { HORIZONTAL_PADDING } from "../assets/constants";
+import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
 import { fetchUserDetails } from "../services/user.service";
+
+import BackArrow from "../assets/arrow-left.svg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -39,7 +41,12 @@ export default function Login() {
   return (
     <View style={styles.page}>
       <Header
-        imageLeft={<Image source={require("../assets/arrow-left.png")} />}
+        imageLeft={
+          <BackArrow
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+          />
+        }
         onPressLeft={() => router.replace("/")}
       />
 
