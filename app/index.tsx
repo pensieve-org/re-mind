@@ -6,19 +6,30 @@ import Body from "../components/Body";
 import Button from "../components/Button";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING } from "../assets/constants";
+import Logo from "../assets/logo.svg";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Page() {
+  const insets = useSafeAreaInsets();
   return (
     <View style={styles.page}>
       <StatusBar style="light" />
-      <Title size={55}>re:mind</Title>
-      <Body size={20}>memory capture</Body>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <View style={styles.topContainer}>
+          <Title size={55}>re:mind</Title>
+          <Body size={20}>memory capture</Body>
+        </View>
 
-      <Image style={styles.image} source={require("../assets/logo.png")} />
+        <View style={styles.image}>
+          <Logo width={300} height={150} />
+        </View>
 
-      <View style={styles.buttonContainer}>
-        <Button onPress={() => router.replace("/login")}>login</Button>
-        <Button onPress={() => router.replace("/register")}>sign up</Button>
+        <View style={styles.bottomContainer}>
+          <View style={styles.buttonContainer}>
+            <Button onPress={() => router.replace("/login")}>login</Button>
+            <Button onPress={() => router.replace("/register")}>sign up</Button>
+          </View>
+        </View>
       </View>
     </View>
   );
@@ -27,17 +38,24 @@ export default function Page() {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: theme.BACKGROUND,
+  },
+  container: {
+    flex: 1,
+    justifyContent: "space-between",
+    paddingHorizontal: HORIZONTAL_PADDING,
+  },
+  topContainer: {
+    alignItems: "center",
+  },
+  bottomContainer: {
+    alignItems: "center",
+    paddingBottom: 100,
   },
   buttonContainer: {
     width: "100%",
-    paddingHorizontal: HORIZONTAL_PADDING,
   },
   image: {
-    // width: 100, // Set your desired width
-    // height: 100, // Set your desired height
-    // marginBottom: 20, // Optional: add some margin if needed
+    alignSelf: "center",
   },
 });
