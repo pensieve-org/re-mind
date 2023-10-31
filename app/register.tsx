@@ -8,9 +8,11 @@ import Button from "../components/Button";
 import LoginValidation from "../services/auth.login";
 import Alert from "../components/Alert";
 import theme from "../assets/theme";
-import { HORIZONTAL_PADDING } from "../assets/constants";
+import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
 import registerUser from "../services/auth.register";
+
+import BackArrow from "../assets/arrow-left.svg";
 
 // TODO: Use Formik
 const Register = () => {
@@ -43,7 +45,12 @@ const Register = () => {
   return (
     <View style={styles.page}>
       <Header
-        imageLeft={<Image source={require("../assets/arrow-left.png")} />}
+        imageLeft={
+          <BackArrow
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+          />
+        }
         onPressLeft={() => router.replace("/")}
       />
 

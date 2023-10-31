@@ -1,1 +1,2 @@
 export const HORIZONTAL_PADDING = 28;
+export const HEADER_ICON_DIMENSION = 30;

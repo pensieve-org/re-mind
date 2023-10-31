@@ -4,9 +4,11 @@ import { router } from "expo-router";
 import Header from "../components/Header";
 import Body from "../components/Body";
 import theme from "../assets/theme";
-import { HORIZONTAL_PADDING } from "../assets/constants";
+import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
 import { UserContext } from "./_layout";
+
+import Plus from "../assets/plus.svg";
 
 export default function Home() {
   const { name, profilePicture } = useContext(UserContext);
@@ -17,8 +19,8 @@ export default function Home() {
         imageLeft={
           <View
             style={{
-              width: 30,
-              height: 30,
+              width: HEADER_ICON_DIMENSION,
+              height: HEADER_ICON_DIMENSION,
               borderRadius: 100,
               backgroundColor: profilePicture ? "transparent" : "blue",
               alignItems: "center",
@@ -28,7 +30,11 @@ export default function Home() {
             {profilePicture ? (
               <Image
                 source={{ uri: profilePicture }}
-                style={{ width: 30, height: 30, borderRadius: 100 }}
+                style={{
+                  width: HEADER_ICON_DIMENSION,
+                  height: HEADER_ICON_DIMENSION,
+                  borderRadius: 100,
+                }}
               />
             ) : (
               <Body
@@ -42,7 +48,9 @@ export default function Home() {
           </View>
         }
         onPressLeft={() => router.replace("/")}
-        imageRight={<Image source={require("../assets/plus.png")} />}
+        imageRight={
+          <Plus height={HEADER_ICON_DIMENSION} width={HEADER_ICON_DIMENSION} />
+        }
       />
       <View style={styles.container}>
         <View style={{ paddingVertical: 10 }}>
