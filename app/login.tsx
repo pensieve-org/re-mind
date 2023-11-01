@@ -72,7 +72,11 @@ export default function Login() {
           value={password}
           onChangeText={setPassword}
         />
-        <Button fill="white" textColor="black" onPress={handleLogin}>
+        <Button
+          fill={theme.TEXT}
+          textColor={theme.BACKGROUND}
+          onPress={handleLogin}
+        >
           login
         </Button>
       </View>
