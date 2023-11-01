@@ -22,7 +22,7 @@ export default function Page() {
         </View>
 
         <View style={styles.image}>
-          <Logo width={250} height={100} />
+          <Logo width={250} height={120} />
         </View>
 
         <View style={styles.bottomContainer}>
