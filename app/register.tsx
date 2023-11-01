@@ -34,7 +34,7 @@ const Register = () => {
       setIsLoading(true);
       await registerUser({ email, password });
       setIsLoading(false);
-      // TODO: Use Alert component instead, add a wait
+      // TODO: Use Alert component instead, add a wait. Add loading animation.
       alert("User registered successfully");
       router.replace("login");
     } catch (error) {
