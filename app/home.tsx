@@ -61,21 +61,23 @@ export default function Home() {
           <Plus height={HEADER_ICON_DIMENSION} width={HEADER_ICON_DIMENSION} />
         }
       />
-      <ScrollView style={styles.container}>
-        <View style={{ paddingVertical: 10 }}>
-          <Subtitle size={23}>memories</Subtitle>
-        </View>
-        <View style={{ paddingVertical: 10 }}>
-          <Subtitle size={20}>ongoing</Subtitle>
-        </View>
+      <ScrollView bounces={true}>
+        <View style={styles.container}>
+          <View style={{ paddingVertical: 10 }}>
+            <Subtitle size={23}>memories</Subtitle>
+          </View>
+          <View style={{ paddingVertical: 10 }}>
+            <Subtitle size={20}>ongoing</Subtitle>
+          </View>
 
-        <EventList imageSources={ongoingEvents} eventName="test" />
+          <EventList imageSources={ongoingEvents} eventName="test" />
 
-        <View style={{ paddingVertical: 10 }}>
-          <Subtitle size={20}>past</Subtitle>
+          <View style={{ paddingVertical: 10 }}>
+            <Subtitle size={20}>past</Subtitle>
+          </View>
+
+          <EventList imageSources={pastEvents} eventName="test" />
         </View>
-
-        <EventList imageSources={pastEvents} eventName="test" />
       </ScrollView>
     </View>
   );
@@ -85,10 +87,10 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: theme.BACKGROUND,
     flex: 1,
-    paddingBottom: 50,
   },
   container: {
     flex: 1,
     marginHorizontal: HORIZONTAL_PADDING,
+    paddingBottom: 50,
   },
 });

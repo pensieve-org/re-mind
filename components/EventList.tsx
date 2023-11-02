@@ -9,6 +9,7 @@ interface Props {
 }
 
 // TODO: give an onpress property that triggers a navigation and returns the event id of the clicked event
+// TODO: when the api is set up right, the only input should be an event object which has all the relevant data in it
 
 const EventList: React.FC<Props> = ({ imageSources, eventName }) => {
   return (
