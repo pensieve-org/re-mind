@@ -61,7 +61,7 @@ export default function Home() {
           <Plus height={HEADER_ICON_DIMENSION} width={HEADER_ICON_DIMENSION} />
         }
       />
-      <ScrollView bounces={true}>
+      <ScrollView>
         <View style={styles.container}>
           <View style={{ paddingVertical: 10 }}>
             <Subtitle size={23}>memories</Subtitle>
