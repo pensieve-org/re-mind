@@ -56,23 +56,24 @@ export default function Home() {
             )}
           </View>
         }
-        onPressLeft={() => router.replace("/")}
+        onPressLeft={() => router.push("/profile")}
         imageRight={
           <Plus height={HEADER_ICON_DIMENSION} width={HEADER_ICON_DIMENSION} />
         }
+        onPressRight={() => router.push("/create-event")}
       />
       <ScrollView>
         <View style={styles.container}>
-          <View style={{ paddingVertical: 10 }}>
+          <View style={{ paddingVertical: 20 }}>
             <Subtitle size={23}>memories</Subtitle>
           </View>
-          <View style={{ paddingVertical: 10 }}>
+          <View style={{ paddingVertical: 20 }}>
             <Subtitle size={20}>ongoing</Subtitle>
           </View>
 
           <EventList imageSources={ongoingEvents} eventName="test" />
 
-          <View style={{ paddingVertical: 10 }}>
+          <View style={{ paddingVertical: 20 }}>
             <Subtitle size={20}>past</Subtitle>
           </View>
 

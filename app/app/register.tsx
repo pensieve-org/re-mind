@@ -51,7 +51,7 @@ const Register = () => {
             width={HEADER_ICON_DIMENSION}
           />
         }
-        onPressLeft={() => router.replace("/")}
+        onPressLeft={() => router.back()}
       />
 
       <View style={styles.alertContainer}>

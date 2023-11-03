@@ -22,13 +22,13 @@ export default function Page() {
         </View>
 
         <View style={styles.image}>
-          <Logo width={250} height={120} />
+          <Logo width={250} height={100} />
         </View>
 
         <View style={styles.bottomContainer}>
           <View style={styles.buttonContainer}>
-            <Button onPress={() => router.replace("/login")}>login</Button>
-            <Button onPress={() => router.replace("/register")}>sign up</Button>
+            <Button onPress={() => router.push("/login")}>login</Button>
+            <Button onPress={() => router.push("/register")}>sign up</Button>
           </View>
         </View>
       </View>

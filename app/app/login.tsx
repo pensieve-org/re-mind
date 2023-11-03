@@ -32,7 +32,7 @@ export default function Login() {
     if (isValidlogin) {
       setName(userDetails.first_name);
       setProfilePicture(userDetails.avatar);
-      router.replace("home");
+      router.replace("/home");
     } else {
       setError(true);
     }
@@ -47,7 +47,7 @@ export default function Login() {
             width={HEADER_ICON_DIMENSION}
           />
         }
-        onPressLeft={() => router.replace("/")}
+        onPressLeft={() => router.back()}
       />
 
       <View style={styles.alertContainer}>
