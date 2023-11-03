@@ -1,6 +1,5 @@
 import { createContext, useState } from "react";
 import { Slot } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import {
   Montserrat_400Regular,
@@ -31,9 +30,7 @@ export default function HomeLayout() {
       <UserContext.Provider
         value={{ name, setName, profilePicture, setProfilePicture }}
       >
-        <Slot>
-          <StatusBar style="light" />
-        </Slot>
+        <Slot />
       </UserContext.Provider>
     </FontLoader>
   );
