@@ -1,17 +1,17 @@
 import React, { useContext } from "react";
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import Body from "../components/Body";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
-import { UserContext } from "./_layout";
+import { AppContext } from "./_layout";
 import BackArrow from "../assets/arrow-left.svg";
 import Button from "../components/Button";
 
 export default function Profile() {
   const { setName, setProfilePicture, name, profilePicture } =
-    useContext(UserContext);
+    useContext(AppContext);
 
   const handleLogout = () => {
     setName("");

@@ -8,7 +8,7 @@ import {
 } from "@expo-google-fonts/montserrat";
 import getEvents from "../services/get.events";
 
-export const UserContext = createContext(null);
+export const AppContext = createContext(null);
 
 function FontLoader({ children }) {
   const [loadedFonts] = useFonts({
@@ -37,11 +37,11 @@ export default function HomeLayout() {
 
   useEffect(() => {
     loadImages();
-  }, []); // TODO: things you put in here will make the use effect run whenever they change, put a flag in here to check when an event changes for a user
+  }, []); // TODO: things you put in here will make the use effect run whenever they change, put a refresh flag in here triggered in the home screen
 
   return (
     <FontLoader>
-      <UserContext.Provider
+      <AppContext.Provider
         value={{
           name,
           setName,
@@ -52,7 +52,7 @@ export default function HomeLayout() {
         }}
       >
         <Slot />
-      </UserContext.Provider>
+      </AppContext.Provider>
     </FontLoader>
   );
 }

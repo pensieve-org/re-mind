@@ -6,13 +6,13 @@ import Body from "../components/Body";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
-import { UserContext } from "./_layout";
+import { AppContext } from "./_layout";
 import Plus from "../assets/plus.svg";
 import EventList from "../components/EventList";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Home() {
-  const { name, profilePicture, events } = useContext(UserContext);
+  const { name, profilePicture, events } = useContext(AppContext);
 
   return (
     <View style={styles.page}>
@@ -60,17 +60,17 @@ export default function Home() {
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={23}>memories</Subtitle>
           </View>
-          <View style={{ paddingVertical: 20 }}>
+          <View style={{ paddingBottom: 20 }}>
             <Subtitle size={20}>ongoing</Subtitle>
           </View>
 
-          <EventList imageSources={events.ongoing} eventName="test" />
+          <EventList events={events.ongoing} />
 
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={20}>past</Subtitle>
           </View>
 
-          <EventList imageSources={events.past} eventName="test" />
+          <EventList events={events.past} />
         </View>
       </ScrollView>
     </View>

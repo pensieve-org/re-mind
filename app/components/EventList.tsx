@@ -4,22 +4,23 @@ import Body from "./Body";
 import { HORIZONTAL_PADDING } from "../assets/constants";
 
 interface Props {
-  imageSources: any[];
-  eventName: string;
+  events: any[]; // might need to make this an object
 }
 
 // TODO: give an onpress property that triggers a navigation and returns the event id of the clicked event
-// TODO: when the api is set up right, the only input should be an event object which has all the relevant data in it
 
-const EventList: React.FC<Props> = ({ imageSources, eventName }) => {
+const EventList: React.FC<Props> = ({ events }) => {
   return (
+    // TODO: add a pressable property that returns the event id of the clicked event. This will trigger the api call and load the right images for the event screen nav
     <View style={styles.container}>
-      {imageSources.map((imageSource, index) => (
+      {events.map((event, index) => (
         <View key={index}>
           <View style={styles.imageContainer}>
-            <Image source={{ uri: imageSource }} style={styles.image} />
+            {/* This will have to be changed to event.url */}
+            <Image source={{ uri: event }} style={styles.image} />
           </View>
-          <Body style={styles.text}>{eventName}</Body>
+          {/* This will have to be changed to event.name */}
+          <Body style={styles.text}>test</Body>
         </View>
       ))}
     </View>

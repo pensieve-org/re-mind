@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
-import Body from "../components/Body";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import LoginValidation from "../services/auth.login";
 import Alert from "../components/Alert";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";

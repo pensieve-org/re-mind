@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
-import { UserContext } from "./_layout";
+import { AppContext } from "./_layout";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import validateLogin from "../services/auth.login";
@@ -18,7 +18,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
-  const { setName, setProfilePicture } = useContext(UserContext);
+  const { setName, setProfilePicture } = useContext(AppContext);
 
   const handleLogin = async () => {
     setError(false);
