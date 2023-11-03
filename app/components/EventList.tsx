@@ -14,7 +14,7 @@ const EventList: React.FC<Props> = ({ events }) => {
     // TODO: add a pressable property that returns the event id of the clicked event. This will trigger the api call and load the right images for the event screen nav
     <View style={styles.container}>
       {events.map((event, index) => (
-        <View key={index}>
+        <View style={{ paddingBottom: 10 }} key={index}>
           <View style={styles.imageContainer}>
             {/* This will have to be changed to event.url */}
             <Image source={{ uri: event }} style={styles.image} />

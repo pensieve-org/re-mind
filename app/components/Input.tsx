@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { TextInput as PaperTextInput } from "react-native-paper";
 import Body from "./Body";
 import theme from "../assets/theme";
+import { CORNER_RADIUS } from "../assets/constants";
 
 interface InputProps {
   label?: string;
@@ -78,6 +79,7 @@ const styles = StyleSheet.create({
     borderColor: theme.PRIMARY,
     flexDirection: "row",
     alignItems: "center",
+    borderRadius: CORNER_RADIUS,
   },
   textInput: {
     backgroundColor: "transparent",

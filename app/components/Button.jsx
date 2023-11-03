@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Pressable, View } from "react-native";
 import Body from "./Body";
 import theme from "../assets/theme";
+import { CORNER_RADIUS } from "../assets/constants";
 
 interface ButtonProps {
   textSize?: number;
@@ -42,6 +43,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: theme.PRIMARY,
+    borderRadius: CORNER_RADIUS,
   },
   container: {
     width: "100%",
