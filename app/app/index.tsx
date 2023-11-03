@@ -1,4 +1,4 @@
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import Title from "../components/Title";
@@ -7,7 +7,6 @@ import Button from "../components/Button";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING } from "../assets/constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 import Logo from "../assets/logo.svg";
 
 export default function Page() {

@@ -11,7 +11,6 @@ import theme from "../assets/theme";
 import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
 import registerUser from "../services/auth.register";
-
 import BackArrow from "../assets/arrow-left.svg";
 
 // TODO: Use Formik

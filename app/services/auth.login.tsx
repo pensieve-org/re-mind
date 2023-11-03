@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const LoginValidation = async (email, password) => {
+const validateLogin = async (email, password) => {
   try {
     const response = await axios.post("https://reqres.in/api/login", {
       email: email,
@@ -18,4 +18,4 @@ const LoginValidation = async (email, password) => {
   }
 };
 
-export default LoginValidation;
+export default validateLogin;

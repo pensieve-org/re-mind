@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const fetchUserDetails = async (email: string) => {
+export const getUserDetails = async (email: string) => {
   const response1 = await axios.get(`https://reqres.in/api/users?page=1`);
   const response2 = await axios.get(`https://reqres.in/api/users?page=2`);
   const userDetails = response1.data.data

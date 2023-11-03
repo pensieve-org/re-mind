@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { StyleSheet, Image, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
@@ -9,19 +9,10 @@ import Subtitle from "../components/Subtitle";
 import { UserContext } from "./_layout";
 import Plus from "../assets/plus.svg";
 import EventList from "../components/EventList";
-import fetchImages from "../services/user.images";
 import { ScrollView } from "react-native-gesture-handler";
 
 export default function Home() {
-  const { name, profilePicture } = useContext(UserContext);
-  const [ongoingEvents, setOngoingEvents] = useState([]);
-  const [pastEvents, setPastEvents] = useState([]);
-
-  useEffect(() => {
-    // TODO: need to update this so that it only loads the images once, not everytime the screen is visited
-    fetchImages(1).then(setOngoingEvents).catch(console.error);
-    fetchImages(5).then(setPastEvents).catch(console.error);
-  }, []);
+  const { name, profilePicture, events } = useContext(UserContext);
 
   return (
     <View style={styles.page}>
@@ -64,6 +55,7 @@ export default function Home() {
         onPressRight={() => router.push("/create-event")}
       />
       <ScrollView>
+        {/* TODO: add a scroll down to refresh (re call the api in layout by adding a refresh flag) */}
         <View style={styles.container}>
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={23}>memories</Subtitle>
@@ -72,13 +64,13 @@ export default function Home() {
             <Subtitle size={20}>ongoing</Subtitle>
           </View>
 
-          <EventList imageSources={ongoingEvents} eventName="test" />
+          <EventList imageSources={events.ongoing} eventName="test" />
 
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={20}>past</Subtitle>
           </View>
 
-          <EventList imageSources={pastEvents} eventName="test" />
+          <EventList imageSources={events.past} eventName="test" />
         </View>
       </ScrollView>
     </View>

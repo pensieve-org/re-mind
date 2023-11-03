@@ -1,18 +1,16 @@
 import React, { useState, useContext } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
-import Body from "../components/Body";
 import { UserContext } from "./_layout";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import LoginValidation from "../services/auth.login";
+import validateLogin from "../services/auth.login";
 import Alert from "../components/Alert";
 import theme from "../assets/theme";
 import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
-import { fetchUserDetails } from "../services/user.service";
-
+import { getUserDetails } from "../services/get.user";
 import BackArrow from "../assets/arrow-left.svg";
 
 export default function Login() {
@@ -26,8 +24,8 @@ export default function Login() {
     setError(false);
     // TODO: add a loading animation
     setIsLoading(true);
-    const isValidlogin = await LoginValidation(email, password);
-    const userDetails = await fetchUserDetails(email);
+    const isValidlogin = await validateLogin(email, password);
+    const userDetails = await getUserDetails(email);
     setIsLoading(false);
     if (isValidlogin) {
       setName(userDetails.first_name);

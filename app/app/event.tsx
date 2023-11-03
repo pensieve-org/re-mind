@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { StyleSheet, Image, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import Body from "../components/Body";
