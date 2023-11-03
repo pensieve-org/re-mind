@@ -18,6 +18,7 @@ export default function Home() {
   const [pastEvents, setPastEvents] = useState([]);
 
   useEffect(() => {
+    // TODO: need to update this so that it only loads the images once, not everytime the screen is visited
     fetchImages(1).then(setOngoingEvents).catch(console.error);
     fetchImages(5).then(setPastEvents).catch(console.error);
   }, []);
