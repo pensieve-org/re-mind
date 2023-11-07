@@ -1,35 +1,34 @@
 import React from "react";
-import { StyleSheet, View, Image, Dimensions } from "react-native";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import Body from "./Body";
-import { HORIZONTAL_PADDING } from "../assets/constants";
+import { EVENT_ICON_DIAMETER } from "../assets/constants";
 
 interface Props {
   events: any[]; // might need to make this an object
+  onPress?: (event) => void;
 }
 
-// TODO: give an onpress property that triggers a navigation and returns the event id of the clicked event
-
-const EventList: React.FC<Props> = ({ events }) => {
+const EventList: React.FC<Props> = ({ events, onPress }) => {
   return (
     // TODO: add a pressable property that returns the event id of the clicked event. This will trigger the api call and load the right images for the event screen nav
     <View style={styles.container}>
       {events.map((event, index) => (
-        <View style={{ paddingBottom: 10 }} key={index}>
+        <TouchableOpacity
+          key={index}
+          style={{ paddingBottom: 10 }}
+          onPress={(event) => onPress(event)}
+        >
           <View style={styles.imageContainer}>
             {/* This will have to be changed to event.url */}
-            <Image source={{ uri: event }} style={styles.image} />
+            <Image source={{ uri: event.image }} style={styles.image} />
           </View>
           {/* This will have to be changed to event.name */}
           <Body style={styles.text}>test</Body>
-        </View>
+        </TouchableOpacity>
       ))}
     </View>
   );
 };
-
-const gap = 20;
-const diameter =
-  (Dimensions.get("window").width - 2 * HORIZONTAL_PADDING) / 2 - gap;
 
 const styles = StyleSheet.create({
   container: {
@@ -39,8 +38,8 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
   },
   imageContainer: {
-    width: diameter,
-    height: diameter,
+    width: EVENT_ICON_DIAMETER,
+    height: EVENT_ICON_DIAMETER,
     borderRadius: 100,
   },
   text: {

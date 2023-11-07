@@ -27,11 +27,21 @@ function FontLoader({ children }) {
 export default function HomeLayout() {
   const [name, setName] = useState("");
   const [profilePicture, setProfilePicture] = useState("");
-  const [events, setEvents] = useState({ ongoing: [], past: [] });
+  const [events, setEvents] = useState({ ongoing: {}, past: {} });
+  const [selectedEvent, setSelectedEvent] = useState({ images: {}, id: "" });
 
   async function loadImages() {
-    const ongoing = await getEvents(1);
-    const past = await getEvents(5);
+    const ongoingEvents = await getEvents(1);
+    const pastEvents = await getEvents(5);
+
+    const ongoing = ongoingEvents.map((image, index) => ({
+      image: image,
+      id: `ongoing-${index}`,
+    }));
+    const past = pastEvents.map((image, index) => ({
+      image: image,
+      id: `past-${index}`,
+    }));
     setEvents({ ongoing, past });
   }
 
@@ -49,6 +59,8 @@ export default function HomeLayout() {
           setProfilePicture,
           events,
           setEvents,
+          selectedEvent,
+          setSelectedEvent,
         }}
       >
         <Slot />

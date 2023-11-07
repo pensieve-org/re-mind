@@ -10,10 +10,17 @@ import { AppContext } from "./_layout";
 import Plus from "../assets/plus.svg";
 import EventList from "../components/EventList";
 import { ScrollView } from "react-native-gesture-handler";
+import getSelectedEvent from "../services/get.selectedEvent";
 
 export default function Home() {
-  const { name, profilePicture, events } = useContext(AppContext);
+  const { name, profilePicture, events, setSelectedEvent } =
+    useContext(AppContext);
 
+  const handleEventPress = async (event) => {
+    const images = await getSelectedEvent(10);
+    setSelectedEvent({ images: images, id: event.id });
+    router.push("/event");
+  };
   return (
     <View style={styles.page}>
       <Header
@@ -64,13 +71,13 @@ export default function Home() {
             <Subtitle size={20}>ongoing</Subtitle>
           </View>
 
-          <EventList events={events.ongoing} />
+          <EventList events={events.ongoing} onPress={handleEventPress} />
 
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={20}>past</Subtitle>
           </View>
 
-          <EventList events={events.past} />
+          <EventList events={events.past} onPress={handleEventPress} />
         </View>
       </ScrollView>
     </View>

@@ -10,12 +10,20 @@ import BackArrow from "../assets/arrow-left.svg";
 import Button from "../components/Button";
 
 export default function Profile() {
-  const { setName, setProfilePicture, name, profilePicture } =
-    useContext(AppContext);
+  const {
+    setName,
+    setProfilePicture,
+    name,
+    profilePicture,
+    setSelectedEvent,
+    setEvents,
+  } = useContext(AppContext);
 
   const handleLogout = () => {
     setName("");
     setProfilePicture("");
+    setSelectedEvent({ images: {}, id: "" });
+    setEvents({ ongoing: {}, past: {} });
     router.replace("/");
   };
 
