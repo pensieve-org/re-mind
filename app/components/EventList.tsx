@@ -18,7 +18,10 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
       {events.map((event, index) => (
         <TouchableOpacity
           key={index}
-          style={{ paddingBottom: 10 }}
+          style={{
+            paddingBottom: 10,
+            alignItems: "center",
+          }}
           onPress={() => handleOnPress(event.id)}
         >
           <View style={styles.imageContainer}>
@@ -33,7 +36,6 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "flex-start",
     flexDirection: "row",
     justifyContent: "space-between",
     flexWrap: "wrap",
