@@ -10,20 +10,17 @@ interface Props {
 
 const EventList: React.FC<Props> = ({ events, onPress }) => {
   return (
-    // TODO: add a pressable property that returns the event id of the clicked event. This will trigger the api call and load the right images for the event screen nav
     <View style={styles.container}>
       {events.map((event, index) => (
         <TouchableOpacity
           key={index}
           style={{ paddingBottom: 10 }}
-          onPress={(event) => onPress(event)}
+          onPress={() => onPress(event)}
         >
           <View style={styles.imageContainer}>
-            {/* This will have to be changed to event.url */}
             <Image source={{ uri: event.image }} style={styles.image} />
           </View>
-          {/* This will have to be changed to event.name */}
-          <Body style={styles.text}>test</Body>
+          <Body style={styles.text}>{event.name}</Body>
         </TouchableOpacity>
       ))}
     </View>

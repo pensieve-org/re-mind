@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import { AppContext } from "./_layout";
@@ -12,27 +12,29 @@ import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
 import { getUserDetails } from "../services/get.user";
 import BackArrow from "../assets/arrow-left.svg";
+import { loadImages } from "../services/load.images";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
-  const { setName, setProfilePicture } = useContext(AppContext);
+  const { setName, setProfilePicture, setEvents } = useContext(AppContext);
 
   const handleLogin = async () => {
     setError(false);
-    // TODO: add a loading animation
     setIsLoading(true);
     const isValidlogin = await validateLogin(email, password);
     const userDetails = await getUserDetails(email);
-    setIsLoading(false);
     if (isValidlogin) {
       setName(userDetails.first_name);
       setProfilePicture(userDetails.avatar);
+      setEvents(await loadImages());
+      setIsLoading(false);
       router.replace("/home");
     } else {
       setError(true);
+      setIsLoading(false);
     }
   };
 
@@ -53,7 +55,7 @@ export default function Login() {
       </View>
 
       <View style={styles.container}>
-        <View style={{ paddingVertical: 50, paddingTop: 30 }}>
+        <View style={styles.subtitle}>
           <Subtitle>login</Subtitle>
         </View>
 
@@ -77,6 +79,14 @@ export default function Login() {
         >
           login
         </Button>
+
+        {isLoading && (
+          <ActivityIndicator
+            style={styles.loading}
+            size={"large"}
+            color={theme.PRIMARY}
+          />
+        )}
       </View>
     </View>
   );
@@ -95,5 +105,14 @@ const styles = StyleSheet.create({
   alertContainer: {
     alignItems: "center",
     height: 80,
+  },
+  loading: {
+    width: "100%",
+    justifyContent: "center",
+    paddingTop: 30,
+  },
+  subtitle: {
+    paddingVertical: 50,
+    paddingTop: 30,
   },
 });
