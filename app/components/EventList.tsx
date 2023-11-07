@@ -1,7 +1,12 @@
 import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import Body from "./Body";
-import { EVENT_ICON_DIAMETER, ICON_GAP, ROW_ICONS } from "../assets/constants";
+import {
+  EVENT_ICON_DIAMETER,
+  ICON_GAP,
+  ICON_GAP_BOTTOM,
+  ROW_ICONS,
+} from "../assets/constants";
 
 interface Props {
   events: any[]; // might need to make this an object
@@ -19,7 +24,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
         <TouchableOpacity
           key={index}
           style={{
-            marginBottom: ICON_GAP,
+            marginBottom: ICON_GAP_BOTTOM,
             marginRight: (index + 1) % ROW_ICONS === 0 ? 0 : ICON_GAP,
             alignItems: "center",
           }}

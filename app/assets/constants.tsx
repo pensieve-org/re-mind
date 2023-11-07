@@ -5,6 +5,7 @@ export const CORNER_RADIUS = 10;
 
 // For Home Screen
 export const ICON_GAP = 30;
+export const ICON_GAP_BOTTOM = 10;
 export const ROW_ICONS = 2;
 export const EVENT_ICON_DIAMETER =
   (Dimensions.get("window").width -
