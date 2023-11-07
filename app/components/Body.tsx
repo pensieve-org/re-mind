@@ -7,6 +7,8 @@ interface BodyProps {
   children?: React.ReactNode;
   style?: TextStyle;
   italic?: boolean;
+  adjustsFontSizeToFit?: boolean;
+  numberOfLines?: number;
 }
 
 const Body: React.FC<BodyProps> = ({
@@ -14,13 +16,23 @@ const Body: React.FC<BodyProps> = ({
   size = 16,
   children,
   italic = false,
+  adjustsFontSizeToFit = false,
+  numberOfLines = 1,
 }) => {
   const textStyle: TextStyle = {
     fontSize: size,
     fontFamily: italic ? "MontserratItalic" : "MontserratRegular",
   };
 
-  return <Text style={[styles.text, textStyle, style]}>{children}</Text>;
+  return (
+    <Text
+      style={[styles.text, textStyle, style]}
+      adjustsFontSizeToFit={adjustsFontSizeToFit}
+      numberOfLines={numberOfLines}
+    >
+      {children}
+    </Text>
+  );
 };
 
 export default Body;

@@ -62,13 +62,7 @@ export default function Home() {
                 }}
               />
             ) : (
-              <Body
-                style={{
-                  textAlign: "center",
-                }}
-              >
-                {name[0]}
-              </Body>
+              <Body style={{ textAlign: "center" }}>{name[0]}</Body>
             )}
           </View>
         }

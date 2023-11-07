@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import Body from "./Body";
-import { EVENT_ICON_DIAMETER } from "../assets/constants";
+import { EVENT_ICON_DIAMETER, ICON_GAP, ROW_ICONS } from "../assets/constants";
 
 interface Props {
   events: any[]; // might need to make this an object
@@ -19,7 +19,8 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
         <TouchableOpacity
           key={index}
           style={{
-            paddingBottom: 10,
+            paddingBottom: ICON_GAP,
+            paddingRight: (index + 1) % ROW_ICONS === 0 ? 0 : ICON_GAP,
             alignItems: "center",
           }}
           onPress={() => handleOnPress(event.id)}
@@ -27,7 +28,9 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
           <View style={styles.imageContainer}>
             <Image source={{ uri: event.image }} style={styles.image} />
           </View>
-          <Body style={styles.text}>{event.name}</Body>
+          <Body style={styles.text} adjustsFontSizeToFit numberOfLines={1}>
+            {event.name}
+          </Body>
         </TouchableOpacity>
       ))}
     </View>
@@ -37,7 +40,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     flexWrap: "wrap",
   },
   imageContainer: {
@@ -48,6 +51,8 @@ const styles = StyleSheet.create({
   text: {
     padding: 10,
     textAlign: "center",
+    flexWrap: "wrap",
+    width: EVENT_ICON_DIAMETER,
   },
   image: {
     width: "100%",
