@@ -30,10 +30,10 @@ export default function Home() {
     setRefreshing(false);
   }, []);
 
-  const handleEventPress = async (eventId) => {
+  const handleEventPress = async (event) => {
     setSelectedEvent({
       images: await getSelectedEvent(10),
-      id: eventId,
+      id: event.id,
     });
     router.push("/event");
   };

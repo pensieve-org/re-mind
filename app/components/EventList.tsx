@@ -9,8 +9,8 @@ interface Props {
 }
 
 const EventList: React.FC<Props> = ({ events, onPress }) => {
-  const handleOnPress = (eventId) => {
-    onPress(eventId);
+  const handleOnPress = (event) => {
+    onPress(event);
   };
 
   return (
@@ -19,11 +19,11 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
         <TouchableOpacity
           key={index}
           style={{
-            paddingBottom: ICON_GAP,
-            paddingRight: (index + 1) % ROW_ICONS === 0 ? 0 : ICON_GAP,
+            marginBottom: ICON_GAP,
+            marginRight: (index + 1) % ROW_ICONS === 0 ? 0 : ICON_GAP,
             alignItems: "center",
           }}
-          onPress={() => handleOnPress(event.id)}
+          onPress={() => handleOnPress(event)}
         >
           <View style={styles.imageContainer}>
             <Image source={{ uri: event.image }} style={styles.image} />

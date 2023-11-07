@@ -4,7 +4,13 @@ import { router } from "expo-router";
 import Header from "../components/Header";
 import Body from "../components/Body";
 import theme from "../assets/theme";
-import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
+import {
+  HORIZONTAL_PADDING,
+  HEADER_ICON_DIMENSION,
+  EVENT_IMAGE_WIDTH,
+  IMAGE_GAP,
+  ROW_IMAGES,
+} from "../assets/constants";
 import { AppContext } from "./_layout";
 import BackArrow from "../assets/arrow-left.svg";
 import { ScrollView } from "react-native-gesture-handler";
@@ -24,13 +30,21 @@ export default function Event() {
         onPressLeft={() => router.back()}
       />
       <ScrollView style={styles.container}>
-        <Body style={{ paddingVertical: 20 }}>Event screen</Body>
         <Body style={{ paddingVertical: 20 }}>
           Event id: {selectedEvent.id}
         </Body>
         <View style={styles.imageContainer}>
           {selectedEvent.images.map((image, index) => (
-            <Image key={index} source={{ uri: image }} style={styles.image} />
+            <Image
+              key={index}
+              source={{ uri: image }}
+              style={[
+                styles.image,
+                {
+                  marginRight: (index + 1) % ROW_IMAGES === 0 ? 0 : IMAGE_GAP,
+                },
+              ]}
+            />
           ))}
         </View>
       </ScrollView>
@@ -50,11 +64,11 @@ const styles = StyleSheet.create({
   imageContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-evenly",
+    justifyContent: "flex-start",
   },
   image: {
-    width: 100,
-    height: 100,
-    margin: 5,
+    width: EVENT_IMAGE_WIDTH,
+    height: EVENT_IMAGE_WIDTH,
+    marginBottom: IMAGE_GAP,
   },
 });
