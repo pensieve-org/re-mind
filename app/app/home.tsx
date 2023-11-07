@@ -30,9 +30,11 @@ export default function Home() {
     setRefreshing(false);
   }, []);
 
-  const handleEventPress = async (event) => {
-    const images = await getSelectedEvent(10);
-    setSelectedEvent({ images: images, id: event.id });
+  const handleEventPress = async (eventId) => {
+    setSelectedEvent({
+      images: await getSelectedEvent(10),
+      id: eventId,
+    });
     router.push("/event");
   };
 
@@ -97,19 +99,13 @@ export default function Home() {
           <Subtitle size={20}>ongoing</Subtitle>
         </View>
 
-        <EventList
-          events={events.ongoing}
-          onPress={() => handleEventPress(event)}
-        />
+        <EventList events={events.ongoing} onPress={handleEventPress} />
 
         <View style={{ paddingVertical: 20 }}>
           <Subtitle size={20}>past</Subtitle>
         </View>
 
-        <EventList
-          events={events.past}
-          onPress={() => handleEventPress(event)}
-        />
+        <EventList events={events.past} onPress={handleEventPress} />
       </ScrollView>
     </View>
   );

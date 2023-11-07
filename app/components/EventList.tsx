@@ -5,17 +5,21 @@ import { EVENT_ICON_DIAMETER } from "../assets/constants";
 
 interface Props {
   events: any[]; // might need to make this an object
-  onPress?: (event) => void;
+  onPress?: (eventId) => void;
 }
 
 const EventList: React.FC<Props> = ({ events, onPress }) => {
+  const handleOnPress = (eventId) => {
+    onPress(eventId);
+  };
+
   return (
     <View style={styles.container}>
       {events.map((event, index) => (
         <TouchableOpacity
           key={index}
           style={{ paddingBottom: 10 }}
-          onPress={() => onPress(event)}
+          onPress={() => handleOnPress(event.id)}
         >
           <View style={styles.imageContainer}>
             <Image source={{ uri: event.image }} style={styles.image} />
