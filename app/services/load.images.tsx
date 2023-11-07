@@ -8,10 +8,12 @@ export async function loadImages() {
 
   const ongoing = ongoingEvents.map((image, index) => ({
     image: image,
+    name: `ongoing-${index}`,
     id: `ongoing-${index}`,
   }));
   const past = pastEvents.map((image, index) => ({
     image: image,
+    name: `past-${index}`,
     id: `past-${index}`,
   }));
 
