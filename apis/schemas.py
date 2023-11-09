@@ -1,6 +1,6 @@
-import datetime
 from pydantic import BaseModel
 from typing import List, Optional
+from datetime import datetime
 
 
 class LoginRequest(BaseModel):
@@ -35,3 +35,11 @@ class ImageResponse(BaseModel):
     tagged: Optional[str] = None
     queued: bool
     timestamp: datetime
+
+
+class UserDetails(BaseModel):
+    user_id: int
+    username: str
+    email: str
+    password: str
+    profile_picture_url: Optional[str] = None

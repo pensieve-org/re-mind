@@ -1,11 +1,10 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from pydantic import BaseModel
-from typing import List, Optional
+from fastapi import FastAPI, Depends
+from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
-from .database import SessionLocal
-from .schemas import LoginRequest, RegisterRequest, EventResponse, EventsCategory, ImageResponse
-from .utils import postgres_connection
+from database import SessionLocal
+from schemas import LoginRequest, RegisterRequest, EventsCategory, ImageResponse, UserDetails
+from utils import postgres_connection
 
 app = FastAPI()
 
@@ -25,6 +24,15 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     '''
     Endpoint that takes an email address and password, and returns true if valid
     and false if invalid based on SQL credentials.
+    '''
+    # Add your logic to verify credentials from the database
+    return {"valid": True or False}
+
+
+@app.get("/get_user/{user_id}", response_model=UserDetails)
+async def get_user_details(user_request: LoginRequest, db: Session = Depends(get_db)):
+    '''
+    Endpoint that takes user_id, and returns all the details about that user
     '''
     # Add your logic to verify credentials from the database
     return {"valid": True or False}
@@ -74,7 +82,7 @@ async def get_events(user_id: int, db: Session = Depends(get_db)):
         }
     '''
     # Add your logic to fetch events from the database
-    return {"ongoing": [], "past": []}
+    return {"ongoing": [user_id], "past": [user_id]}
 
 
 @app.get("/get_event_images/{event_id}", response_model=List[ImageResponse])
