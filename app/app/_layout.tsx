@@ -6,7 +6,6 @@ import {
   Montserrat_400Regular_Italic,
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
-import getEvents from "../services/get.events";
 
 export const AppContext = createContext(null);
 

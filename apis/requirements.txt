@@ -1,0 +1,7 @@
+fastapi==0.75.1  # Check for the latest version on https://pypi.org/project/fastapi/
+uvicorn==0.17.6  # ASGI server for FastAPI
+sqlalchemy==1.4.31  # ORM for database interactions
+psycopg2-binary==2.9.3  # PostgreSQL driver for Python, use psycopg2 if you prefer not to use the binary package
+alembic==1.7.7  # Database migration tool
+pydantic==1.9.1  # Data validation by using Python type annotations
+python-dotenv==0.20.0  # Reads key-value pairs from a .env file and sets them as environment variables
