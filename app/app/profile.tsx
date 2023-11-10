@@ -10,18 +10,11 @@ import BackArrow from "../assets/arrow-left.svg";
 import Button from "../components/Button";
 
 export default function Profile() {
-  const {
-    setName,
-    setProfilePicture,
-    name,
-    profilePicture,
-    setSelectedEvent,
-    setEvents,
-  } = useContext(AppContext);
+  const { userDetails, setUserDetails, setSelectedEvent, setEvents } =
+    useContext(AppContext);
 
   const handleLogout = () => {
-    setName("");
-    setProfilePicture("");
+    setUserDetails({});
     setSelectedEvent({ images: {}, id: "" });
     setEvents({ ongoing: {}, past: {} });
     router.replace("/");
@@ -39,7 +32,9 @@ export default function Profile() {
         onPressLeft={() => router.replace("/home")}
       />
       <View style={styles.container}>
-        <Body style={{ paddingVertical: 20 }}>Hello, {name}</Body>
+        <Body style={{ paddingVertical: 20 }}>
+          Hello, {userDetails.first_name}
+        </Body>
         <Button
           fill={theme.TEXT}
           textColor={theme.BACKGROUND}

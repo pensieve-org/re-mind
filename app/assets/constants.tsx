@@ -26,5 +26,5 @@ export const ACCESS_KEY = "z8VmrXJoH1PlbOdhoL2vyzV1AD1C_xdxPrz4IA7N2lM";
 export const SECRET_KEY = "5JvPWJeOWloIQqqsnXQSOn_GTEFav9hXDYuiiqYLbkM";
 
 export const API_BASE_URL = "http://localhost:8000/";
-export const API_GET_EVENTS = "get_events/";
-export const API_GET_SELECTED_EVENT = "get_selected_event/";
+export const API_GET_ALL_USER_EVENTS = "get_all_user_events/";
+export const API_GET_EVENT = "get_event/";

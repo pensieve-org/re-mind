@@ -16,23 +16,24 @@ import { AppContext } from "./_layout";
 import Plus from "../assets/plus.svg";
 import EventList from "../components/EventList";
 import { ScrollView } from "react-native-gesture-handler";
-import getSelectedEvent from "../services/get.selectedEvent";
-import { loadImages } from "../services/load.images";
-import getEvents from "../services/get.events";
+import getEvent from "../services/get.event";
+import getAllUserEvents from "../services/get.allUserEvents";
 
 export default function Home() {
-  const { userDetails, events, setEvents, setSelectedEvent } =
+  const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setEvents(await getEvents(userDetails.id));
+    setUserEvents(await getAllUserEvents(userDetails.id));
     setRefreshing(false);
   }, []);
 
   const handleEventPress = async (event) => {
-    setSelectedEvent(await getSelectedEvent(event.id));
+    // TODO: is this api call necessary? Maybe just pass the event object through?
+    // setSelectedEvent(await getEvent(event.id));
+    setSelectedEvent(event);
     router.push("/event");
   };
 
@@ -93,13 +94,13 @@ export default function Home() {
           <Subtitle size={20}>ongoing</Subtitle>
         </View>
 
-        <EventList events={events.ongoing} onPress={handleEventPress} />
+        <EventList events={userEvents.ongoing} onPress={handleEventPress} />
 
         <View style={{ paddingVertical: 20 }}>
           <Subtitle size={20}>past</Subtitle>
         </View>
 
-        <EventList events={events.past} onPress={handleEventPress} />
+        <EventList events={userEvents.past} onPress={handleEventPress} />
       </ScrollView>
     </View>
   );

@@ -55,8 +55,8 @@ async def register(register_request: RegisterRequest, db: Session = Depends(get_
     return {"registered": True or False}
 
 
-@app.get("/get_events/{user_id}", response_model=EventsCategory)
-async def get_events(user_id: int, db: Session = Depends(get_db)):
+@app.get("/get_all_user_events/{user_id}", response_model=EventsCategory)
+async def get_all_user_events(user_id: int, db: Session = Depends(get_db)):
     try:
         # Fetch image URLs
         response = requests.get("https://api.unsplash.com/photos/random", params={
@@ -97,8 +97,8 @@ async def get_events(user_id: int, db: Session = Depends(get_db)):
         raise
 
 
-@app.get("/get_selected_event/{event_id}", response_model=EventResponse)
-async def get_selected_event(event_id: int, db: Session = Depends(get_db)):
+@app.get("/get_event/{event_id}", response_model=EventResponse)
+async def get_event(event_id: int, db: Session = Depends(get_db)):
     '''
     Endpoint that takes an event id, and returns all the images associated from SQL.
 

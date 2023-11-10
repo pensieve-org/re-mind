@@ -1,5 +1,11 @@
-import React, { useContext } from "react";
-import { StyleSheet, View, Image } from "react-native";
+import React, { useContext, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Image,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import Body from "../components/Body";
@@ -14,9 +20,18 @@ import {
 import { AppContext } from "./_layout";
 import BackArrow from "../assets/arrow-left.svg";
 import { ScrollView } from "react-native-gesture-handler";
+import getEvent from "../services/get.event";
 
 export default function Event() {
-  const { name, profilePicture, selectedEvent } = useContext(AppContext);
+  const { userDetails, selectedEvent, setSelectedEvent } =
+    useContext(AppContext);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    setSelectedEvent(await getEvent(selectedEvent.id));
+    setRefreshing(false);
+  }, []);
 
   return (
     <View style={styles.page}>
@@ -29,7 +44,20 @@ export default function Event() {
         }
         onPressLeft={() => router.back()}
       />
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {refreshing && (
+          <ActivityIndicator
+            style={{ padding: 10 }}
+            size={"large"}
+            color={theme.PRIMARY}
+          />
+        )}
+
         <Body style={{ paddingVertical: 20 }}>
           Event id: {selectedEvent.id}
         </Body>
