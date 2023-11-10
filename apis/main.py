@@ -4,13 +4,18 @@ from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from schemas import LoginRequest, RegisterRequest, EventResponse, EventsCategory, ImageResponse, UserDetails
 from utils import postgres_connection
 import requests
+from schemas import (
+    LoginRequest,
+    RegisterRequest,
+    EventResponse,
+    EventsCategory,
+    ImageResponse,
+    UserDetails
+)
 
 app = FastAPI()
-
-# Dependency to get the database session
 
 
 def get_db():
