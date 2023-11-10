@@ -9,7 +9,7 @@ import { AppContext } from "./_layout";
 import BackArrow from "../assets/arrow-left.svg";
 
 export default function CreateEvent() {
-  const { name, profilePicture } = useContext(AppContext);
+  const { userDetails } = useContext(AppContext);
 
   return (
     <View style={styles.page}>

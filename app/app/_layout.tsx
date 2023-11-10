@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
 import {
@@ -24,21 +24,18 @@ function FontLoader({ children }) {
 }
 
 export default function HomeLayout() {
-  const [name, setName] = useState("");
-  const [profilePicture, setProfilePicture] = useState("");
-  const [events, setEvents] = useState({ ongoing: {}, past: {} });
+  const [userDetails, setUserDetails] = useState({});
+  const [userEvents, setUserEvents] = useState({ ongoing: {}, past: {} });
   const [selectedEvent, setSelectedEvent] = useState({ images: {}, id: "" });
 
   return (
     <FontLoader>
       <AppContext.Provider
         value={{
-          name,
-          setName,
-          profilePicture,
-          setProfilePicture,
-          events,
-          setEvents,
+          userDetails,
+          setUserDetails,
+          userEvents,
+          setUserEvents,
           selectedEvent,
           setSelectedEvent,
         }}

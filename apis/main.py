@@ -4,13 +4,18 @@ from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from schemas import LoginRequest, RegisterRequest, EventResponse, EventsCategory, ImageResponse, UserDetails
 from utils import postgres_connection
 import requests
+from schemas import (
+    LoginRequest,
+    RegisterRequest,
+    EventResponse,
+    EventsCategory,
+    ImageResponse,
+    UserDetails
+)
 
 app = FastAPI()
-
-# Dependency to get the database session
 
 
 def get_db():
@@ -50,8 +55,8 @@ async def register(register_request: RegisterRequest, db: Session = Depends(get_
     return {"registered": True or False}
 
 
-@app.get("/get_events/{user_id}", response_model=EventsCategory)
-async def get_events(user_id: int, db: Session = Depends(get_db)):
+@app.get("/get_all_user_events/{user_id}", response_model=EventsCategory)
+async def get_all_user_events(user_id: int, db: Session = Depends(get_db)):
     try:
         # Fetch image URLs
         response = requests.get("https://api.unsplash.com/photos/random", params={
@@ -62,12 +67,13 @@ async def get_events(user_id: int, db: Session = Depends(get_db)):
         image_urls = [image['urls']['regular'] for image in response.json()]
 
         events = [EventResponse(
-            event_id=i,
+            id=i,
             start_time=datetime.now() - timedelta(days=2*i),
             end_time=datetime.now() + timedelta(days=1) - timedelta(days=2*i),
             thumbnail=url,
-            event_name=f"Event {i}",
-            attendees=[]
+            name=f"Event {i}",
+            attendees=[],
+            images=[]
         ) for i, url in enumerate(image_urls)]
 
         event_categories = EventsCategory(
@@ -91,8 +97,8 @@ async def get_events(user_id: int, db: Session = Depends(get_db)):
         raise
 
 
-@app.get("/get_selected_event/{event_id}", response_model=List[ImageResponse])
-async def get_selected_event(event_id: int, db: Session = Depends(get_db)):
+@app.get("/get_event/{event_id}", response_model=EventResponse)
+async def get_event(event_id: int, db: Session = Depends(get_db)):
     '''
     Endpoint that takes an event id, and returns all the images associated from SQL.
 
@@ -114,7 +120,7 @@ async def get_selected_event(event_id: int, db: Session = Depends(get_db)):
 
     try:
         response = requests.get("https://api.unsplash.com/photos/random", params={
-            'count': event_id,
+            'count': 11,
             'client_id': 'z8VmrXJoH1PlbOdhoL2vyzV1AD1C_xdxPrz4IA7N2lM'
         })
         response.raise_for_status()
@@ -123,14 +129,18 @@ async def get_selected_event(event_id: int, db: Session = Depends(get_db)):
         images = []
         for i, url in enumerate(image_urls):
             image = ImageResponse(
-                image_id=i,
-                event_id=event_id,
+                id=i,
                 url=url,
                 timestamp=datetime.now()
             )
             images.append(image)
 
-        return images
+        return EventResponse(
+            id=event_id,
+            name='test',
+            start_time=datetime.now(),
+            end_time=datetime.now(),
+            images=images)
 
     except requests.exceptions.HTTPError as errh:
         print("Http Error:", errh)

@@ -12,24 +12,22 @@ import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
 import { getUserDetails } from "../services/get.user";
 import BackArrow from "../assets/arrow-left.svg";
-import { loadImages } from "../services/load.images";
+import getAllUserEvents from "../services/get.allUserEvents";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
-  const { setName, setProfilePicture, setEvents } = useContext(AppContext);
+  const { setUserDetails, userDetails, setUserEvents } = useContext(AppContext);
 
   const handleLogin = async () => {
     setError(false);
     setIsLoading(true);
     const isValidlogin = await validateLogin(email, password);
-    const userDetails = await getUserDetails(email);
     if (isValidlogin) {
-      setName(userDetails.first_name);
-      setProfilePicture(userDetails.avatar);
-      setEvents(await loadImages());
+      setUserDetails(await getUserDetails(email));
+      setUserEvents(await getAllUserEvents(userDetails.id));
       setIsLoading(false);
       router.replace("/home");
     } else {

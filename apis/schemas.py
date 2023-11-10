@@ -14,13 +14,22 @@ class RegisterRequest(BaseModel):
     password: str
 
 
+class ImageResponse(BaseModel):
+    id: int
+    url: str
+    tagged: Optional[str] = None
+    queued: Optional[bool] = False
+    timestamp: datetime
+
+
 class EventResponse(BaseModel):
-    event_id: int
+    id: int
     start_time: datetime
     end_time: datetime
-    thumbnail: str
-    event_name: str
+    name: str
     attendees: Optional[List[int]] = []
+    thumbnail: Optional[str] = None
+    images: Optional[List[ImageResponse]] = []
 
 
 class EventsCategory(BaseModel):
@@ -28,17 +37,8 @@ class EventsCategory(BaseModel):
     past: List[EventResponse]
 
 
-class ImageResponse(BaseModel):
-    image_id: int
-    event_id: int
-    url: str
-    tagged: Optional[str] = None
-    queued: Optional[bool] = False
-    timestamp: datetime
-
-
 class UserDetails(BaseModel):
-    user_id: int
+    id: int
     username: str
     email: str
     password: str

@@ -16,25 +16,24 @@ import { AppContext } from "./_layout";
 import Plus from "../assets/plus.svg";
 import EventList from "../components/EventList";
 import { ScrollView } from "react-native-gesture-handler";
-import getSelectedEvent from "../services/get.selectedEvent";
-import { loadImages } from "../services/load.images";
+import getEvent from "../services/get.event";
+import getAllUserEvents from "../services/get.allUserEvents";
 
 export default function Home() {
-  const { name, profilePicture, events, setEvents, setSelectedEvent } =
+  const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setEvents(await loadImages());
+    setUserEvents(await getAllUserEvents(userDetails.id));
     setRefreshing(false);
   }, []);
 
   const handleEventPress = async (event) => {
-    setSelectedEvent({
-      images: await getSelectedEvent(10),
-      id: event.id,
-    });
+    // TODO: is this api call necessary? Maybe just pass the event object through?
+    // setSelectedEvent(await getEvent(event.id));
+    setSelectedEvent(event);
     router.push("/event");
   };
 
@@ -47,14 +46,14 @@ export default function Home() {
               width: HEADER_ICON_DIMENSION,
               height: HEADER_ICON_DIMENSION,
               borderRadius: 100,
-              backgroundColor: profilePicture ? "transparent" : "blue",
+              backgroundColor: userDetails.avatar ? "transparent" : "blue",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {profilePicture ? (
+            {userDetails.avatar ? (
               <Image
-                source={{ uri: profilePicture }}
+                source={{ uri: userDetails.avatar }}
                 style={{
                   width: HEADER_ICON_DIMENSION,
                   height: HEADER_ICON_DIMENSION,
@@ -62,7 +61,9 @@ export default function Home() {
                 }}
               />
             ) : (
-              <Body style={{ textAlign: "center" }}>{name[0]}</Body>
+              <Body style={{ textAlign: "center" }}>
+                {userDetails.first_name[0]}
+              </Body>
             )}
           </View>
         }
@@ -93,13 +94,13 @@ export default function Home() {
           <Subtitle size={20}>ongoing</Subtitle>
         </View>
 
-        <EventList events={events.ongoing} onPress={handleEventPress} />
+        <EventList events={userEvents.ongoing} onPress={handleEventPress} />
 
         <View style={{ paddingVertical: 20 }}>
           <Subtitle size={20}>past</Subtitle>
         </View>
 
-        <EventList events={events.past} onPress={handleEventPress} />
+        <EventList events={userEvents.past} onPress={handleEventPress} />
       </ScrollView>
     </View>
   );
