@@ -18,23 +18,21 @@ import EventList from "../components/EventList";
 import { ScrollView } from "react-native-gesture-handler";
 import getSelectedEvent from "../services/get.selectedEvent";
 import { loadImages } from "../services/load.images";
+import getEvents from "../services/get.events";
 
 export default function Home() {
-  const { name, profilePicture, events, setEvents, setSelectedEvent } =
+  const { userDetails, events, setEvents, setSelectedEvent } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setEvents(await loadImages());
+    setEvents(await getEvents(userDetails.id));
     setRefreshing(false);
   }, []);
 
   const handleEventPress = async (event) => {
-    setSelectedEvent({
-      images: await getSelectedEvent(10),
-      id: event.id,
-    });
+    setSelectedEvent(await getSelectedEvent(event.id));
     router.push("/event");
   };
 
@@ -47,14 +45,14 @@ export default function Home() {
               width: HEADER_ICON_DIMENSION,
               height: HEADER_ICON_DIMENSION,
               borderRadius: 100,
-              backgroundColor: profilePicture ? "transparent" : "blue",
+              backgroundColor: userDetails.avatar ? "transparent" : "blue",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {profilePicture ? (
+            {userDetails.avatar ? (
               <Image
-                source={{ uri: profilePicture }}
+                source={{ uri: userDetails.avatar }}
                 style={{
                   width: HEADER_ICON_DIMENSION,
                   height: HEADER_ICON_DIMENSION,
@@ -62,7 +60,9 @@ export default function Home() {
                 }}
               />
             ) : (
-              <Body style={{ textAlign: "center" }}>{name[0]}</Body>
+              <Body style={{ textAlign: "center" }}>
+                {userDetails.first_name[0]}
+              </Body>
             )}
           </View>
         }

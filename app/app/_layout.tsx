@@ -24,8 +24,7 @@ function FontLoader({ children }) {
 }
 
 export default function HomeLayout() {
-  const [name, setName] = useState("");
-  const [profilePicture, setProfilePicture] = useState("");
+  const [userDetails, setUserDetails] = useState({});
   const [events, setEvents] = useState({ ongoing: {}, past: {} });
   const [selectedEvent, setSelectedEvent] = useState({ images: {}, id: "" });
 
@@ -33,10 +32,8 @@ export default function HomeLayout() {
     <FontLoader>
       <AppContext.Provider
         value={{
-          name,
-          setName,
-          profilePicture,
-          setProfilePicture,
+          userDetails,
+          setUserDetails,
           events,
           setEvents,
           selectedEvent,

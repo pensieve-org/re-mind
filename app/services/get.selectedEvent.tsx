@@ -1,21 +1,18 @@
 import axios from "axios";
-import { ACCESS_KEY } from "../assets/constants";
+import { API_GET_SELECTED_EVENT, API_BASE_URL } from "../assets/constants";
 
-const getSelectedEvent = async (number = 10) => {
+const getSelectedEvent = async (eventId = 10) => {
   try {
-    const response = await axios.get("https://api.unsplash.com/photos/random", {
-      params: {
-        count: number,
-        client_id: ACCESS_KEY,
-      },
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}${API_GET_SELECTED_EVENT}${eventId}`
+    );
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
-    const images = response.data.map((image) => image.urls.regular);
-    return images;
+    const event = response.data;
+    return event;
   } catch (error) {
-    console.error("Error fetching images:", error);
+    console.error("Error fetching events:", error);
     throw error;
   }
 };

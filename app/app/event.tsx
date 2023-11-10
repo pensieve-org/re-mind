@@ -37,7 +37,7 @@ export default function Event() {
           {selectedEvent.images.map((image, index) => (
             <Image
               key={index}
-              source={{ uri: image }}
+              source={{ uri: image.url }}
               style={[
                 styles.image,
                 {

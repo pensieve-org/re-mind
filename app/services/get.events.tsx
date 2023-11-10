@@ -1,26 +1,20 @@
 import axios from "axios";
-import { ACCESS_KEY } from "../assets/constants";
+import { API_BASE_URL, API_GET_EVENTS } from "../assets/constants";
 
-const getEvents = async (number = 10) => {
+const getEvents = async (user_id = 10) => {
   try {
-    const response = await axios.get("https://api.unsplash.com/photos/random", {
-      params: {
-        count: number,
-        client_id: ACCESS_KEY,
-      },
-    });
+    const response = await axios.get(
+      `${API_BASE_URL}${API_GET_EVENTS}${user_id}`
+    );
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
-    const images = response.data.map((image) => image.urls.regular);
-    return images;
+    const events = response.data;
+    return events;
   } catch (error) {
-    console.error("Error fetching images:", error);
+    console.error("Error fetching events:", error);
     throw error;
   }
 };
 
 export default getEvents;
-
-// TODO: make a service to pull all the events related to the user via SQL
-// TODO: then make a service to pull all the photos related to a specific event via SQL

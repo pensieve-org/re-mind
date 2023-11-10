@@ -9,7 +9,7 @@ import {
 } from "../assets/constants";
 
 interface Props {
-  events: any[]; // might need to make this an object
+  events: any[];
   onPress?: (eventId) => void;
 }
 
@@ -31,7 +31,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
           onPress={() => handleOnPress(event)}
         >
           <View style={styles.imageContainer}>
-            <Image source={{ uri: event.image }} style={styles.image} />
+            <Image source={{ uri: event.thumbnail }} style={styles.image} />
           </View>
           <Body style={styles.text} adjustsFontSizeToFit numberOfLines={1}>
             {event.name}
