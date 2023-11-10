@@ -5,3 +5,4 @@ psycopg2-binary  # PostgreSQL driver for Python, use psycopg2 if you prefer not 
 alembic  # Database migration tool
 pydantic # Data validation by using Python type annotations
 python-dotenv  # Reads key-value pairs from a .env file and sets them as environment variables
+requests # Requests

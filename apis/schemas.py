@@ -20,7 +20,7 @@ class EventResponse(BaseModel):
     end_time: datetime
     thumbnail: str
     event_name: str
-    attendees: List[int]
+    attendees: Optional[List[int]] = []
 
 
 class EventsCategory(BaseModel):
@@ -33,7 +33,7 @@ class ImageResponse(BaseModel):
     event_id: int
     url: str
     tagged: Optional[str] = None
-    queued: bool
+    queued: Optional[bool] = False
     timestamp: datetime
 
 

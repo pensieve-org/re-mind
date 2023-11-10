@@ -1,10 +1,12 @@
+import os
 from fastapi import FastAPI, Depends
 from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from schemas import LoginRequest, RegisterRequest, EventsCategory, ImageResponse, UserDetails
+from schemas import LoginRequest, RegisterRequest, EventResponse, EventsCategory, ImageResponse, UserDetails
 from utils import postgres_connection
+import requests
 
 app = FastAPI()
 
@@ -50,43 +52,47 @@ async def register(register_request: RegisterRequest, db: Session = Depends(get_
 
 @app.get("/get_events/{user_id}", response_model=EventsCategory)
 async def get_events(user_id: int, db: Session = Depends(get_db)):
-    '''
-    Endpoint that takes a user id, and returns an events object from SQL
-    of every event that user is associated with.
+    try:
+        # Fetch image URLs
+        response = requests.get("https://api.unsplash.com/photos/random", params={
+            'count': 6,
+            'client_id': 'z8VmrXJoH1PlbOdhoL2vyzV1AD1C_xdxPrz4IA7N2lM',
+        })
+        response.raise_for_status()
+        image_urls = [image['urls']['regular'] for image in response.json()]
 
-    Input:
-        user_id: int
+        events = [EventResponse(
+            event_id=i,
+            start_time=datetime.now() - timedelta(days=2*i),
+            end_time=datetime.now() + timedelta(days=1) - timedelta(days=2*i),
+            thumbnail=url,
+            event_name=f"Event {i}",
+            attendees=[]
+        ) for i, url in enumerate(image_urls)]
 
-    Output:
-        {
-            ongoing: [
-                {
-                    event_id: int
-                    start_time: timestamp
-                    end_time: timestamp
-                    thumbnail: image_url
-                    event_name: string
-                },
-                ...
-            ],
-            past: [
-                {
-                    event_id: int
-                    start_time: timestamp
-                    end_time: timestamp
-                    thumbnail: image_url
-                    event_name: string
-                },
-                ...
-            ]
-        }
-    '''
-    # Add your logic to fetch events from the database
-    return {"ongoing": [user_id], "past": [user_id]}
+        event_categories = EventsCategory(
+            ongoing=[e for e in events if e.end_time >= datetime.now()],
+            past=[e for e in events if e.end_time < datetime.now()]
+        )
+
+        return event_categories
+
+    except requests.exceptions.HTTPError as errh:
+        print("Http Error:", errh)
+        raise
+    except requests.exceptions.ConnectionError as errc:
+        print("Error Connecting:", errc)
+        raise
+    except requests.exceptions.Timeout as errt:
+        print("Timeout Error:", errt)
+        raise
+    except requests.exceptions.RequestException as err:
+        print("Something went wrong with the request:", err)
+        raise
 
 
-@app.get("/get_event_images/{event_id}", response_model=List[ImageResponse])
-async def get_event_images(event_id: int, db: Session = Depends(get_db)):
+@app.get("/get_selected_event/{event_id}", response_model=List[ImageResponse])
+async def get_selected_event(event_id: int, db: Session = Depends(get_db)):
     '''
     Endpoint that takes an event id, and returns all the images associated from SQL.
 
@@ -105,8 +111,39 @@ async def get_event_images(event_id: int, db: Session = Depends(get_db)):
             ...
         ]
     '''
-    # Add your logic to fetch event images from the database
-    return []
+
+    try:
+        response = requests.get("https://api.unsplash.com/photos/random", params={
+            'count': event_id,
+            'client_id': 'z8VmrXJoH1PlbOdhoL2vyzV1AD1C_xdxPrz4IA7N2lM'
+        })
+        response.raise_for_status()
+        image_urls = [image['urls']['regular'] for image in response.json()]
+
+        images = []
+        for i, url in enumerate(image_urls):
+            image = ImageResponse(
+                image_id=i,
+                event_id=event_id,
+                url=url,
+                timestamp=datetime.now()
+            )
+            images.append(image)
+
+        return images
+
+    except requests.exceptions.HTTPError as errh:
+        print("Http Error:", errh)
+        raise
+    except requests.exceptions.ConnectionError as errc:
+        print("Error Connecting:", errc)
+        raise
+    except requests.exceptions.Timeout as errt:
+        print("Timeout Error:", errt)
+        raise
+    except requests.exceptions.RequestException as err:
+        print("Something went wrong with the request:", err)
+        raise
 
 # Additional endpoints you may consider adding:
 # - Update user profile
