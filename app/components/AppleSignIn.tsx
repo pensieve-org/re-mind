@@ -3,7 +3,11 @@ import { View, StyleSheet } from "react-native";
 import * as AppleAuthentication from "expo-apple-authentication";
 import { COMPONENT_HEIGHT, CORNER_RADIUS } from "../assets/constants";
 
-const AppleSignIn = (onPress) => {
+interface AppleSignInProps {
+  onPress: () => void;
+}
+
+const AppleSignIn: React.FC<AppleSignInProps> = ({ onPress }) => {
   return (
     <View style={styles.container}>
       <AppleAuthentication.AppleAuthenticationButton

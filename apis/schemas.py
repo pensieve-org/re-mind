@@ -8,6 +8,16 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class AppleLoginRequest(BaseModel):
+    user: str
+    fullName: str
+    email: str
+    realUserStatus: int
+    state: Optional[str] = None
+    authorizationCode: str
+    identityToken: str
+
+
 class RegisterRequest(BaseModel):
     username: str
     email: str
@@ -38,8 +48,10 @@ class EventsCategory(BaseModel):
 
 
 class UserDetails(BaseModel):
-    id: int
+    id: int  # make uuid?
+    apple_id: Optional[str] = None
+    first_name: str
+    last_name: str
     username: str
     email: str
-    password: str
     profile_picture_url: Optional[str] = None

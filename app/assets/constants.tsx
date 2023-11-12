@@ -27,3 +27,4 @@ export const EVENT_IMAGE_WIDTH =
 export const API_BASE_URL = "http://localhost:8000/";
 export const API_GET_ALL_USER_EVENTS = "get_all_user_events/";
 export const API_GET_EVENT = "get_event/";
+export const API_APPLE_LOGIN = "apple_login/";

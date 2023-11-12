@@ -16,6 +16,7 @@ import getAllUserEvents from "../services/get.allUserEvents";
 import * as AppleAuthentication from "expo-apple-authentication";
 import Body from "../components/Body";
 import AppleSignIn from "../components/AppleSignIn";
+import appleLogin from "../services/auth.appleLogin";
 import { Platform } from "react-native";
 
 export default function Login() {
@@ -23,6 +24,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const { setUserDetails, userDetails, setUserEvents } = useContext(AppContext);
 
   const handleLogin = async () => {
@@ -35,25 +37,38 @@ export default function Login() {
       setIsLoading(false);
       router.replace("/home");
     } else {
+      setErrorMsg("invalid email or password");
       setError(true);
       setIsLoading(false);
     }
   };
 
   const handleAppleSignIn = async () => {
+    setError(false);
+    setIsLoading(true);
     try {
-      const credential = await AppleAuthentication.signInAsync({
+      const credentials = await AppleAuthentication.signInAsync({
         requestedScopes: [
           AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
       // signed in
+
+      // TODO: make an api that takes apples credentials and
+      // if not already an account in th user base, adds one
+      // then returns the full user credentials and sets the user details
+      setUserDetails(await appleLogin(credentials));
+      setUserEvents(await getAllUserEvents(userDetails.id));
+      setIsLoading(false);
+      router.replace("/home");
     } catch (e) {
       if (e.code === "ERR_REQUEST_CANCELED") {
-        // handle that the user canceled the sign-in flow
+        setIsLoading(false);
       } else {
-        // handle other errors
+        setErrorMsg(e.message);
+        setError(true);
+        setIsLoading(false);
       }
     }
   };
@@ -71,7 +86,7 @@ export default function Login() {
       />
 
       <View style={styles.alertContainer}>
-        {error && <Alert text="Invalid email or password" />}
+        {error && <Alert text={errorMsg} />}
       </View>
 
       <View style={styles.container}>

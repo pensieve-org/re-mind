@@ -1,4 +1,5 @@
 import os
+import uuid
 from fastapi import FastAPI, Depends
 from typing import List
 from datetime import datetime, timedelta
@@ -7,6 +8,7 @@ from database import SessionLocal
 from utils import postgres_connection
 import requests
 from schemas import (
+    AppleLoginRequest,
     LoginRequest,
     RegisterRequest,
     EventResponse,
@@ -34,6 +36,50 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     '''
     # Add your logic to verify credentials from the database
     return {"valid": True or False}
+
+
+@app.post("/apple_login", response_model=UserDetails)
+async def apple_login(login_request: AppleLoginRequest, db: Session = Depends(get_db)):
+    '''
+    Endpoint that takes an apple login credential, checks if an account exists, makes one if not, then returns the user
+    '''
+    # # Check if a user with the given Apple ID exists in the database
+    # user = db.query(User).filter(User.apple_id == login_request.user).first()
+
+    # # If the user doesn't exist, create a new user
+    # if not user:
+    #     user = User(
+    #         apple_id=login_request.user,
+    #         email=login_request.email,
+    #         full_name=login_request.fullName,
+    #         real_user_status=login_request.realUserStatus,
+    #         state=login_request.state,
+    #         authorization_code=login_request.authorizationCode,
+    #         identity_token=login_request.identityToken,
+    #     )
+    #     db.add(user)
+    #     db.commit()
+    #     db.refresh(user)
+
+    # # Convert the user object to a UserDetails object
+    # user_details = UserDetails(
+    #     id=user.id,
+    #     apple_id=user.apple_id,
+    #     email=user.email,
+    #     full_name=user.full_name,
+    #     real_user_status=user.real_user_status,
+    #     state=user.state,
+    # )
+
+    return UserDetails(
+        id=5,
+        apple_id=login_request.user,
+        username='testusername',
+        email=login_request.email,
+        first_name=login_request.fullName.split(' ')[0],
+        last_name=login_request.fullName.split(' ')[-1],
+        profile_picture_url='https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=960'
+    )
 
 
 @app.get("/get_user/{user_id}", response_model=UserDetails)
