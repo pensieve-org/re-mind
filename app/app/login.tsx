@@ -13,6 +13,10 @@ import Subtitle from "../components/Subtitle";
 import { getUserDetails } from "../services/get.user";
 import BackArrow from "../assets/arrow-left.svg";
 import getAllUserEvents from "../services/get.allUserEvents";
+import * as AppleAuthentication from "expo-apple-authentication";
+import Body from "../components/Body";
+import AppleSignIn from "../components/AppleSignIn";
+import { Platform } from "react-native";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -33,6 +37,24 @@ export default function Login() {
     } else {
       setError(true);
       setIsLoading(false);
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      // signed in
+    } catch (e) {
+      if (e.code === "ERR_REQUEST_CANCELED") {
+        // handle that the user canceled the sign-in flow
+      } else {
+        // handle other errors
+      }
     }
   };
 
@@ -77,6 +99,22 @@ export default function Login() {
         >
           login
         </Button>
+
+        {Platform.OS === "ios" && (
+          <>
+            <Body
+              style={{
+                width: "100%",
+                textAlign: "center",
+                paddingVertical: 30,
+              }}
+            >
+              or
+            </Body>
+
+            <AppleSignIn onPress={handleAppleSignIn} />
+          </>
+        )}
 
         {isLoading && (
           <ActivityIndicator

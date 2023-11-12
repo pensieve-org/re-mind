@@ -2,6 +2,7 @@ import { Dimensions } from "react-native";
 export const HORIZONTAL_PADDING = 28;
 export const HEADER_ICON_DIMENSION = 30;
 export const CORNER_RADIUS = 10;
+export const COMPONENT_HEIGHT = 55;
 
 // For Home Screen
 export const ICON_GAP = 30;
