@@ -9,7 +9,6 @@ interface RegisterUserResponse {
   token: string;
 }
 
-// TODO: https://medium.com/@wanguiwawerub/user-registration-in-node-js-3e0ef7a61de7
 async function registerUser(
   request: RegisterUserRequest
 ): Promise<RegisterUserResponse> {

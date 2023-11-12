@@ -22,10 +22,7 @@ export const EVENT_IMAGE_WIDTH =
     (ROW_IMAGES - 1) * IMAGE_GAP) /
   ROW_IMAGES;
 
-export const ACCESS_KEY = "z8VmrXJoH1PlbOdhoL2vyzV1AD1C_xdxPrz4IA7N2lM";
-export const SECRET_KEY = "5JvPWJeOWloIQqqsnXQSOn_GTEFav9hXDYuiiqYLbkM";
-
-// TODO: replace localhost with computer isParameter, should work with expo app then
+// TODO: replace localhost with computer ip (127.0.0.1), should work with expo app then
 export const API_BASE_URL = "http://localhost:8000/";
 export const API_GET_ALL_USER_EVENTS = "get_all_user_events/";
 export const API_GET_EVENT = "get_event/";
