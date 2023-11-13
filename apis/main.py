@@ -72,6 +72,8 @@ async def apple_login(login_request: AppleLoginRequest, db: Session = Depends(ge
     # )
     print(login_request)
 
+    # TODO: apple login only gives a name, email etc once. Need to create a user with that infor once then use the user or the identityToken field to fetch it
+
     return UserDetails(
         id=5,
         apple_id=login_request.user,
