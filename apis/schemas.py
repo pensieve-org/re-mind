@@ -1,11 +1,37 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+from enum import Enum
 
 
 class LoginRequest(BaseModel):
     email: str
     password: str
+
+
+class AppleAuthenticationFullName(BaseModel):
+    givenName: Optional[str] = None
+    familyName: Optional[str] = None
+    middleName: Optional[str] = None
+    namePrefix: Optional[str] = None
+    nameSuffix: Optional[str] = None
+    nickname: Optional[str] = None
+
+
+class AppleAuthenticationUserDetectionStatus(Enum):
+    UNSUPPORTED = 0
+    UNKNOWN = 1
+    LIKELY_REAL = 2
+
+
+class AppleLoginRequest(BaseModel):
+    user: str
+    fullName: Optional[AppleAuthenticationFullName] = None
+    email: Optional[str] = None
+    realUserStatus: AppleAuthenticationUserDetectionStatus
+    state: Optional[str] = None
+    authorizationCode: Optional[str] = None
+    identityToken: Optional[str] = None
 
 
 class RegisterRequest(BaseModel):
@@ -38,8 +64,10 @@ class EventsCategory(BaseModel):
 
 
 class UserDetails(BaseModel):
-    id: int
+    id: int  # make uuid?
+    apple_id: Optional[str] = None
+    first_name: str
+    last_name: str
     username: str
     email: str
-    password: str
     profile_picture_url: Optional[str] = None

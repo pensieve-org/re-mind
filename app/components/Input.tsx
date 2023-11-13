@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { TextInput as PaperTextInput } from "react-native-paper";
 import Body from "./Body";
 import theme from "../assets/theme";
-import { CORNER_RADIUS } from "../assets/constants";
+import { COMPONENT_HEIGHT, CORNER_RADIUS } from "../assets/constants";
 
 interface InputProps {
   label?: string;
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: 8,
     width: "100%",
-    height: 55,
+    height: COMPONENT_HEIGHT,
     borderWidth: 1,
     borderColor: theme.PRIMARY,
     flexDirection: "row",

@@ -1,21 +1,22 @@
 import axios from "axios";
+import { API_BASE_URL, API_LOGIN } from "../assets/constants";
 
-const validateLogin = async (email, password) => {
+const login = async (email, password) => {
   try {
-    const response = await axios.post("https://reqres.in/api/login", {
+    const response = await axios.post(`${API_BASE_URL}${API_LOGIN}`, {
       email: email,
       password: password,
     });
 
-    if (response.data.token) {
-      return true;
+    if (response.data) {
+      return response.data;
     } else {
-      return false;
+      return null;
     }
   } catch (error) {
     console.log(error);
-    return false;
+    return null;
   }
 };
 
-export default validateLogin;
+export default login;

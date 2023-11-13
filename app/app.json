@@ -5,7 +5,17 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
-    ]
+      "expo-router",
+      "expo-apple-authentication"
+    ],
+    "android": {
+      "package": "com.remind"
+    },
+    "ios": {
+      "bundleIdentifier": "com.remind"
+    }
+  },
+  "ios": {
+    "usesAppleSignIn": true
   }
 }

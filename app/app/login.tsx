@@ -5,34 +5,85 @@ import Header from "../components/Header";
 import { AppContext } from "./_layout";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import validateLogin from "../services/auth.login";
+import login from "../services/auth.login";
 import Alert from "../components/Alert";
 import theme from "../assets/theme";
-import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
+import {
+  HEADER_ICON_DIMENSION,
+  HORIZONTAL_PADDING,
+  IOS_CLIENT_ID,
+} from "../assets/constants";
 import Subtitle from "../components/Subtitle";
-import { getUserDetails } from "../services/get.user";
 import BackArrow from "../assets/arrow-left.svg";
 import getAllUserEvents from "../services/get.allUserEvents";
+import * as AppleAuthentication from "expo-apple-authentication";
+import Body from "../components/Body";
+import AppleSignIn from "../components/AppleSignIn";
+import appleLogin from "../services/auth.appleLogin";
+import { Platform } from "react-native";
+
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const { setUserDetails, userDetails, setUserEvents } = useContext(AppContext);
+
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    iosClientId: IOS_CLIENT_ID,
+  });
 
   const handleLogin = async () => {
     setError(false);
     setIsLoading(true);
-    const isValidlogin = await validateLogin(email, password);
-    if (isValidlogin) {
-      setUserDetails(await getUserDetails(email));
+    const user = await login(email, password);
+    if (user) {
+      setUserDetails(user);
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserEvents(await getAllUserEvents(userDetails.id));
       setIsLoading(false);
       router.replace("/home");
     } else {
+      setErrorMsg("invalid email or password");
       setError(true);
       setIsLoading(false);
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    setError(false);
+    setIsLoading(true);
+    try {
+      const credentials = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      // TODO: make an api that takes apples credentials and
+      // if not already an account in th user base, adds one
+      // then returns the full user credentials and sets the user details
+      const user = await appleLogin(credentials);
+      setUserDetails(user);
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserEvents(await getAllUserEvents(userDetails.id));
+      setIsLoading(false);
+      router.replace("/home");
+    } catch (e) {
+      if (e.code === "ERR_REQUEST_CANCELED") {
+        setIsLoading(false);
+      } else {
+        setErrorMsg(e.message);
+        setError(true);
+        setIsLoading(false);
+      }
     }
   };
 
@@ -49,7 +100,7 @@ export default function Login() {
       />
 
       <View style={styles.alertContainer}>
-        {error && <Alert text="Invalid email or password" />}
+        {error && <Alert text={errorMsg} />}
       </View>
 
       <View style={styles.container}>
@@ -77,6 +128,22 @@ export default function Login() {
         >
           login
         </Button>
+
+        {Platform.OS === "ios" && (
+          <>
+            <Body
+              style={{
+                width: "100%",
+                textAlign: "center",
+                paddingVertical: 30,
+              }}
+            >
+              or
+            </Body>
+
+            <AppleSignIn onPress={handleAppleSignIn} />
+          </>
+        )}
 
         {isLoading && (
           <ActivityIndicator

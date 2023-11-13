@@ -46,14 +46,16 @@ export default function Home() {
               width: HEADER_ICON_DIMENSION,
               height: HEADER_ICON_DIMENSION,
               borderRadius: 100,
-              backgroundColor: userDetails.avatar ? "transparent" : "blue",
+              backgroundColor: userDetails.profile_picture_url
+                ? "transparent"
+                : "blue",
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {userDetails.avatar ? (
+            {userDetails.profile_picture_url ? (
               <Image
-                source={{ uri: userDetails.avatar }}
+                source={{ uri: userDetails.profile_picture_url }}
                 style={{
                   width: HEADER_ICON_DIMENSION,
                   height: HEADER_ICON_DIMENSION,

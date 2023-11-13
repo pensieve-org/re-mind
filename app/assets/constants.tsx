@@ -2,6 +2,7 @@ import { Dimensions } from "react-native";
 export const HORIZONTAL_PADDING = 28;
 export const HEADER_ICON_DIMENSION = 30;
 export const CORNER_RADIUS = 10;
+export const COMPONENT_HEIGHT = 55;
 
 // For Home Screen
 export const ICON_GAP = 30;
@@ -26,3 +27,11 @@ export const EVENT_IMAGE_WIDTH =
 export const API_BASE_URL = "http://localhost:8000/";
 export const API_GET_ALL_USER_EVENTS = "get_all_user_events/";
 export const API_GET_EVENT = "get_event/";
+export const API_APPLE_LOGIN = "apple_login";
+export const API_LOGIN = "login";
+export const API_GET_USER = "get_user/";
+
+// Google login API (https://www.youtube.com/watch?v=BDeKTPQzvR4&ab_channel=CodewithBeto)
+// TODO: add web and android ids
+export const IOS_CLIENT_ID =
+  "309656006737-kcbbeulpm3kjajci0ri6cvflhc9qnkt8.apps.googleusercontent.com";
