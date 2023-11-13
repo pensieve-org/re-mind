@@ -8,15 +8,17 @@ import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
 import { AppContext } from "./_layout";
 import BackArrow from "../assets/arrow-left.svg";
 import Button from "../components/Button";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setUserDetails({});
     setSelectedEvent({ images: {}, id: "" });
     setUserEvents({ ongoing: {}, past: {} });
+    await AsyncStorage.clear();
     router.replace("/");
   };
 
