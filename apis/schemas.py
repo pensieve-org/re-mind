@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+from enum import Enum
 
 
 class LoginRequest(BaseModel):
@@ -8,14 +9,29 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class AppleAuthenticationFullName(BaseModel):
+    givenName: Optional[str] = None
+    familyName: Optional[str] = None
+    middleName: Optional[str] = None
+    namePrefix: Optional[str] = None
+    nameSuffix: Optional[str] = None
+    nickname: Optional[str] = None
+
+
+class AppleAuthenticationUserDetectionStatus(Enum):
+    UNSUPPORTED = 0
+    UNKNOWN = 1
+    LIKELY_REAL = 2
+
+
 class AppleLoginRequest(BaseModel):
     user: str
-    fullName: str
-    email: str
-    realUserStatus: int
+    fullName: Optional[AppleAuthenticationFullName] = None
+    email: Optional[str] = None
+    realUserStatus: AppleAuthenticationUserDetectionStatus
     state: Optional[str] = None
-    authorizationCode: str
-    identityToken: str
+    authorizationCode: Optional[str] = None
+    identityToken: Optional[str] = None
 
 
 class RegisterRequest(BaseModel):

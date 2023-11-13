@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: theme.ERROR_TEXT,
+    flexWrap: "wrap",
   },
 });
 

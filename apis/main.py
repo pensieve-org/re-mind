@@ -70,14 +70,15 @@ async def apple_login(login_request: AppleLoginRequest, db: Session = Depends(ge
     #     real_user_status=user.real_user_status,
     #     state=user.state,
     # )
+    print(login_request)
 
     return UserDetails(
         id=5,
         apple_id=login_request.user,
         username='testusername',
         email=login_request.email,
-        first_name=login_request.fullName.split(' ')[0],
-        last_name=login_request.fullName.split(' ')[-1],
+        first_name=login_request.fullName.givenName,
+        last_name=login_request.fullName.familyName,
         profile_picture_url='https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=960'
     )
 

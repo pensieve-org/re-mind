@@ -4,7 +4,7 @@ import { API_APPLE_LOGIN, API_BASE_URL } from "../assets/constants";
 const appleLogin = async (credentials) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}${API_APPLE_LOGIN}`,
+      "http://localhost:8000/apple_login",
       credentials
     );
     if (response.status !== 200) {
