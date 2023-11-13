@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import { AppContext } from "./_layout";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import validateLogin from "../services/auth.login";
+import login from "../services/auth.login";
 import Alert from "../components/Alert";
 import theme from "../assets/theme";
 import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
@@ -30,9 +30,9 @@ export default function Login() {
   const handleLogin = async () => {
     setError(false);
     setIsLoading(true);
-    const isValidlogin = await validateLogin(email, password);
-    if (isValidlogin) {
-      setUserDetails(await getUserDetails(email));
+    const user = await login(email, password);
+    if (user) {
+      setUserDetails(user);
       setUserEvents(await getAllUserEvents(userDetails.id));
       setIsLoading(false);
       router.replace("/home");

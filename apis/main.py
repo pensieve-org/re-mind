@@ -1,6 +1,7 @@
+from fastapi import HTTPException
 import os
 import uuid
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, HTTPException
 from typing import List
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
@@ -28,14 +29,47 @@ def get_db():
         db.close()
 
 
-@app.post("/login")
+@app.post("/login", response_model=UserDetails)
 async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
     '''
-    Endpoint that takes an email address and password, and returns true if valid
-    and false if invalid based on SQL credentials.
+    Endpoint that takes an email address and password, and returns user details if valid
+    and raises an HTTPException otherwise.
     '''
-    # Add your logic to verify credentials from the database
-    return {"valid": True or False}
+
+    try:
+        response = requests.post("https://reqres.in/api/login", data={
+            'email': login_request.email,
+            'password': login_request.password,
+        })
+
+        response = response.json()
+
+        if 'token' in response:
+            # Fetch user details from your database here
+            # user_details = fetch_user_details(login_request.email)
+
+            response1 = requests.get('https://reqres.in/api/users?page=1')
+            response2 = requests.get('https://reqres.in/api/users?page=2')
+
+            users_page_1 = response1.json()['data']
+            users_page_2 = response2.json()['data']
+
+            all_users = users_page_1 + users_page_2
+
+            for user in all_users:
+                if user['email'] == login_request.email:
+                    return UserDetails(
+                        first_name=user['first_name'],
+                        last_name=user['last_name'],
+                        email=user['email'],
+                        profile_picture_url=user['avatar'],
+                        username=user['first_name'] + user['last_name'],
+                        id=user['id'])
+        else:
+            raise HTTPException(status_code=400, detail="Invalid credentials")
+    except Exception as error:
+        print(error)
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.post("/apple_login", response_model=UserDetails)
@@ -86,12 +120,30 @@ async def apple_login(login_request: AppleLoginRequest, db: Session = Depends(ge
 
 
 @app.get("/get_user/{user_id}", response_model=UserDetails)
-async def get_user_details(user_request: LoginRequest, db: Session = Depends(get_db)):
+async def get_user_details(user_id: int, db: Session = Depends(get_db)):
     '''
     Endpoint that takes user_id, and returns all the details about that user
     '''
-    # Add your logic to verify credentials from the database
-    return {"valid": True or False}
+
+    response1 = requests.get('https://reqres.in/api/users?page=1')
+    response2 = requests.get('https://reqres.in/api/users?page=2')
+
+    users_page_1 = response1.json()['data']
+    users_page_2 = response2.json()['data']
+
+    all_users = users_page_1 + users_page_2
+
+    for user in all_users:
+        if user['id'] == user_id:
+            return UserDetails(
+                first_name=user['first_name'],
+                last_name=user['last_name'],
+                email=user['email'],
+                profile_picture_url=user['avatar'],
+                username=user['first_name'] + user['last_name'],
+                id=user['id'])
+
+    raise HTTPException(status_code=404, detail="User not found")
 
 
 @app.post("/register")

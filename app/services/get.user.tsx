@@ -1,10 +1,12 @@
 import axios from "axios";
+import { API_BASE_URL, API_GET_USER } from "../assets/constants";
 
-export const getUserDetails = async (email: string) => {
-  const response1 = await axios.get(`https://reqres.in/api/users?page=1`);
-  const response2 = await axios.get(`https://reqres.in/api/users?page=2`);
-  const userDetails = response1.data.data
-    .concat(response2.data.data)
-    .find((user) => user.email === email);
-  return userDetails;
+export const getUserDetails = async (userId: number) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}${API_GET_USER}${userId}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
