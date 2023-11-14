@@ -13,6 +13,7 @@ from schemas import (
     ImageResponse,
     UserDetails
 )
+import pymysql
 
 app = FastAPI()
 
@@ -30,17 +31,19 @@ async def test():
     conn = mysql_connection()
     if conn is not None:
         try:
-            # Attempt to execute a simple query
             with conn.cursor() as cursor:
+                # Fetch all users
                 cursor.execute("SELECT * FROM users;")
                 users = cursor.fetchall()
                 print(
                     f"Successfully connected to MySQL Database. Users: {users}")
+
+            return users
         except pymysql.MySQLError as e:
             print(f"Error executing query on the MySQL Database: {e}")
+            return str(e)
         finally:
             conn.close()
-            return users
     else:
         return "Failed to connect to MySQL Database."
 
