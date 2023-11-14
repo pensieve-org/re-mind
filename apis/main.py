@@ -102,23 +102,22 @@ async def apple_login(login_request: AppleLoginRequest):
                 if user['apple_id'] != login_request.user and user['email'] == login_request.email:
                     cursor.execute("""
                         UPDATE users SET apple_id = %s WHERE email = %s
-                    """, (login_request.user, login_request.email))  # TODO: add OR username == back in where username is handled
+                    """, (login_request.user, login_request.email))
                     conn.commit()
                     user['apple_id'] = login_request.user
 
                 return UserDetails(**user)
             else:
                 cursor.execute("""
-                    INSERT INTO users (apple_id, username, email, first_name, last_name, profile_picture_url)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                """, (login_request.user, login_request.user, login_request.email, login_request.fullName.givenName, login_request.fullName.familyName, None))
+                    INSERT INTO users (apple_id, email, first_name, last_name, profile_picture_url)
+                    VALUES (%s, %s, %s, %s, %s)
+                """, (login_request.user, login_request.email, login_request.fullName.givenName, login_request.fullName.familyName, None))
                 conn.commit()
 
                 new_user_id = cursor.lastrowid
                 return UserDetails(
                     user_id=new_user_id,
                     apple_id=login_request.user,
-                    username=login_request.user,  # TODO: figure out how to handle usernames
                     email=login_request.email,
                     first_name=login_request.fullName.givenName,
                     last_name=login_request.fullName.familyName,

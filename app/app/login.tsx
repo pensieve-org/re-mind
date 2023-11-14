@@ -72,6 +72,7 @@ export default function Login() {
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserEvents(await getAllUserEvents(userDetails.id));
       setIsLoading(false);
+      // TODO: go to a set username screen if userDetails.username is blank
       router.replace("/home");
     } catch (e) {
       if (e.code === "ERR_REQUEST_CANCELED") {

@@ -17,6 +17,8 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
 
@@ -64,6 +66,12 @@ const Register = () => {
           label="name"
           value={name}
           onChangeText={setName}
+        />
+        <Input
+          placeholder="enter username"
+          label="username"
+          value={username}
+          onChangeText={setUsername}
         />
         <Input
           placeholder="enter email"

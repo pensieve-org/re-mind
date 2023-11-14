@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
     apple_id VARCHAR(255) UNIQUE,
-    username VARCHAR(255) NOT NULL UNIQUE,
+    username VARCHAR(255) UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255),
     first_name VARCHAR(255),

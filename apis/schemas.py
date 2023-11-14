@@ -68,6 +68,6 @@ class UserDetails(BaseModel):
     apple_id: Optional[str] = None
     first_name: str
     last_name: str
-    username: str
+    username: Optional[str] = None
     email: str
     profile_picture_url: Optional[str] = None
