@@ -37,6 +37,9 @@ export default function Profile() {
         <Body style={{ paddingVertical: 20 }}>
           Hello, {userDetails.first_name}
         </Body>
+        <Body style={{ paddingVertical: 20 }}>
+          username: {userDetails.username}
+        </Body>
         <Button
           fill={theme.TEXT}
           textColor={theme.BACKGROUND}

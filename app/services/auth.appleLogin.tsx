@@ -7,9 +7,6 @@ const appleLogin = async (credentials) => {
       `${API_BASE_URL}${API_APPLE_LOGIN}`,
       credentials
     );
-    if (response.status !== 200) {
-      throw new Error("Network response was not ok");
-    }
     const user = response.data;
     return user;
   } catch (error) {
