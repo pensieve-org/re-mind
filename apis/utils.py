@@ -1,26 +1,21 @@
+import pymysql
 import os
 from dotenv import load_dotenv
-import psycopg2
 
 
-def load_postgres_credentials():
-    load_dotenv()
-    creds = {}
-    creds["host"] = os.environ.get("POSTGRES_HOST")
-    creds["port"] = os.environ.get("POSTGRES_PORT")
-    creds["user"] = os.environ.get("POSTGRES_USER")
-    creds["password"] = os.environ.get("POSTGRES_USER_PWD")
-    creds["db"] = os.environ.get("POSTGRES_DB")
-    return creds
+load_dotenv()
 
 
-def postgres_connection(database):
-    creds = load_postgres_credentials()
-    conn = psycopg2.connect(
-        host=creds["host"],
-        port=creds["port"],
-        user=creds["user"],
-        password=creds["password"],
-        database=database,
-    )
-    return conn
+def mysql_connection():
+    try:
+        conn = pymysql.connect(
+            unix_socket=os.getenv("MYSQL_UNIX_SOCKET"),
+            user=os.getenv("MYSQL_USER"),
+            password=os.getenv("MYSQL_USER_PWD"),
+            database=os.getenv("MYSQL_DATABASE_NAME"),
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        return conn
+    except pymysql.MySQLError as e:
+        print(f"Error connecting to the MySQL Database: {e}")
+        return None

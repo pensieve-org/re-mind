@@ -1,13 +1,8 @@
-from fastapi import HTTPException
-import os
-import uuid
-from fastapi import FastAPI, Depends, HTTPException
-from typing import List
+from fastapi import HTTPException, FastAPI, Depends
 from datetime import datetime, timedelta
-from sqlalchemy.orm import Session
-from database import SessionLocal
-from utils import postgres_connection
+from utils import mysql_connection
 import requests
+import pymysql
 from schemas import (
     AppleLoginRequest,
     LoginRequest,
@@ -21,16 +16,30 @@ from schemas import (
 app = FastAPI()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+@app.get('/testsql')
+async def test():
+    conn = mysql_connection()
+    if conn is not None:
+        try:
+            with conn.cursor() as cursor:
+                # Fetch all users
+                cursor.execute("SELECT * FROM users;")
+                users = cursor.fetchall()
+                print(
+                    f"Successfully connected to MySQL Database. Users: {users}")
+
+            return users
+        except pymysql.MySQLError as e:
+            print(f"Error executing query on the MySQL Database: {e}")
+            return str(e)
+        finally:
+            conn.close()
+    else:
+        return "Failed to connect to MySQL Database."
 
 
 @app.post("/login", response_model=UserDetails)
-async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
+async def login(login_request: LoginRequest):
     '''
     Endpoint that takes an email address and password, and returns user details if valid
     and raises an HTTPException otherwise.
@@ -73,7 +82,7 @@ async def login(login_request: LoginRequest, db: Session = Depends(get_db)):
 
 
 @app.post("/apple_login", response_model=UserDetails)
-async def apple_login(login_request: AppleLoginRequest, db: Session = Depends(get_db)):
+async def apple_login(login_request: AppleLoginRequest):
     '''
     Endpoint that takes an apple login credential, checks if an account exists, makes one if not, then returns the user
     '''
@@ -120,7 +129,7 @@ async def apple_login(login_request: AppleLoginRequest, db: Session = Depends(ge
 
 
 @app.get("/get_user/{user_id}", response_model=UserDetails)
-async def get_user_details(user_id: int, db: Session = Depends(get_db)):
+async def get_user_details(user_id: int):
     '''
     Endpoint that takes user_id, and returns all the details about that user
     '''
@@ -147,7 +156,7 @@ async def get_user_details(user_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/register")
-async def register(register_request: RegisterRequest, db: Session = Depends(get_db)):
+async def register(register_request: RegisterRequest):
     '''
     Endpoint that takes a username, email, and password and updates the relevant SQL tables
     if valid and not already taken. Returns true if successful and false if not.
@@ -157,7 +166,7 @@ async def register(register_request: RegisterRequest, db: Session = Depends(get_
 
 
 @app.get("/get_all_user_events/{user_id}", response_model=EventsCategory)
-async def get_all_user_events(user_id: int, db: Session = Depends(get_db)):
+async def get_all_user_events(user_id: int):
     try:
         # Fetch image URLs
         response = requests.get("https://api.unsplash.com/photos/random", params={
@@ -199,7 +208,7 @@ async def get_all_user_events(user_id: int, db: Session = Depends(get_db)):
 
 
 @app.get("/get_event/{event_id}", response_model=EventResponse)
-async def get_event(event_id: int, db: Session = Depends(get_db)):
+async def get_event(event_id: int):
     '''
     Endpoint that takes an event id, and returns all the images associated from SQL.
 

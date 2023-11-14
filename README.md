@@ -18,3 +18,8 @@ For a successful login, use any email from this list in the 'email address' fiel
 - <eve.holt@reqres.in>
 - <charles.morris@reqres.in>
 - <tracey.ramos@reqres.in>
+
+## TODO
+
+- add google api login
+- add facebook api login
