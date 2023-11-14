@@ -1,12 +1,8 @@
-from fastapi import HTTPException
-import os
-import uuid
-from fastapi import FastAPI, Depends, HTTPException
-from typing import List
+from fastapi import HTTPException, FastAPI, Depends
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from database import SessionLocal
-from utils import postgres_connection
+from utils import mysql_connection
 import requests
 from schemas import (
     AppleLoginRequest,
@@ -27,6 +23,26 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+@app.get('/testsql')
+async def test():
+    conn = mysql_connection()
+    if conn is not None:
+        try:
+            # Attempt to execute a simple query
+            with conn.cursor() as cursor:
+                cursor.execute("SELECT VERSION();")
+                version = cursor.fetchone()
+                print(
+                    f"Successfully connected to MySQL Database. Version: {version[0]}")
+        except pymysql.MySQLError as e:
+            print(f"Error executing query on the MySQL Database: {e}")
+        finally:
+            conn.close()
+            return f"Successfully connected to MySQL Database. Version: {version[0]}"
+    else:
+        return "Failed to connect to MySQL Database."
 
 
 @app.post("/login", response_model=UserDetails)
