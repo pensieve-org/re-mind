@@ -1,4 +1,4 @@
-from fastapi import HTTPException, FastAPI, Depends
+from fastapi import HTTPException, FastAPI, Depends, status
 from datetime import datetime, timedelta
 from utils import mysql_connection
 import requests
@@ -22,12 +22,16 @@ async def test():
     if conn is not None:
         try:
             with conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users';")
+                column_types = cursor.fetchall()
+
                 cursor.execute("SELECT * FROM users;")
                 users = cursor.fetchall()
                 print(
                     f"Successfully connected to MySQL Database. Users: {users}")
 
-            return users
+            return users, column_types
         except pymysql.MySQLError as e:
             print(f"Error executing query on the MySQL Database: {e}")
             return str(e)
@@ -83,13 +87,17 @@ async def login(login_request: LoginRequest):
 @app.post("/apple_login", response_model=UserDetails)
 async def apple_login(login_request: AppleLoginRequest):
     '''
-    Endpoint that takes an apple login credential, checks if an account exists, makes one if not, then returns the user
+    Endpoint that takes an apple login credential, checks if an account exists, if so returns the user
+    else returns an HTTP exception
     '''
     print(login_request)
 
     conn = mysql_connection()
     if conn is None:
-        return "Failed to connect to MySQL Database."
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database."
+        )
 
     try:
         with conn.cursor() as cursor:
@@ -99,7 +107,7 @@ async def apple_login(login_request: AppleLoginRequest):
             user = cursor.fetchone()
 
             if user:
-                if user['apple_id'] != login_request.user and user['email'] == login_request.email:
+                if user['apple_id'] != login_request.user:
                     cursor.execute("""
                         UPDATE users SET apple_id = %s WHERE email = %s
                     """, (login_request.user, login_request.email))
@@ -108,16 +116,53 @@ async def apple_login(login_request: AppleLoginRequest):
 
                 return UserDetails(**user)
             else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found."
+                )
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.post("/apple_new_user", response_model=UserDetails)
+async def apple_new_user(login_request: AppleLoginRequest, username: str):
+    '''
+    returns none if username taken, otherwise adds new user and returns user details
+    '''
+    conn = mysql_connection()
+    if conn is None:
+        return "Failed to connect to MySQL Database."
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM users WHERE username = %s
+            """, (username))
+            user = cursor.fetchone()
+
+            if user:
+                # Username already taken
+                raise HTTPException(
+                    status_code=400, detail="username already taken")
+            else:
                 cursor.execute("""
-                    INSERT INTO users (apple_id, email, first_name, last_name, profile_picture_url)
-                    VALUES (%s, %s, %s, %s, %s)
-                """, (login_request.user, login_request.email, login_request.fullName.givenName, login_request.fullName.familyName, None))
+                    INSERT INTO users (apple_id, username, email, first_name, last_name, profile_picture_url)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, (login_request.user, username, login_request.email, login_request.fullName.givenName, login_request.fullName.familyName, None))
                 conn.commit()
 
                 new_user_id = cursor.lastrowid
                 return UserDetails(
                     user_id=new_user_id,
                     apple_id=login_request.user,
+                    username=username,
                     email=login_request.email,
                     first_name=login_request.fullName.givenName,
                     last_name=login_request.fullName.familyName,
@@ -126,7 +171,8 @@ async def apple_login(login_request: AppleLoginRequest):
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")
-        return None
+        raise HTTPException(
+            status_code=500, detail="Failed to create new user")
     finally:
         conn.close()
 

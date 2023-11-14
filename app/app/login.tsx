@@ -34,7 +34,8 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const { setUserDetails, userDetails, setUserEvents } = useContext(AppContext);
+  const { setUserDetails, userDetails, setUserEvents, setAppleCredentials } =
+    useContext(AppContext);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     iosClientId: IOS_CLIENT_ID,
@@ -60,25 +61,32 @@ export default function Login() {
   const handleAppleSignIn = async () => {
     setError(false);
     setIsLoading(true);
+    const credentials = await AppleAuthentication.signInAsync({
+      requestedScopes: [
+        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+      ],
+    });
+
     try {
-      const credentials = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      });
       const user = await appleLogin(credentials);
-      setUserDetails(user);
-      await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserEvents(await getAllUserEvents(userDetails.id));
-      setIsLoading(false);
-      // TODO: go to a set username screen if userDetails.username is blank
-      router.replace("/home");
+      if (user) {
+        setUserDetails(user);
+        await AsyncStorage.setItem("@user", JSON.stringify(user));
+        setUserEvents(await getAllUserEvents(userDetails.id));
+        setIsLoading(false);
+        router.replace("/home");
+      }
     } catch (e) {
       if (e.code === "ERR_REQUEST_CANCELED") {
         setIsLoading(false);
+      } else if (e.response && e.response.status === 404) {
+        // User not found, redirect to set username
+        setAppleCredentials(credentials);
+        router.push("/set-username");
       } else {
-        setErrorMsg(e.message);
+        // Handle other errors
+        setErrorMsg(e.message || "An error occurred. Please try again.");
         setError(true);
         setIsLoading(false);
       }

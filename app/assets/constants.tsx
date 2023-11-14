@@ -28,6 +28,7 @@ export const API_BASE_URL = "http://localhost:8000/";
 export const API_GET_ALL_USER_EVENTS = "get_all_user_events/";
 export const API_GET_EVENT = "get_event/";
 export const API_APPLE_LOGIN = "apple_login";
+export const API_APPLE_NEW_USER = "apple_new_user";
 export const API_LOGIN = "login";
 export const API_GET_USER = "get_user/";
 
