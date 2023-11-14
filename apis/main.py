@@ -32,15 +32,15 @@ async def test():
         try:
             # Attempt to execute a simple query
             with conn.cursor() as cursor:
-                cursor.execute("SELECT VERSION();")
-                version = cursor.fetchone()
+                cursor.execute("SELECT * FROM users;")
+                users = cursor.fetchall()
                 print(
-                    f"Successfully connected to MySQL Database. Version: {version[0]}")
+                    f"Successfully connected to MySQL Database. Users: {users}")
         except pymysql.MySQLError as e:
             print(f"Error executing query on the MySQL Database: {e}")
         finally:
             conn.close()
-            return f"Successfully connected to MySQL Database. Version: {version[0]}"
+            return users
     else:
         return "Failed to connect to MySQL Database."
 

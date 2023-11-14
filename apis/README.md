@@ -41,6 +41,13 @@ If it is not a get request, you will need to add the `-X` flag and specify the r
 curl http://localhost:8000/{endpoint} -X POST -d '{"key": "value"}'
 ```
 
+Set up cloud sql socket
+
+```
+gcloud auth login or gcloud auth application-default login
+cloud-sql-proxy re-mind-405009:europe-west2:remind-mysql --unix-socket=/Users/jamesheavey/Documents/GitHub/re-mind/apis/sql_socket
+```
+
 ## Running in a local Container
 
 > Install Docker or a compatible container runtime if you don't have it
