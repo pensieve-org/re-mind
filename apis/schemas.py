@@ -64,7 +64,7 @@ class EventsCategory(BaseModel):
 
 
 class UserDetails(BaseModel):
-    id: int  # make uuid?
+    user_id: int  # make uuid?
     apple_id: Optional[str] = None
     first_name: str
     last_name: str

@@ -67,9 +67,6 @@ export default function Login() {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
-      // TODO: make an api that takes apples credentials and
-      // if not already an account in th user base, adds one
-      // then returns the full user credentials and sets the user details
       const user = await appleLogin(credentials);
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));

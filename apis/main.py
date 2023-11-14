@@ -22,7 +22,6 @@ async def test():
     if conn is not None:
         try:
             with conn.cursor() as cursor:
-                # Fetch all users
                 cursor.execute("SELECT * FROM users;")
                 users = cursor.fetchall()
                 print(
@@ -73,7 +72,7 @@ async def login(login_request: LoginRequest):
                         email=user['email'],
                         profile_picture_url=user['avatar'],
                         username=user['first_name'] + user['last_name'],
-                        id=user['id'])
+                        user_id=user['id'])
         else:
             raise HTTPException(status_code=400, detail="Invalid credentials")
     except Exception as error:
@@ -86,46 +85,51 @@ async def apple_login(login_request: AppleLoginRequest):
     '''
     Endpoint that takes an apple login credential, checks if an account exists, makes one if not, then returns the user
     '''
-    # # Check if a user with the given Apple ID exists in the database
-    # user = db.query(User).filter(User.apple_id == login_request.user).first()
-
-    # # If the user doesn't exist, create a new user
-    # if not user:
-    #     user = User(
-    #         apple_id=login_request.user,
-    #         email=login_request.email,
-    #         full_name=login_request.fullName,
-    #         real_user_status=login_request.realUserStatus,
-    #         state=login_request.state,
-    #         authorization_code=login_request.authorizationCode,
-    #         identity_token=login_request.identityToken,
-    #     )
-    #     db.add(user)
-    #     db.commit()
-    #     db.refresh(user)
-
-    # # Convert the user object to a UserDetails object
-    # user_details = UserDetails(
-    #     id=user.id,
-    #     apple_id=user.apple_id,
-    #     email=user.email,
-    #     full_name=user.full_name,
-    #     real_user_status=user.real_user_status,
-    #     state=user.state,
-    # )
     print(login_request)
 
-    # TODO: apple login only gives a name, email etc once. Need to create a user with that infor once then use the user or the identityToken field to fetch it
+    conn = mysql_connection()
+    if conn is None:
+        return "Failed to connect to MySQL Database."
 
-    return UserDetails(
-        id=5,
-        apple_id=login_request.user,
-        username='testusername',
-        email=login_request.email,
-        first_name=login_request.fullName.givenName,
-        last_name=login_request.fullName.familyName,
-        profile_picture_url='https://imageio.forbes.com/specials-images/imageserve/5d35eacaf1176b0008974b54/2020-Chevrolet-Corvette-Stingray/0x0.jpg?format=jpg&crop=4560,2565,x790,y784,safe&width=960'
-    )
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM users WHERE apple_id = %s OR email = %s
+            """, (login_request.user, login_request.email))
+            user = cursor.fetchone()
+
+            if user:
+                if user['apple_id'] != login_request.user and user['email'] == login_request.email:
+                    cursor.execute("""
+                        UPDATE users SET apple_id = %s WHERE email = %s
+                    """, (login_request.user, login_request.email))  # TODO: add OR username == back in where username is handled
+                    conn.commit()
+                    user['apple_id'] = login_request.user
+
+                return UserDetails(**user)
+            else:
+                cursor.execute("""
+                    INSERT INTO users (apple_id, username, email, first_name, last_name, profile_picture_url)
+                    VALUES (%s, %s, %s, %s, %s, %s)
+                """, (login_request.user, login_request.user, login_request.email, login_request.fullName.givenName, login_request.fullName.familyName, None))
+                conn.commit()
+
+                new_user_id = cursor.lastrowid
+                return UserDetails(
+                    user_id=new_user_id,
+                    apple_id=login_request.user,
+                    username=login_request.user,  # TODO: figure out how to handle usernames
+                    email=login_request.email,
+                    first_name=login_request.fullName.givenName,
+                    last_name=login_request.fullName.familyName,
+                    profile_picture_url=''
+                )
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        return None
+    finally:
+        conn.close()
 
 
 @app.get("/get_user/{user_id}", response_model=UserDetails)
@@ -150,7 +154,7 @@ async def get_user_details(user_id: int):
                 email=user['email'],
                 profile_picture_url=user['avatar'],
                 username=user['first_name'] + user['last_name'],
-                id=user['id'])
+                user_id=user['id'])
 
     raise HTTPException(status_code=404, detail="User not found")
 

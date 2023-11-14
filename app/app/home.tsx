@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   StyleSheet,
   Image,
@@ -16,7 +16,6 @@ import { AppContext } from "./_layout";
 import Plus from "../assets/plus.svg";
 import EventList from "../components/EventList";
 import { ScrollView } from "react-native-gesture-handler";
-import getEvent from "../services/get.event";
 import getAllUserEvents from "../services/get.allUserEvents";
 
 export default function Home() {
@@ -31,8 +30,6 @@ export default function Home() {
   }, []);
 
   const handleEventPress = async (event) => {
-    // TODO: is this api call necessary? Maybe just pass the event object through?
-    // setSelectedEvent(await getEvent(event.id));
     setSelectedEvent(event);
     router.push("/event");
   };
