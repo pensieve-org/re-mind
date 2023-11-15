@@ -53,40 +53,42 @@ async def login(login_request: LoginRequest):
     and raises an HTTPException otherwise.
     '''
 
+    conn = mysql_connection()
+    if conn is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database."
+        )
+
     try:
-        response = requests.post("https://reqres.in/api/login", data={
-            'email': login_request.email,
-            'password': login_request.password,
-        })
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM users WHERE email = %s OR username = %s
+            """, (login_request.identifier, login_request.identifier))
+            user = cursor.fetchone()
 
-        response = response.json()
+            if user:
+                if user['password'] == login_request.password:
+                    return UserDetails(**user)
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail="Invalid password"
+                    )
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="user not found"
+                )
 
-        if 'token' in response:
-            # Fetch user details from your database here
-            # user_details = fetch_user_details(login_request.email)
-
-            response1 = requests.get('https://reqres.in/api/users?page=1')
-            response2 = requests.get('https://reqres.in/api/users?page=2')
-
-            users_page_1 = response1.json()['data']
-            users_page_2 = response2.json()['data']
-
-            all_users = users_page_1 + users_page_2
-
-            for user in all_users:
-                if user['email'] == login_request.email:
-                    return UserDetails(
-                        first_name=user['first_name'],
-                        last_name=user['last_name'],
-                        email=user['email'],
-                        profile_picture_url=user['avatar'],
-                        username=user['first_name'] + user['last_name'],
-                        user_id=user['id'])
-        else:
-            raise HTTPException(status_code=400, detail="Invalid credentials")
-    except Exception as error:
-        print(error)
-        raise HTTPException(status_code=500, detail="Internal server error")
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="database error."
+        )
+    finally:
+        conn.close()
 
 
 @app.post("/apple_login", response_model=UserDetails)

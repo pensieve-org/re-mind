@@ -29,7 +29,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -44,15 +44,23 @@ export default function Login() {
   const handleLogin = async () => {
     setError(false);
     setIsLoading(true);
-    const user = await login(email, password);
-    if (user) {
+
+    if (!identifier || !password) {
+      setErrorMsg("Please enter an email/username and password");
+      setError(true);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const user = await login(identifier, password);
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserEvents(await getAllUserEvents(userDetails.id));
       setIsLoading(false);
       router.replace("/home");
-    } else {
-      setErrorMsg("invalid email or password");
+    } catch (error) {
+      setErrorMsg(error.response.data.detail);
       setError(true);
       setIsLoading(false);
     }
@@ -70,17 +78,13 @@ export default function Login() {
 
     try {
       const user = await appleLogin(credentials);
-      if (user) {
-        setUserDetails(user);
-        await AsyncStorage.setItem("@user", JSON.stringify(user));
-        setUserEvents(await getAllUserEvents(userDetails.user_id));
-        setIsLoading(false);
-        router.replace("/home");
-      }
+      setUserDetails(user);
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserEvents(await getAllUserEvents(userDetails.user_id));
+      setIsLoading(false);
+      router.replace("/home");
     } catch (error) {
-      if (error.code === "ERR_REQUEST_CANCELED") {
-        setIsLoading(false);
-      } else if (error.response.status === 404) {
+      if (error.response.status === 404) {
         // User not found, redirect to set username
         setAppleCredentials(credentials);
         setIsLoading(false);
@@ -116,10 +120,10 @@ export default function Login() {
         </View>
 
         <Input
-          placeholder="enter email"
-          label="email"
-          value={email}
-          onChangeText={setEmail}
+          placeholder="enter username/email"
+          label="username/email"
+          value={identifier}
+          onChangeText={setIdentifier}
         />
         <Input
           placeholder="enter password"

@@ -1,21 +1,17 @@
 import axios from "axios";
 import { API_BASE_URL, API_LOGIN } from "../assets/constants";
 
-const login = async (email, password) => {
+const login = async (identifier, password) => {
   try {
     const response = await axios.post(`${API_BASE_URL}${API_LOGIN}`, {
-      email: email,
-      password: password,
+      identifier,
+      password,
     });
-
-    if (response.data) {
-      return response.data;
-    } else {
-      return null;
-    }
+    const user = response.data;
+    return user;
   } catch (error) {
-    console.log(error);
-    return null;
+    console.error("Error fetching events:", error);
+    throw error;
   }
 };
 

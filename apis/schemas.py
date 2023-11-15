@@ -5,7 +5,7 @@ from enum import Enum
 
 
 class LoginRequest(BaseModel):
-    email: str
+    identifier: str
     password: str
 
 
