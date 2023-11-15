@@ -26,6 +26,11 @@ async def test():
                     "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users';")
                 column_types = cursor.fetchall()
 
+                # cursor.execute(
+                #     "DELETE FROM users WHERE user_id = 8;"
+                # )
+                # conn.commit()
+
                 cursor.execute("SELECT * FROM users;")
                 users = cursor.fetchall()
                 print(
