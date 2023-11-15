@@ -1,23 +1,26 @@
 import axios from "axios";
+import { API_BASE_URL, API_REGISTER } from "../assets/constants";
 
-interface RegisterUserRequest {
+interface RegisterRequest {
+  username: string;
   email: string;
+  first_name: string;
+  last_name: string;
   password: string;
 }
 
-interface RegisterUserResponse {
-  token: string;
-}
-
-async function registerUser(
-  request: RegisterUserRequest
-): Promise<RegisterUserResponse> {
+const register = async (registerRequest: RegisterRequest) => {
   try {
-    const response = await axios.post("https://reqres.in/api/users", request);
-    return { token: response.data.token };
+    const response = await axios.post(
+      `${API_BASE_URL}${API_REGISTER}`,
+      registerRequest
+    );
+    const user = response.data;
+    return user;
   } catch (error) {
-    throw new Error("Failed to register user");
+    console.error("Error fetching events:", error);
+    throw error;
   }
-}
+};
 
-export default registerUser;
+export default register;

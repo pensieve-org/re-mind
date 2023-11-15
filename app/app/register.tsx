@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useContext, useState } from "react";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -8,36 +8,58 @@ import Alert from "../components/Alert";
 import theme from "../assets/theme";
 import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
-import registerUser from "../services/auth.register";
 import BackArrow from "../assets/arrow-left.svg";
+import { AppContext } from "./_layout";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import getAllUserEvents from "../services/get.allUserEvents";
+import register from "../services/auth.register";
 
 // TODO: Use Formik
 const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const { setUserDetails, userDetails, setUserEvents, setAppleCredentials } =
+    useContext(AppContext);
 
   const handleRegister = async () => {
+    setError(false);
+    if (!password || !confirmPassword || !email || !firstName || !lastName) {
+      setErrorMsg("fill out all fields");
+      setError(true);
+      return;
+    }
+
     if (password !== confirmPassword) {
-      // TODO: Use Alert component instead
-      alert("Passwords do not match");
+      setErrorMsg("passwords do not match");
+      setError(true);
       return;
     }
 
     try {
       setIsLoading(true);
-      await registerUser({ email, password });
+      const user = await register({
+        email: email,
+        username: username,
+        first_name: firstName,
+        last_name: lastName,
+        password: password,
+      });
       setIsLoading(false);
-      // TODO: Use Alert component instead, add a wait. Add loading animation.
-      alert("User registered successfully");
-      router.replace("login");
+      setUserDetails(user);
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserEvents(await getAllUserEvents(userDetails.id));
+      setIsLoading(false);
+      router.replace("/home");
     } catch (error) {
-      alert(error.message);
+      setErrorMsg(error.response.data.detail);
+      setError(true);
     }
   };
 
@@ -53,19 +75,27 @@ const Register = () => {
         onPressLeft={() => router.back()}
       />
 
-      <View style={styles.alertContainer}>
-        {error && <Alert text="Invalid email or password" />}
-      </View>
+      {error && (
+        <View style={styles.alertContainer}>
+          <Alert text={errorMsg} />
+        </View>
+      )}
 
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={{ paddingVertical: 50, paddingTop: 30 }}>
           <Subtitle>register</Subtitle>
         </View>
         <Input
-          placeholder="enter name"
-          label="name"
-          value={name}
-          onChangeText={setName}
+          placeholder="enter first name"
+          label="first name"
+          value={firstName}
+          onChangeText={setFirstName}
+        />
+        <Input
+          placeholder="enter last name"
+          label="last name"
+          value={lastName}
+          onChangeText={setLastName}
         />
         <Input
           placeholder="enter username"
@@ -96,7 +126,7 @@ const Register = () => {
         <Button fill="white" textColor="black" onPress={handleRegister}>
           register
         </Button>
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -110,7 +140,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: "flex-start",
     marginHorizontal: HORIZONTAL_PADDING,
   },
   alertContainer: {

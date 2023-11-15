@@ -21,12 +21,13 @@ import Body from "../components/Body";
 import AppleSignIn from "../components/AppleSignIn";
 import appleLogin from "../services/auth.appleLogin";
 import { Platform } from "react-native";
-
-import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-WebBrowser.maybeCompleteAuthSession();
+// import * as WebBrowser from "expo-web-browser";
+// import * as Google from "expo-auth-session/providers/google";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// WebBrowser.maybeCompleteAuthSession();
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -37,9 +38,9 @@ export default function Login() {
   const { setUserDetails, userDetails, setUserEvents, setAppleCredentials } =
     useContext(AppContext);
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    iosClientId: IOS_CLIENT_ID,
-  });
+  // const [request, response, promptAsync] = Google.useAuthRequest({
+  //   iosClientId: IOS_CLIENT_ID,
+  // });
 
   const handleLogin = async () => {
     setError(false);

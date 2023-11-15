@@ -91,6 +91,67 @@ async def login(login_request: LoginRequest):
         conn.close()
 
 
+@app.post("/register", response_model=UserDetails)
+async def register(register_request: RegisterRequest):
+    '''
+    Endpoint that takes an email address and password, and returns user details if valid
+    and raises an HTTPException otherwise.
+    '''
+
+    conn = mysql_connection()
+    if conn is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database."
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM users WHERE email = %s OR username = %s
+            """, (register_request.email, register_request.username))
+            user = cursor.fetchone()
+
+            if user:
+                if user['email'] == register_request.email:
+                    raise HTTPException(
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail="email already registered, try logging in"
+                    )
+                elif user['username'] == register_request.username:
+                    raise HTTPException(
+                        status_code=status.HTTP_401_UNAUTHORIZED,
+                        detail="username already taken"
+                    )
+            else:
+                cursor.execute(
+                    """
+                    INSERT INTO users (email, username, password, first_name, last_name)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """,
+                    (register_request.email, register_request.username, register_request.password,
+                     register_request.first_name, register_request.last_name)
+                )
+                conn.commit()
+                return UserDetails(
+                    user_id=cursor.lastrowid,
+                    email=register_request.email,
+                    username=register_request.username,
+                    first_name=register_request.first_name,
+                    last_name=register_request.last_name,
+                    profile_picture_url=''
+                )
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="database error."
+        )
+    finally:
+        conn.close()
+
+
 @app.post("/apple_login", response_model=UserDetails)
 async def apple_login(login_request: AppleLoginRequest):
     '''
@@ -165,9 +226,8 @@ async def apple_new_user(login_request: AppleLoginRequest, username: str):
                 """, (login_request.user, username, login_request.email, login_request.fullName.givenName, login_request.fullName.familyName, None))
                 conn.commit()
 
-                new_user_id = cursor.lastrowid
                 return UserDetails(
-                    user_id=new_user_id,
+                    user_id=cursor.lastrowid,
                     apple_id=login_request.user,
                     username=username,
                     email=login_request.email,
