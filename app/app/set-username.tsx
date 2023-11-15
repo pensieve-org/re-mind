@@ -27,7 +27,7 @@ const SetUsername = () => {
     setIsLoading(true);
 
     if (!username) {
-      setErrorMsg("Please enter a username");
+      setErrorMsg("please enter a username");
       setError(true);
       setIsLoading(false);
       return;
@@ -38,22 +38,12 @@ const SetUsername = () => {
       if (user) {
         setUserDetails(user);
         await AsyncStorage.setItem("@user", JSON.stringify(user));
-        setUserEvents(await getAllUserEvents(userDetails.id));
+        setUserEvents(await getAllUserEvents(userDetails.user_id));
         setIsLoading(false);
         router.replace("/home");
       }
     } catch (error) {
-      // Check if the error is due to the username being already taken
-      if (
-        error.response &&
-        error.response.status === 400 &&
-        error.response.data.detail === "Username already taken"
-      ) {
-        setErrorMsg("Username already taken");
-      } else {
-        // Handle other types of errors
-        setErrorMsg("An error occurred. Please try again.");
-      }
+      setErrorMsg(error.response.data.detail);
       setError(true);
       setIsLoading(false);
     }

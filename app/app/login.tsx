@@ -73,20 +73,21 @@ export default function Login() {
       if (user) {
         setUserDetails(user);
         await AsyncStorage.setItem("@user", JSON.stringify(user));
-        setUserEvents(await getAllUserEvents(userDetails.id));
+        setUserEvents(await getAllUserEvents(userDetails.user_id));
         setIsLoading(false);
         router.replace("/home");
       }
-    } catch (e) {
-      if (e.code === "ERR_REQUEST_CANCELED") {
+    } catch (error) {
+      if (error.code === "ERR_REQUEST_CANCELED") {
         setIsLoading(false);
-      } else if (e.response && e.response.status === 404) {
+      } else if (error.response.status === 404) {
         // User not found, redirect to set username
         setAppleCredentials(credentials);
+        setIsLoading(false);
         router.push("/set-username");
       } else {
         // Handle other errors
-        setErrorMsg(e.message || "An error occurred. Please try again.");
+        setErrorMsg(error.response.data.detail);
         setError(true);
         setIsLoading(false);
       }

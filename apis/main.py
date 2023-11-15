@@ -125,7 +125,7 @@ async def apple_login(login_request: AppleLoginRequest):
         print(f"Error executing query on the MySQL Database: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Database error."
+            detail="database error."
         )
     finally:
         conn.close()
@@ -172,7 +172,7 @@ async def apple_new_user(login_request: AppleLoginRequest, username: str):
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")
         raise HTTPException(
-            status_code=500, detail="Failed to create new user")
+            status_code=500, detail="failed to create new user")
     finally:
         conn.close()
 
@@ -201,7 +201,7 @@ async def get_user_details(user_id: int):
                 username=user['first_name'] + user['last_name'],
                 user_id=user['id'])
 
-    raise HTTPException(status_code=404, detail="User not found")
+    raise HTTPException(status_code=404, detail="user not found")
 
 
 @app.post("/register")
