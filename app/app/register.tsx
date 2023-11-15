@@ -25,8 +25,7 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const { setUserDetails, userDetails, setUserEvents, setAppleCredentials } =
-    useContext(AppContext);
+  const { setUserDetails, userDetails, setUserEvents } = useContext(AppContext);
 
   const handleRegister = async () => {
     setError(false);

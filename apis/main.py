@@ -380,10 +380,3 @@ async def get_event(event_id: int):
     except requests.exceptions.RequestException as err:
         print("Something went wrong with the request:", err)
         raise
-
-# Additional endpoints you may consider adding:
-# - Update user profile
-# - Change password
-# - Join/Leave event
-# - Add/Remove friend
-# - Upload/Delete image
