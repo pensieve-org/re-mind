@@ -111,6 +111,13 @@ export default function Login() {
         onPressLeft={() => router.back()}
       />
 
+      {/* TODO: Maybe this is better than below? ask euan */}
+      {/* {error && (
+        <View style={styles.alertContainer}>
+          <Alert text={errorMsg} />
+        </View>
+      )} */}
+
       <View style={styles.alertContainer}>
         {error && <Alert text={errorMsg} />}
       </View>
