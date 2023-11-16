@@ -73,7 +73,7 @@ async def login(login_request: LoginRequest):
                 else:
                     raise HTTPException(
                         status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="Invalid password"
+                        detail="invalid password"
                     )
             else:
                 raise HTTPException(
@@ -250,35 +250,37 @@ async def get_user_details(user_id: int):
     Endpoint that takes user_id, and returns all the details about that user
     '''
 
-    response1 = requests.get('https://reqres.in/api/users?page=1')
-    response2 = requests.get('https://reqres.in/api/users?page=2')
+    conn = mysql_connection()
+    if conn is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database."
+        )
 
-    users_page_1 = response1.json()['data']
-    users_page_2 = response2.json()['data']
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM users WHERE user_id = %s
+            """, (user_id))
+            user = cursor.fetchone()
 
-    all_users = users_page_1 + users_page_2
+            if user:
+                return UserDetails(**user)
 
-    for user in all_users:
-        if user['id'] == user_id:
-            return UserDetails(
-                first_name=user['first_name'],
-                last_name=user['last_name'],
-                email=user['email'],
-                profile_picture_url=user['avatar'],
-                username=user['first_name'] + user['last_name'],
-                user_id=user['id'])
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="user not found"
+                )
 
-    raise HTTPException(status_code=404, detail="user not found")
-
-
-@app.post("/register")
-async def register(register_request: RegisterRequest):
-    '''
-    Endpoint that takes a username, email, and password and updates the relevant SQL tables
-    if valid and not already taken. Returns true if successful and false if not.
-    '''
-    # Add your logic to insert a new user into the database
-    return {"registered": True or False}
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="database error."
+        )
+    finally:
+        conn.close()
 
 
 @app.get("/get_all_user_events/{user_id}", response_model=EventsCategory)
