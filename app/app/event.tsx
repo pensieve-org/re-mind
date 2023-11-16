@@ -29,7 +29,7 @@ export default function Event() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setSelectedEvent(await getEvent(selectedEvent.id));
+    setSelectedEvent(await getEvent(selectedEvent.event_id));
     setRefreshing(false);
   }, []);
 
@@ -59,7 +59,7 @@ export default function Event() {
         )}
 
         <Body style={{ paddingVertical: 20 }}>
-          Event id: {selectedEvent.id}
+          Event id: {selectedEvent.event_id}
         </Body>
         <View style={styles.imageContainer}>
           {selectedEvent.images.map((image, index) => (

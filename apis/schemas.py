@@ -43,7 +43,7 @@ class RegisterRequest(BaseModel):
 
 
 class ImageResponse(BaseModel):
-    id: int
+    image_id: int
     url: str
     tagged: Optional[str] = None
     queued: Optional[bool] = False
@@ -51,7 +51,7 @@ class ImageResponse(BaseModel):
 
 
 class EventResponse(BaseModel):
-    id: int
+    event_id: int
     start_time: datetime
     end_time: datetime
     name: str

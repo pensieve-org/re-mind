@@ -47,65 +47,6 @@ async def test():
         return "Failed to connect to MySQL Database."
 
 
-@app.get('/add_loads_of_images')
-async def add_loads_of_images():
-    conn = mysql_connection()
-    if conn is None:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to connect to MySQL Database."
-        )
-
-    try:
-        with conn.cursor() as cursor:
-            response = requests.get("https://api.unsplash.com/photos/random", params={
-                'count': 100,
-                'client_id': 'z8VmrXJoH1PlbOdhoL2vyzV1AD1C_xdxPrz4IA7N2lM'
-            })
-            response.raise_for_status()
-            image_urls = [image['urls']['regular']
-                          for image in response.json()]
-
-            def random_datetime(start_date, end_date):
-                time_between_dates = end_date - start_date
-                random_seconds = random.randint(
-                    0, int(time_between_dates.total_seconds()))
-                random_datetime = start_date + \
-                    timedelta(seconds=random_seconds)
-                return random_datetime
-
-            start_date = datetime(2023, 11, 1)
-            end_date = datetime(2023, 12, 30)
-
-            # Insert events into the database
-            for i in range(len(image_urls)):
-                cursor.execute(
-                    """
-                    INSERT INTO images (event_id, url, timestamp)
-                    VALUES (%s, %s, %s)
-                    """,
-                    ((i % 10)+1, image_urls[i],
-                     random_datetime(start_date, end_date))
-                )
-            conn.commit()
-
-            cursor.execute("SELECT * FROM images;")
-            images = cursor.fetchall()
-            print(
-                f"Successfully connected to MySQL Database. Events: {images}")
-
-            return images
-
-    except pymysql.MySQLError as e:
-        print(f"Error executing query on the MySQL Database: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="database error."
-        )
-    finally:
-        conn.close()
-
-
 @app.post("/login", response_model=UserDetails)
 async def login(login_request: LoginRequest):
     '''
@@ -355,7 +296,7 @@ async def get_all_user_events(user_id: int):
         image_urls = [image['urls']['regular'] for image in response.json()]
 
         events = [EventResponse(
-            id=i,
+            event_id=i,
             start_time=datetime.now() - timedelta(days=2*i),
             end_time=datetime.now() + timedelta(days=1) - timedelta(days=2*i),
             thumbnail=url,
@@ -389,56 +330,47 @@ async def get_all_user_events(user_id: int):
 async def get_event(event_id: int):
     '''
     Endpoint that takes an event id, and returns all the images associated from SQL.
-
-    Input:
-     event_id: int
-
-    Output:
-        [
-            {
-                image_id: int
-                url: string
-                tagged: string
-                queued: boolean
-                timestamp: timestamp
-            },
-            ...
-        ]
     '''
 
+    conn = mysql_connection()
+    if conn is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database."
+        )
+
     try:
-        response = requests.get("https://api.unsplash.com/photos/random", params={
-            'count': 11,
-            'client_id': 'z8VmrXJoH1PlbOdhoL2vyzV1AD1C_xdxPrz4IA7N2lM'
-        })
-        response.raise_for_status()
-        image_urls = [image['urls']['regular'] for image in response.json()]
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                SELECT * FROM events WHERE event_id = %s
+            """, (event_id))
+            event = cursor.fetchone()
 
-        images = []
-        for i, url in enumerate(image_urls):
-            image = ImageResponse(
-                id=i,
-                url=url,
-                timestamp=datetime.now()
-            )
-            images.append(image)
+            if event:
+                cursor.execute("""
+                    SELECT * FROM images WHERE event_id = %s
+                """, (event_id))
+                images = cursor.fetchall()
 
-        return EventResponse(
-            id=event_id,
-            name='test',
-            start_time=datetime.now(),
-            end_time=datetime.now(),
-            images=images)
+                return EventResponse(
+                    event_id=event['event_id'],
+                    name=event['name'],
+                    start_time=event['start_time'],
+                    end_time=event['end_time'],
+                    images=images
+                )
 
-    except requests.exceptions.HTTPError as errh:
-        print("Http Error:", errh)
-        raise
-    except requests.exceptions.ConnectionError as errc:
-        print("Error Connecting:", errc)
-        raise
-    except requests.exceptions.Timeout as errt:
-        print("Timeout Error:", errt)
-        raise
-    except requests.exceptions.RequestException as err:
-        print("Something went wrong with the request:", err)
-        raise
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="event not found"
+                )
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="database error."
+        )
+    finally:
+        conn.close()
