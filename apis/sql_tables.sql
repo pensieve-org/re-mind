@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS events (
 -- Create Images table
 CREATE TABLE IF NOT EXISTS images (
     image_id SERIAL PRIMARY KEY,
-    event_id BIGINT UNSIGNED,
+    event_id BIGINT UNSIGNED NOT NULL,
     url VARCHAR(255) NOT NULL,
     tagged TEXT,
     queued BOOLEAN,

@@ -1,5 +1,6 @@
 from fastapi import HTTPException, FastAPI, Depends, status
 from datetime import datetime, timedelta
+import random
 from utils import mysql_connection
 import requests
 import pymysql
@@ -44,6 +45,65 @@ async def test():
             conn.close()
     else:
         return "Failed to connect to MySQL Database."
+
+
+@app.get('/add_loads_of_images')
+async def add_loads_of_images():
+    conn = mysql_connection()
+    if conn is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database."
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            response = requests.get("https://api.unsplash.com/photos/random", params={
+                'count': 100,
+                'client_id': 'z8VmrXJoH1PlbOdhoL2vyzV1AD1C_xdxPrz4IA7N2lM'
+            })
+            response.raise_for_status()
+            image_urls = [image['urls']['regular']
+                          for image in response.json()]
+
+            def random_datetime(start_date, end_date):
+                time_between_dates = end_date - start_date
+                random_seconds = random.randint(
+                    0, int(time_between_dates.total_seconds()))
+                random_datetime = start_date + \
+                    timedelta(seconds=random_seconds)
+                return random_datetime
+
+            start_date = datetime(2023, 11, 1)
+            end_date = datetime(2023, 12, 30)
+
+            # Insert events into the database
+            for i in range(len(image_urls)):
+                cursor.execute(
+                    """
+                    INSERT INTO images (event_id, url, timestamp)
+                    VALUES (%s, %s, %s)
+                    """,
+                    ((i % 10)+1, image_urls[i],
+                     random_datetime(start_date, end_date))
+                )
+            conn.commit()
+
+            cursor.execute("SELECT * FROM images;")
+            images = cursor.fetchall()
+            print(
+                f"Successfully connected to MySQL Database. Events: {images}")
+
+            return images
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="database error."
+        )
+    finally:
+        conn.close()
 
 
 @app.post("/login", response_model=UserDetails)
