@@ -53,7 +53,7 @@ const Register = () => {
       setIsLoading(false);
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserEvents(await getAllUserEvents(userDetails.id));
+      setUserEvents(await getAllUserEvents(userDetails.user_id));
       setIsLoading(false);
       router.replace("/home");
     } catch (error) {

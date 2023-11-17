@@ -38,7 +38,7 @@ const SetUsername = () => {
       if (user) {
         setUserDetails(user);
         await AsyncStorage.setItem("@user", JSON.stringify(user));
-        setUserEvents(await getAllUserEvents(userDetails.user_id));
+        setUserEvents(await getAllUserEvents(user.user_id));
         setIsLoading(false);
         router.replace("/home");
       }

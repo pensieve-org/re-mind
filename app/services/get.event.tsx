@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_GET_EVENT, API_BASE_URL } from "../assets/constants";
 
-const getEvent = async (eventId = 10) => {
+const getEvent = async (eventId) => {
   try {
     const response = await axios.get(
       `${API_BASE_URL}${API_GET_EVENT}${eventId}`

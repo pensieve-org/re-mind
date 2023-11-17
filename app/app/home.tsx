@@ -25,7 +25,7 @@ export default function Home() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setUserEvents(await getAllUserEvents(userDetails.id));
+    setUserEvents(await getAllUserEvents(userDetails.user_id));
     setRefreshing(false);
   }, []);
 
@@ -93,13 +93,25 @@ export default function Home() {
           <Subtitle size={20}>ongoing</Subtitle>
         </View>
 
-        <EventList events={userEvents.ongoing} onPress={handleEventPress} />
+        {userEvents.ongoing.length > 0 ? (
+          <EventList events={userEvents.ongoing} onPress={handleEventPress} />
+        ) : (
+          <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+            no ongoing events
+          </Body>
+        )}
 
         <View style={{ paddingVertical: 20 }}>
           <Subtitle size={20}>past</Subtitle>
         </View>
 
-        <EventList events={userEvents.past} onPress={handleEventPress} />
+        {userEvents.past > 0 ? (
+          <EventList events={userEvents.past} onPress={handleEventPress} />
+        ) : (
+          <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+            no past events
+          </Body>
+        )}
       </ScrollView>
     </View>
   );

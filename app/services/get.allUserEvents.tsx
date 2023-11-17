@@ -1,7 +1,7 @@
 import axios from "axios";
 import { API_BASE_URL, API_GET_ALL_USER_EVENTS } from "../assets/constants";
 
-const getEvents = async (user_id = 10) => {
+const getAllUserEvents = async (user_id) => {
   try {
     const response = await axios.get(
       `${API_BASE_URL}${API_GET_ALL_USER_EVENTS}${user_id}`
@@ -17,4 +17,4 @@ const getEvents = async (user_id = 10) => {
   }
 };
 
-export default getEvents;
+export default getAllUserEvents;

@@ -16,9 +16,15 @@ export default function Page() {
   const checkLogin = async () => {
     const user = await AsyncStorage.getItem("@user");
     if (user) {
-      setUserDetails(JSON.parse(user));
-      setUserEvents(await getAllUserEvents(userDetails.id));
-      router.replace("/home");
+      try {
+        const userJSON = JSON.parse(user);
+        setUserDetails(userJSON);
+        setUserEvents(await getAllUserEvents(userJSON.user_id));
+        router.replace("/home");
+      } catch (error) {
+        console.log(error);
+        router.replace("/entry");
+      }
     } else {
       router.replace("/entry");
     }

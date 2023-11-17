@@ -80,3 +80,6 @@ docker run -p 8000:8000 fastapi:latest
 6. Reload your web app to apply the changes.
 
 For more detailed instructions, consult the PythonAnywhere documentation on deploying web apps.
+
+
+LOOK AT Quey.io for deployment to opnshift, ask ASAA
