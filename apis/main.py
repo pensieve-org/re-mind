@@ -173,7 +173,7 @@ async def register(register_request: RegisterRequest):
         conn.close()
 
 
-@app.get("/delete_user/{user_id}")
+@app.get("/delete_user/{user_id}", response_class=Response))
 async def delete_user(user_id: int):
     conn = mysql_connection()
     if not conn:
@@ -215,6 +215,8 @@ async def delete_user(user_id: int):
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail=str(e),
                 )
+                
+            return Response(status_code=200)
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")
