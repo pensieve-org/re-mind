@@ -227,6 +227,7 @@ async def delete_user(user_id: int):
         conn.close()
 
 
+# TODO: move apple login to go through firebase
 @app.post("/apple_login", response_model=UserDetails)
 async def apple_login(login_request: AppleLoginRequest):
     """
