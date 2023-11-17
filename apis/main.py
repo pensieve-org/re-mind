@@ -33,9 +33,6 @@ async def test():
                 )
                 column_types = cursor.fetchall()
 
-                cursor.execute("ALTER TABLE users DROP COLUMN password;")
-                conn.commit()
-
                 cursor.execute("SELECT * FROM users;")
                 users = cursor.fetchall()
                 print(f"Successfully connected to MySQL Database. Users: {users}")
@@ -495,3 +492,15 @@ async def get_event(event_id: int):
         )
     finally:
         conn.close()
+
+
+@app.get("/image_test")
+async def image_test():
+    # TODO: get image from firebase (https://www.youtube.com/watch?v=53qOv3nuo4c&ab_channel=CodewithMarcus)
+    return
+
+
+@app.get("/password_reset_email")
+async def password_reset_email():
+    # TODO: send password reset email with firebase API (https://www.youtube.com/watch?v=w0P2v25Fwj4&ab_channel=CodewithMarcus)
+    return
