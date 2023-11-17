@@ -1,4 +1,4 @@
-from fastapi import HTTPException, FastAPI, Depends, status
+from fastapi import HTTPException, FastAPI, Depends, status, Response
 from datetime import datetime, timedelta
 from firebase_admin import auth
 from utils import mysql_connection, firebase_connection, sign_in_with_email_and_password
@@ -173,7 +173,7 @@ async def register(register_request: RegisterRequest):
         conn.close()
 
 
-@app.get("/delete_user/{user_id}", response_class=Response))
+@app.get("/delete_user/{user_id}", response_class=Response)
 async def delete_user(user_id: int):
     conn = mysql_connection()
     if not conn:
@@ -215,7 +215,7 @@ async def delete_user(user_id: int):
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail=str(e),
                 )
-                
+
             return Response(status_code=200)
 
     except pymysql.MySQLError as e:
