@@ -105,7 +105,7 @@ export default function Home() {
           <Subtitle size={20}>past</Subtitle>
         </View>
 
-        {userEvents.past > 0 ? (
+        {userEvents.past.length > 0 ? (
           <EventList events={userEvents.past} onPress={handleEventPress} />
         ) : (
           <Body style={{ textAlign: "center", paddingVertical: 10 }}>
