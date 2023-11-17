@@ -7,3 +7,4 @@ python-dotenv  # Reads key-value pairs from a .env file and sets them as environ
 requests # Requests
 mysql-connector-python
 pymysql
+pyrebase5

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, FastAPI, Depends, status
 from datetime import datetime, timedelta
-import random
-from utils import mysql_connection
+from firebase_admin import auth
+from utils import mysql_connection, firebase_connection, sign_in_with_email_and_password
 import requests
 import pymysql
 from schemas import (
@@ -17,6 +17,11 @@ from schemas import (
 app = FastAPI()
 
 
+@app.on_event("startup")
+def startup_event():
+    firebase_connection()
+
+
 @app.get("/testsql")
 async def test():
     conn = mysql_connection()
@@ -28,10 +33,8 @@ async def test():
                 )
                 column_types = cursor.fetchall()
 
-                # cursor.execute(
-                #     "DELETE FROM users WHERE user_id = 8;"
-                # )
-                # conn.commit()
+                cursor.execute("ALTER TABLE users DROP COLUMN password;")
+                conn.commit()
 
                 cursor.execute("SELECT * FROM users;")
                 users = cursor.fetchall()
@@ -71,18 +74,20 @@ async def login(login_request: LoginRequest):
             )
             user = cursor.fetchone()
 
-            if user:
-                if user["password"] == login_request.password:
-                    return UserDetails(**user)
-                else:
-                    raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="invalid password",
-                    )
-            else:
+            if not user:
                 raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="user not found"
+                    status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
                 )
+
+            try:
+                sign_in_with_email_and_password(user["email"], login_request.password)
+            except Exception:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="invalid password",
+                )
+
+            return UserDetails(**user)
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")
@@ -95,13 +100,8 @@ async def login(login_request: LoginRequest):
 
 @app.post("/register", response_model=UserDetails)
 async def register(register_request: RegisterRequest):
-    """
-    Endpoint that takes an email address and password, and returns user details if valid
-    and raises an HTTPException otherwise.
-    """
-
     conn = mysql_connection()
-    if conn is None:
+    if not conn:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to connect to MySQL Database.",
@@ -110,9 +110,7 @@ async def register(register_request: RegisterRequest):
     try:
         with conn.cursor() as cursor:
             cursor.execute(
-                """
-                SELECT * FROM users WHERE email = %s OR username = %s
-                """,
+                "SELECT * FROM users WHERE email = %s OR username = %s",
                 (register_request.email, register_request.username),
             )
             user = cursor.fetchone()
@@ -120,42 +118,108 @@ async def register(register_request: RegisterRequest):
             if user:
                 if user["email"] == register_request.email:
                     raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="email already registered, try logging in",
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Email already registered.",
                     )
                 elif user["username"] == register_request.username:
                     raise HTTPException(
-                        status_code=status.HTTP_401_UNAUTHORIZED,
-                        detail="username already taken",
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Username already taken.",
                     )
-            else:
+
+            try:
+                user = auth.create_user(
+                    email=register_request.email, password=register_request.password
+                )
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=str(e),
+                )
+
+            try:
                 cursor.execute(
-                    """
-                    INSERT INTO users (email, username, password, first_name, last_name)
-                    VALUES (%s, %s, %s, %s, %s)
-                    """,
+                    "INSERT INTO users (email, username, first_name, last_name) VALUES (%s, %s, %s, %s)",
                     (
                         register_request.email,
                         register_request.username,
-                        register_request.password,
                         register_request.first_name,
                         register_request.last_name,
                     ),
                 )
                 conn.commit()
-                return UserDetails(
-                    user_id=cursor.lastrowid,
-                    email=register_request.email,
-                    username=register_request.username,
-                    first_name=register_request.first_name,
-                    last_name=register_request.last_name,
-                    profile_picture_url="",
+            except Exception as e:
+                auth.delete_user(user.uid)
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=str(e),
+                )
+
+            return UserDetails(
+                user_id=cursor.lastrowid,
+                email=register_request.email,
+                username=register_request.username,
+                first_name=register_request.first_name,
+                last_name=register_request.last_name,
+                profile_picture_url="",
+            )
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.get("/delete_user/{user_id}")
+async def delete_user(user_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT * FROM users WHERE user_id = %s",
+                (user_id),
+            )
+            user = cursor.fetchone()
+
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
+                )
+
+            try:
+                user = auth.get_user_by_email(user["email"])
+                auth.delete_user(user.uid)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=str(e),
+                )
+
+            try:
+                cursor.execute(
+                    "DELETE FROM users WHERE user_id = %s",
+                    (user_id),
+                )
+                conn.commit()
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=str(e),
                 )
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="database error."
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
         )
     finally:
         conn.close()

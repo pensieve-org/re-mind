@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS users (
     apple_id VARCHAR(255) UNIQUE,
     username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
-    password VARCHAR(255),
     first_name VARCHAR(255),
     last_name VARCHAR(255),
     profile_picture_url VARCHAR(255)
