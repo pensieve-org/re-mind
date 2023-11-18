@@ -25,10 +25,12 @@ def mysql_connection():
 
 
 def firebase_connection():
-    cred = credentials.Certificate(
+    creds = credentials.Certificate(
         "./re-mind-405009-firebase-adminsdk-2r0et-0ce1cad289.json"
     )
-    firebase_admin.initialize_app(cred)
+    firebase_admin.initialize_app(
+        creds, {"storageBucket": "re-mind-405009.appspot.com"}
+    )
 
 
 def sign_in_with_email_and_password(email, password):
