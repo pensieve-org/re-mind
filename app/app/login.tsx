@@ -70,6 +70,7 @@ export default function Login() {
   };
 
   const handleAppleSignIn = async () => {
+    // TODO: fix this
     setError(false);
     setIsLoading(true);
 
