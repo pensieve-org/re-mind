@@ -1,16 +1,12 @@
 from typing import List
-from fastapi import HTTPException, FastAPI, Depends, status, Response
+from fastapi import HTTPException, FastAPI, status, Response
 from datetime import datetime, timedelta
-
-# from firebase_admin import auth, storage
-from utils import mysql_connection, firebase_connection, sign_in_with_email_and_password
-import requests
+from utils import mysql_connection, firebase_connection
 import pymysql
 from schemas import (
     RegisterRequest,
     EventResponse,
     EventsCategory,
-    ImageResponse,
     UserDetails,
 )
 
@@ -45,6 +41,24 @@ async def test():
             conn.close()
     else:
         return "Failed to connect to MySQL Database."
+
+
+@app.get("/image_test")
+async def image_test():
+    # TODO: need to get the permanent image url from the front end (client side) on upload
+    # then pass that url to the backend and add it to the sql db
+    # https://chat.openai.com/share/8552c102-bc3f-46fe-a0e3-16dbaba7d902
+
+    def get_image_url(image_name: str):
+        try:
+            bucket = storage.bucket()
+            blob = bucket.blob(image_name)
+            url = blob.generate_signed_url(timedelta(seconds=300), method="GET")
+            return url
+        except Exception as e:
+            print(f"Error getting image URL: {e}")
+
+    return get_image_url("The Heavey's (134 of 566).jpeg")
 
 
 @app.get("/get_user/{firebase_id}", response_model=UserDetails)
@@ -509,21 +523,3 @@ async def get_event(event_id: int):
         )
     finally:
         conn.close()
-
-
-@app.get("/image_test")
-async def image_test():
-    # TODO: need to get the permanent image url from the front end (client side) on upload
-    # then pass that url to the backend and add it to the sql db
-    # https://chat.openai.com/share/8552c102-bc3f-46fe-a0e3-16dbaba7d902
-
-    def get_image_url(image_name: str):
-        try:
-            bucket = storage.bucket()
-            blob = bucket.blob(image_name)
-            url = blob.generate_signed_url(timedelta(seconds=300), method="GET")
-            return url
-        except Exception as e:
-            print(f"Error getting image URL: {e}")
-
-    return get_image_url("The Heavey's (134 of 566).jpeg")
