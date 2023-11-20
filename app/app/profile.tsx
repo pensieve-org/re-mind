@@ -9,17 +9,24 @@ import { AppContext } from "./_layout";
 import BackArrow from "../assets/arrow-left.svg";
 import Button from "../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signOut } from "firebase/auth";
+import auth from "../firebase.js";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
 
   const handleLogout = async () => {
-    setUserDetails({});
-    setSelectedEvent({ images: {}, id: "" });
-    setUserEvents({ ongoing: {}, past: {} });
-    await AsyncStorage.clear();
-    router.replace("/");
+    try {
+      await signOut(auth);
+      setUserDetails({});
+      setSelectedEvent({ images: {}, id: "" });
+      setUserEvents({ ongoing: {}, past: {} });
+      await AsyncStorage.clear();
+      router.replace("/");
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
 
   return (

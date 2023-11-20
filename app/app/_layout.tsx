@@ -25,7 +25,6 @@ function FontLoader({ children }) {
 
 export default function HomeLayout() {
   const [userDetails, setUserDetails] = useState({});
-  const [appleCredentials, setAppleCredentials] = useState({});
   const [userEvents, setUserEvents] = useState({ ongoing: {}, past: {} });
   const [selectedEvent, setSelectedEvent] = useState({ images: {}, id: "" });
 
@@ -39,8 +38,6 @@ export default function HomeLayout() {
           setUserEvents,
           selectedEvent,
           setSelectedEvent,
-          appleCredentials,
-          setAppleCredentials,
         }}
       >
         <Slot />

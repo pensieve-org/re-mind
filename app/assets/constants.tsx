@@ -27,13 +27,5 @@ export const EVENT_IMAGE_WIDTH =
 export const API_BASE_URL = "http://localhost:8000/";
 export const API_GET_ALL_USER_EVENTS = "get_all_user_events/";
 export const API_GET_EVENT = "get_event/";
-export const API_APPLE_LOGIN = "apple_login";
-export const API_APPLE_NEW_USER = "apple_new_user";
-export const API_LOGIN = "login";
-export const API_REGISTER = "register";
+export const API_CREATE_USER = "create_user";
 export const API_GET_USER = "get_user/";
-
-// Google login API (https://www.youtube.com/watch?v=BDeKTPQzvR4&ab_channel=CodewithBeto)
-// TODO: add web and android ids
-export const IOS_CLIENT_ID =
-  "309656006737-kcbbeulpm3kjajci0ri6cvflhc9qnkt8.apps.googleusercontent.com";
