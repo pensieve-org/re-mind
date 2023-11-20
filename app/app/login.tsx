@@ -47,7 +47,6 @@ export default function Login() {
       setUserEvents(await getAllUserEvents(user.user_id));
       setIsLoading(false);
       router.replace("/home");
-      console.log(userCredentials);
     } catch (error) {
       if (error.code === "auth/invalid-email") {
         setErrorMsg("invalid email address");
