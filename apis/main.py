@@ -341,7 +341,6 @@ async def add_user_to_event(user_id: int, event_id: int):
         conn.close()
 
 
-@app.get("/get_event_attendees/{event_id}", response_model=List[UserDetails])
 async def get_event_attendees(event_id: int):
     conn = mysql_connection()
     if not conn:
@@ -421,16 +420,16 @@ async def get_all_user_events(user_id: int):
                     )
                     images = cursor.fetchall()
 
+                    attendees = await get_event_attendees(event["event_id"])
+
                     # Construct EventResponse for each event
                     event_response = EventResponse(
                         event_id=event["event_id"],
                         name=event["name"],
                         start_time=event["start_time"],
                         end_time=event["end_time"],
-                        thumbnail=event.get(
-                            "thumbnail", ""
-                        ),  # Assuming thumbnail field can be optional
-                        attendees=[],  # Assuming you need to fetch attendees separately if needed
+                        thumbnail=event["thumbnail"],
+                        attendees=attendees,
                         images=images,
                     )
                     all_events.append(event_response)
@@ -487,12 +486,15 @@ async def get_event(event_id: int):
                 )
                 images = cursor.fetchall()
 
+                attendees = await get_event_attendees(event_id)
+
                 return EventResponse(
                     event_id=event["event_id"],
                     name=event["name"],
                     start_time=event["start_time"],
                     end_time=event["end_time"],
                     images=images,
+                    attendees=attendees,
                 )
 
             else:
