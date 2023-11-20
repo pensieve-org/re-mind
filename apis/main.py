@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import HTTPException, FastAPI, Depends, status, Response
 from datetime import datetime, timedelta
 
@@ -194,6 +195,198 @@ async def delete_user(user_id: int):
         conn.close()
 
 
+@app.post("/add_friend/{user_id}/{friend_id}", response_class=Response)
+async def add_friend(user_id: int, friend_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            # Check if both users exist
+            for id in [user_id, friend_id]:
+                cursor.execute(
+                    "SELECT * FROM users WHERE user_id = %s",
+                    (id,),
+                )
+                user = cursor.fetchone()
+
+                if not user:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"User {id} not found.",
+                    )
+
+            # Check if they are already friends
+            cursor.execute(
+                """
+                SELECT * FROM friends 
+                WHERE (user_id = %s AND friend_user_id = %s) OR (user_id = %s AND friend_user_id = %s)
+                """,
+                (user_id, friend_id, friend_id, user_id),
+            )
+            existing_friendship = cursor.fetchone()
+
+            if existing_friendship:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Users are already friends.",
+                )
+
+            # Add friend connection
+            cursor.execute(
+                "INSERT INTO friends (user_id, friend_user_id) VALUES (%s, %s), (%s, %s)",
+                (user_id, friend_id, friend_id, user_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.get("/get_friends/{user_id}", response_model=List[UserDetails])
+async def get_friends(user_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT * FROM users WHERE user_id = %s",
+                (user_id),
+            )
+            user = cursor.fetchone()
+
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Event {user_id} not found.",
+                )
+            # Get friends
+            cursor.execute(
+                """
+                SELECT * FROM users
+                INNER JOIN friends ON users.user_id = friends.friend_user_id
+                WHERE friends.user_id = %s
+                """,
+                (user_id),
+            )
+            friends = cursor.fetchall()
+
+            return [UserDetails(**friend) for friend in friends]
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.post("/add_user_to_event/{user_id}/{event_id}", response_class=Response)
+async def add_user_to_event(user_id: int, event_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            # Check if the user and event exist
+            for table, id in [("users", user_id), ("events", event_id)]:
+                cursor.execute(
+                    f"SELECT * FROM {table} WHERE {table[:-1]}_id = %s",
+                    (id),
+                )
+                item = cursor.fetchone()
+
+                if not item:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"{table[:-1].capitalize()} {id} not found.",
+                    )
+
+            # Add user to event
+            cursor.execute(
+                "INSERT INTO event_attendees (event_id, attendee_user_id) VALUES (%s, %s)",
+                (event_id, user_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.get("/get_event_attendees/{event_id}", response_model=List[UserDetails])
+async def get_event_attendees(event_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            # Check if the event exists
+            cursor.execute(
+                "SELECT * FROM events WHERE event_id = %s",
+                (event_id),
+            )
+            event = cursor.fetchone()
+
+            if not event:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Event {event_id} not found.",
+                )
+
+            # Get attendee details
+            cursor.execute(
+                """
+                SELECT * FROM users
+                INNER JOIN event_attendees ON users.user_id = event_attendees.attendee_user_id
+                WHERE event_attendees.event_id = %s
+                """,
+                (event_id,),
+            )
+            attendees = cursor.fetchall()
+
+            return [UserDetails(**attendee) for attendee in attendees]
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
 @app.get("/get_all_user_events/{user_id}", response_model=EventsCategory)
 async def get_all_user_events(user_id: int):
     conn = mysql_connection()
@@ -332,9 +525,3 @@ async def image_test():
             print(f"Error getting image URL: {e}")
 
     return get_image_url("The Heavey's (134 of 566).jpeg")
-
-
-@app.get("/password_reset_email")
-async def password_reset_email():
-    # TODO: send password reset email with firebase API (https://www.youtube.com/watch?v=w0P2v25Fwj4&ab_channel=CodewithMarcus)
-    return
