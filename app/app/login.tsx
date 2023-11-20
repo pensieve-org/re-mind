@@ -108,6 +108,10 @@ export default function Login() {
     }
   };
 
+  const handleForgotPassword = () => {
+    router.push("/forgot-password");
+  };
+
   return (
     <View style={styles.page}>
       <Header
@@ -119,13 +123,6 @@ export default function Login() {
         }
         onPressLeft={() => router.back()}
       />
-
-      {/* TODO: Maybe this is better than below? ask euan */}
-      {/* {error && (
-        <View style={styles.alertContainer}>
-          <Alert text={errorMsg} />
-        </View>
-      )} */}
 
       <View style={styles.alertContainer}>
         {error && <Alert text={errorMsg} />}
@@ -156,6 +153,10 @@ export default function Login() {
         >
           login
         </Button>
+
+        <Body style={styles.forgotPassword} onPress={handleForgotPassword}>
+          forgot password?
+        </Body>
 
         {Platform.OS === "ios" && (
           <>
@@ -207,5 +208,10 @@ const styles = StyleSheet.create({
   subtitle: {
     paddingVertical: 50,
     paddingTop: 30,
+  },
+  forgotPassword: {
+    width: "100%",
+    textAlign: "right",
+    marginVertical: 5,
   },
 });

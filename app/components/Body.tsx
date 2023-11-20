@@ -1,5 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, TextStyle } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextStyle,
+  GestureResponderEvent,
+} from "react-native";
 import theme from "../assets/theme";
 
 interface BodyProps {
@@ -9,6 +14,7 @@ interface BodyProps {
   italic?: boolean;
   adjustsFontSizeToFit?: boolean;
   numberOfLines?: number;
+  onPress?: (event: GestureResponderEvent) => void;
 }
 
 const Body: React.FC<BodyProps> = ({
@@ -18,6 +24,7 @@ const Body: React.FC<BodyProps> = ({
   italic = false,
   adjustsFontSizeToFit = false,
   numberOfLines = 1,
+  onPress,
 }) => {
   const textStyle: TextStyle = {
     fontSize: size,
@@ -29,6 +36,7 @@ const Body: React.FC<BodyProps> = ({
       style={[styles.text, textStyle, style]}
       adjustsFontSizeToFit={adjustsFontSizeToFit}
       numberOfLines={numberOfLines}
+      onPress={onPress}
     >
       {children}
     </Text>
