@@ -1,16 +1,19 @@
 import React, { useContext } from "react";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
-import Header from "../components/Header";
-import Body from "../components/Body";
-import theme from "../assets/theme";
-import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
-import { AppContext } from "./_layout";
+import Header from "../../components/Header";
+import Body from "../../components/Body";
+import theme from "../../assets/theme";
+import {
+  HORIZONTAL_PADDING,
+  HEADER_ICON_DIMENSION,
+} from "../../assets/constants";
+import { AppContext } from "../_layout";
 import BackArrow from "../assets/arrow-left.svg";
-import Button from "../components/Button";
+import Button from "../../components/Button";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signOut } from "firebase/auth";
-import auth from "../firebase.js";
+import auth from "../../firebase.js";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =

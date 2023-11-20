@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { ActivityIndicator, StyleSheet, View, Alert } from "react-native";
 import { router } from "expo-router";
-import Header from "../components/Header";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import AlertBanner from "../components/Alert";
-import theme from "../assets/theme";
-import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
-import Subtitle from "../components/Subtitle";
+import Header from "../../components/Header";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+import AlertBanner from "../../components/Alert";
+import theme from "../../assets/theme";
+import {
+  HEADER_ICON_DIMENSION,
+  HORIZONTAL_PADDING,
+} from "../../assets/constants";
+import Subtitle from "../../components/Subtitle";
 import BackArrow from "../assets/arrow-left.svg";
 import { sendPasswordResetEmail } from "firebase/auth";
-import auth from "../firebase.js";
+import auth from "../../firebase.js";
 import "react-native-get-random-values";
 
 export default function Login() {

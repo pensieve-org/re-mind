@@ -1,27 +1,30 @@
 import React, { useState, useContext } from "react";
 import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
-import Header from "../components/Header";
-import { AppContext } from "./_layout";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import getUser from "../services/get.user";
-import Alert from "../components/Alert";
-import theme from "../assets/theme";
-import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
-import Subtitle from "../components/Subtitle";
+import Header from "../../components/Header";
+import { AppContext } from "../_layout";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+import getUser from "../../services/get.user";
+import Alert from "../../components/Alert";
+import theme from "../../assets/theme";
+import {
+  HEADER_ICON_DIMENSION,
+  HORIZONTAL_PADDING,
+} from "../../assets/constants";
+import Subtitle from "../../components/Subtitle";
 import BackArrow from "../assets/arrow-left.svg";
-import getAllUserEvents from "../services/get.allUserEvents";
+import getAllUserEvents from "../../services/get.allUserEvents";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   OAuthProvider,
   signInWithEmailAndPassword,
   signInWithCredential,
 } from "firebase/auth";
-import auth from "../firebase.js";
+import auth from "../../firebase.js";
 import * as AppleAuthentication from "expo-apple-authentication";
-import Body from "../components/Body";
-import AppleSignIn from "../components/AppleSignIn";
+import Body from "../../components/Body";
+import AppleSignIn from "../../components/AppleSignIn";
 import "react-native-get-random-values";
 import { nanoid } from "nanoid";
 

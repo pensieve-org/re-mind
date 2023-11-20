@@ -1,20 +1,23 @@
 import React, { useContext, useState } from "react";
 import { StyleSheet, View, ScrollView, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
-import Header from "../components/Header";
-import Input from "../components/Input";
-import Button from "../components/Button";
-import Alert from "../components/Alert";
-import theme from "../assets/theme";
-import { HORIZONTAL_PADDING, HEADER_ICON_DIMENSION } from "../assets/constants";
-import Subtitle from "../components/Subtitle";
+import Header from "../../components/Header";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+import Alert from "../../components/Alert";
+import theme from "../../assets/theme";
+import {
+  HORIZONTAL_PADDING,
+  HEADER_ICON_DIMENSION,
+} from "../../assets/constants";
+import Subtitle from "../../components/Subtitle";
 import BackArrow from "../assets/arrow-left.svg";
-import { AppContext } from "./_layout";
+import { AppContext } from "../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import getAllUserEvents from "../services/get.allUserEvents";
-import createUser from "../services/create.user";
+import getAllUserEvents from "../../services/get.allUserEvents";
+import createUser from "../../services/create.user";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import auth from "../firebase.js";
+import auth from "../../firebase.js";
 
 // TODO: Use Formik
 const Register = () => {

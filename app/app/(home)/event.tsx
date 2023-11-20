@@ -7,20 +7,20 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { router } from "expo-router";
-import Header from "../components/Header";
-import Body from "../components/Body";
-import theme from "../assets/theme";
+import Header from "../../components/Header";
+import Body from "../../components/Body";
+import theme from "../../assets/theme";
 import {
   HORIZONTAL_PADDING,
   HEADER_ICON_DIMENSION,
   EVENT_IMAGE_WIDTH,
   IMAGE_GAP,
   ROW_IMAGES,
-} from "../assets/constants";
-import { AppContext } from "./_layout";
+} from "../../assets/constants";
+import { AppContext } from "../_layout";
 import BackArrow from "../assets/arrow-left.svg";
 import { ScrollView } from "react-native-gesture-handler";
-import getEvent from "../services/get.event";
+import getEvent from "../../services/get.event";
 
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent } =
