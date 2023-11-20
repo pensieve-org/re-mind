@@ -9,7 +9,7 @@ import {
   HEADER_ICON_DIMENSION,
 } from "../../assets/constants";
 import { AppContext } from "../_layout";
-import BackArrow from "../assets/arrow-left.svg";
+import BackArrow from "../../assets/arrow-left.svg";
 
 export default function CreateEvent() {
   const { userDetails } = useContext(AppContext);

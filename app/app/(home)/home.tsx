@@ -16,7 +16,7 @@ import {
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
 import { AppContext } from "../_layout";
-import Plus from "../assets/plus.svg";
+import Plus from "../../assets/plus.svg";
 import EventList from "../../components/EventList";
 import { ScrollView } from "react-native-gesture-handler";
 import getAllUserEvents from "../../services/get.allUserEvents";

@@ -13,7 +13,7 @@ import {
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
-import BackArrow from "../assets/arrow-left.svg";
+import BackArrow from "../../assets/arrow-left.svg";
 import getAllUserEvents from "../../services/get.allUserEvents";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {

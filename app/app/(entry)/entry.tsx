@@ -7,7 +7,7 @@ import Button from "../../components/Button";
 import theme from "../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../assets/constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Logo from "../assets/logo.svg";
+import Logo from "../../assets/logo.svg";
 
 export default function Page() {
   const insets = useSafeAreaInsets();

@@ -11,7 +11,7 @@ import {
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
-import BackArrow from "../assets/arrow-left.svg";
+import BackArrow from "../../assets/arrow-left.svg";
 import { sendPasswordResetEmail } from "firebase/auth";
 import auth from "../../firebase.js";
 import "react-native-get-random-values";

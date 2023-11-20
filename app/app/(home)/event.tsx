@@ -18,7 +18,7 @@ import {
   ROW_IMAGES,
 } from "../../assets/constants";
 import { AppContext } from "../_layout";
-import BackArrow from "../assets/arrow-left.svg";
+import BackArrow from "../../assets/arrow-left.svg";
 import { ScrollView } from "react-native-gesture-handler";
 import getEvent from "../../services/get.event";
 

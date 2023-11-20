@@ -11,7 +11,7 @@ import {
   HEADER_ICON_DIMENSION,
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
-import BackArrow from "../assets/arrow-left.svg";
+import BackArrow from "../../assets/arrow-left.svg";
 import { AppContext } from "../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import getAllUserEvents from "../../services/get.allUserEvents";
