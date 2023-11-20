@@ -22,6 +22,8 @@ import auth from "../firebase.js";
 import * as AppleAuthentication from "expo-apple-authentication";
 import Body from "../components/Body";
 import AppleSignIn from "../components/AppleSignIn";
+import "react-native-get-random-values";
+import { nanoid } from "nanoid";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -70,7 +72,6 @@ export default function Login() {
   const handleAppleSignIn = async () => {
     setError(false);
     setIsLoading(true);
-    console.log("hi");
 
     try {
       const credentials = await AppleAuthentication.signInAsync({
@@ -79,42 +80,30 @@ export default function Login() {
           AppleAuthentication.AppleAuthenticationScope.EMAIL,
         ],
       });
+      const provider = new OAuthProvider("apple.com");
+      const appleCredential = provider.credential({
+        idToken: credentials.identityToken,
+        rawNonce: nanoid(),
+      });
 
-      console.log(credentials);
-
-      // try {
-      //   const provider = new OAuthProvider("apple.com");
-      //   const { idToken, nonce } = credentials;
-      //   const appleCredential = provider.credential({
-      //     idToken: credentials.identityToken,
-      //     rawNonce: credentials.nonce,
-      //   });
-
-      //   const userCredential = await signInWithCredential(
-      //     auth,
-      //     appleCredential
-      //   );
-      //   const user = await getUser(userCredential.user.uid);
-      //   setUserDetails(user);
-      //   await AsyncStorage.setItem("@user", JSON.stringify(user));
-      //   setUserEvents(await getAllUserEvents(user.user_id));
-      //   setIsLoading(false);
-      //   router.replace("/home");
-      // } catch (error) {
-      //   if (error.code === "auth/invalid-email") {
-      //     setErrorMsg("invalid email address");
-      //   } else if (error.code === "auth/invalid-login-credentials") {
-      //     setErrorMsg("invalid login credentials");
-      //   } else {
-      //     setErrorMsg(error.code);
-      //   }
-      //   setError(true);
-      //   setIsLoading(false);
-      // }
+      const userCredential = await signInWithCredential(auth, appleCredential);
+      const user = await getUser(userCredential.user.uid);
+      setUserDetails(user);
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserEvents(await getAllUserEvents(user.user_id));
+      setIsLoading(false);
+      router.replace("/home");
     } catch (error) {
-      setErrorMsg(error.message);
+      if (error.code === "auth/invalid-email") {
+        setErrorMsg("invalid email address");
+      } else if (error.code === "auth/invalid-login-credentials") {
+        setErrorMsg("invalid login credentials");
+      } else {
+        setErrorMsg(error.message);
+      }
       setError(true);
       setIsLoading(false);
+      console.log(error.message);
     }
   };
 
