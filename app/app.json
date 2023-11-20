@@ -10,10 +10,10 @@
       "@react-native-google-signin/google-signin"
     ],
     "android": {
-      "package": "com.remind"
+      "package": "com.pensieve.remind"
     },
     "ios": {
-      "bundleIdentifier": "com.remind"
+      "bundleIdentifier": "com.pensieve.remind"
     }
   },
   "ios": {
