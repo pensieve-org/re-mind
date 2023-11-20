@@ -12,6 +12,7 @@
     "@expo-google-fonts/montserrat": "^0.2.3",
     "@expo/webpack-config": "^19.0.0",
     "@react-native-async-storage/async-storage": "1.18.2",
+    "@react-native-google-signin/google-signin": "^10.1.1",
     "@types/react": "~18.2.14",
     "axios": "^1.6.0",
     "expo": "^49.0.16",
