@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import { AppContext } from "./_layout";
@@ -13,8 +13,15 @@ import Subtitle from "../components/Subtitle";
 import BackArrow from "../assets/arrow-left.svg";
 import getAllUserEvents from "../services/get.allUserEvents";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  OAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithCredential,
+} from "firebase/auth";
 import auth from "../firebase.js";
+import * as AppleAuthentication from "expo-apple-authentication";
+import Body from "../components/Body";
+import AppleSignIn from "../components/AppleSignIn";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -55,6 +62,57 @@ export default function Login() {
       } else {
         setErrorMsg(error.code);
       }
+      setError(true);
+      setIsLoading(false);
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    setError(false);
+    setIsLoading(true);
+    console.log("hi");
+
+    try {
+      const credentials = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      console.log(credentials);
+
+      // try {
+      //   const provider = new OAuthProvider("apple.com");
+      //   const { idToken, nonce } = credentials;
+      //   const appleCredential = provider.credential({
+      //     idToken: credentials.identityToken,
+      //     rawNonce: credentials.nonce,
+      //   });
+
+      //   const userCredential = await signInWithCredential(
+      //     auth,
+      //     appleCredential
+      //   );
+      //   const user = await getUser(userCredential.user.uid);
+      //   setUserDetails(user);
+      //   await AsyncStorage.setItem("@user", JSON.stringify(user));
+      //   setUserEvents(await getAllUserEvents(user.user_id));
+      //   setIsLoading(false);
+      //   router.replace("/home");
+      // } catch (error) {
+      //   if (error.code === "auth/invalid-email") {
+      //     setErrorMsg("invalid email address");
+      //   } else if (error.code === "auth/invalid-login-credentials") {
+      //     setErrorMsg("invalid login credentials");
+      //   } else {
+      //     setErrorMsg(error.code);
+      //   }
+      //   setError(true);
+      //   setIsLoading(false);
+      // }
+    } catch (error) {
+      setErrorMsg(error.message);
       setError(true);
       setIsLoading(false);
     }
@@ -108,6 +166,22 @@ export default function Login() {
         >
           login
         </Button>
+
+        {Platform.OS === "ios" && (
+          <>
+            <Body
+              style={{
+                width: "100%",
+                textAlign: "center",
+                paddingVertical: 30,
+              }}
+            >
+              or
+            </Body>
+
+            <AppleSignIn onPress={handleAppleSignIn} />
+          </>
+        )}
 
         {isLoading && (
           <ActivityIndicator

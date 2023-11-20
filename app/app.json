@@ -13,8 +13,7 @@
       "package": "com.remind"
     },
     "ios": {
-      "bundleIdentifier": "com.remind",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "bundleIdentifier": "com.remind"
     }
   },
   "ios": {
