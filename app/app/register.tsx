@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import Input from "../components/Input";
@@ -12,7 +12,9 @@ import BackArrow from "../assets/arrow-left.svg";
 import { AppContext } from "./_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import getAllUserEvents from "../services/get.allUserEvents";
-import register from "../services/auth.register";
+import createUser from "../services/create.user";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import auth from "../firebase.js";
 
 // TODO: Use Formik
 const Register = () => {
@@ -25,7 +27,7 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const { setUserDetails, userDetails, setUserEvents } = useContext(AppContext);
+  const { setUserDetails, setUserEvents } = useContext(AppContext);
 
   const handleRegister = async () => {
     setError(false);
@@ -43,22 +45,38 @@ const Register = () => {
 
     try {
       setIsLoading(true);
-      const user = await register({
+      const userCredentials = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = await createUser({
         email: email,
         username: username,
         first_name: firstName,
         last_name: lastName,
-        password: password,
+        firebase_id: userCredentials.user.uid,
       });
-      setIsLoading(false);
+
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserEvents(await getAllUserEvents(user.user_id));
       setIsLoading(false);
       router.replace("/home");
     } catch (error) {
-      setErrorMsg(error.response.data.detail);
+      if (error.code === "auth/weak-password") {
+        setErrorMsg("password must be at least 6 characters");
+      } else if (error.code === "auth/invalid-email") {
+        setErrorMsg("invalid email address");
+      } else if (error.code === "auth/invalid-login-credentials") {
+        setErrorMsg("invalid login credentials");
+      } else if (error.code === "auth/email-already-in-use") {
+        setErrorMsg("email already in use");
+      } else {
+        setErrorMsg(error.code);
+      }
       setError(true);
+      setIsLoading(false);
     }
   };
 
@@ -125,6 +143,13 @@ const Register = () => {
         <Button fill="white" textColor="black" onPress={handleRegister}>
           register
         </Button>
+        {isLoading && (
+          <ActivityIndicator
+            style={styles.loading}
+            size={"large"}
+            color={theme.PRIMARY}
+          />
+        )}
       </ScrollView>
     </View>
   );
@@ -144,5 +169,10 @@ const styles = StyleSheet.create({
   alertContainer: {
     alignItems: "center",
     height: 80,
+  },
+  loading: {
+    width: "100%",
+    justifyContent: "center",
+    paddingTop: 30,
   },
 });

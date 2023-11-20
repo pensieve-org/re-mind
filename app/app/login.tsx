@@ -1,101 +1,110 @@
 import React, { useState, useContext } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../components/Header";
 import { AppContext } from "./_layout";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import login from "../services/auth.login";
+import getUser from "../services/get.user";
 import Alert from "../components/Alert";
 import theme from "../assets/theme";
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-  IOS_CLIENT_ID,
-} from "../assets/constants";
+import { HEADER_ICON_DIMENSION, HORIZONTAL_PADDING } from "../assets/constants";
 import Subtitle from "../components/Subtitle";
 import BackArrow from "../assets/arrow-left.svg";
 import getAllUserEvents from "../services/get.allUserEvents";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  OAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithCredential,
+} from "firebase/auth";
+import auth from "../firebase.js";
 import * as AppleAuthentication from "expo-apple-authentication";
 import Body from "../components/Body";
 import AppleSignIn from "../components/AppleSignIn";
-import appleLogin from "../services/auth.appleLogin";
-import { Platform } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// import * as WebBrowser from "expo-web-browser";
-// import * as Google from "expo-auth-session/providers/google";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// WebBrowser.maybeCompleteAuthSession();
+import "react-native-get-random-values";
+import { nanoid } from "nanoid";
 
 export default function Login() {
-  const [identifier, setIdentifier] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const { setUserDetails, userDetails, setUserEvents, setAppleCredentials } =
-    useContext(AppContext);
-
-  // const [request, response, promptAsync] = Google.useAuthRequest({
-  //   iosClientId: IOS_CLIENT_ID,
-  // });
+  const { setUserDetails, setUserEvents } = useContext(AppContext);
 
   const handleLogin = async () => {
     setError(false);
     setIsLoading(true);
 
-    if (!identifier || !password) {
-      setErrorMsg("Please enter an email/username and password");
+    if (!email || !password) {
+      setErrorMsg("Please enter an email and password");
       setError(true);
       setIsLoading(false);
       return;
     }
 
     try {
-      const user = await login(identifier, password);
+      const userCredentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = await getUser(userCredentials.user.uid);
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserEvents(await getAllUserEvents(user.user_id));
       setIsLoading(false);
       router.replace("/home");
     } catch (error) {
-      setErrorMsg(error.response.data.detail);
+      if (error.code === "auth/invalid-email") {
+        setErrorMsg("invalid email address");
+      } else if (error.code === "auth/invalid-login-credentials") {
+        setErrorMsg("invalid login credentials");
+      } else {
+        setErrorMsg(error.code);
+      }
       setError(true);
       setIsLoading(false);
     }
   };
 
   const handleAppleSignIn = async () => {
+    // TODO: fix this
     setError(false);
     setIsLoading(true);
-    const credentials = await AppleAuthentication.signInAsync({
-      requestedScopes: [
-        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-        AppleAuthentication.AppleAuthenticationScope.EMAIL,
-      ],
-    });
 
     try {
-      const user = await appleLogin(credentials);
+      const credentials = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+      const provider = new OAuthProvider("apple.com");
+      const appleCredential = provider.credential({
+        idToken: credentials.identityToken,
+        rawNonce: nanoid(),
+      });
+
+      const userCredential = await signInWithCredential(auth, appleCredential);
+      const user = await getUser(userCredential.user.uid);
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserEvents(await getAllUserEvents(user.user_id));
       setIsLoading(false);
       router.replace("/home");
     } catch (error) {
-      if (error.response.status === 404) {
-        // User not found, redirect to set username
-        setAppleCredentials(credentials);
-        setIsLoading(false);
-        router.push("/set-username");
+      if (error.code === "auth/invalid-email") {
+        setErrorMsg("invalid email address");
+      } else if (error.code === "auth/invalid-login-credentials") {
+        setErrorMsg("invalid login credentials");
       } else {
-        // Handle other errors
-        setErrorMsg(error.response.data.detail);
-        setError(true);
-        setIsLoading(false);
+        setErrorMsg(error.message);
       }
+      setError(true);
+      setIsLoading(false);
+      console.log(error.message);
     }
   };
 
@@ -128,10 +137,10 @@ export default function Login() {
         </View>
 
         <Input
-          placeholder="enter username/email"
-          label="username/email"
-          value={identifier}
-          onChangeText={setIdentifier}
+          placeholder="enter email"
+          label="email"
+          value={email}
+          onChangeText={setEmail}
         />
         <Input
           placeholder="enter password"

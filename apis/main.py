@@ -1,12 +1,11 @@
 from fastapi import HTTPException, FastAPI, Depends, status, Response
 from datetime import datetime, timedelta
-from firebase_admin import auth, storage
+
+# from firebase_admin import auth, storage
 from utils import mysql_connection, firebase_connection, sign_in_with_email_and_password
 import requests
 import pymysql
 from schemas import (
-    AppleLoginRequest,
-    LoginRequest,
     RegisterRequest,
     EventResponse,
     EventsCategory,
@@ -47,11 +46,10 @@ async def test():
         return "Failed to connect to MySQL Database."
 
 
-@app.post("/login", response_model=UserDetails)
-async def login(login_request: LoginRequest):
+@app.get("/get_user/{firebase_id}", response_model=UserDetails)
+async def get_user_details(firebase_id: str):
     """
-    Endpoint that takes an email address and password, and returns user details if valid
-    and raises an HTTPException otherwise.
+    Endpoint that takes user_id, and returns all the details about that user
     """
 
     conn = mysql_connection()
@@ -65,26 +63,19 @@ async def login(login_request: LoginRequest):
         with conn.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT * FROM users WHERE email = %s OR username = %s
+                SELECT * FROM users WHERE firebase_id = %s
                 """,
-                (login_request.identifier, login_request.identifier),
+                (firebase_id),
             )
             user = cursor.fetchone()
 
-            if not user:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
-                )
+            if user:
+                return UserDetails(**user)
 
-            try:
-                sign_in_with_email_and_password(user["email"], login_request.password)
-            except Exception:
+            else:
                 raise HTTPException(
-                    status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="invalid password",
+                    status_code=status.HTTP_404_NOT_FOUND, detail="user not found"
                 )
-
-            return UserDetails(**user)
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")
@@ -95,8 +86,8 @@ async def login(login_request: LoginRequest):
         conn.close()
 
 
-@app.post("/register", response_model=UserDetails)
-async def register(register_request: RegisterRequest):
+@app.post("/create_user", response_model=UserDetails)
+async def create_user(register_request: RegisterRequest):
     conn = mysql_connection()
     if not conn:
         raise HTTPException(
@@ -107,8 +98,12 @@ async def register(register_request: RegisterRequest):
     try:
         with conn.cursor() as cursor:
             cursor.execute(
-                "SELECT * FROM users WHERE email = %s OR username = %s",
-                (register_request.email, register_request.username),
+                "SELECT * FROM users WHERE email = %s OR username = %s OR firebase_id = %s",
+                (
+                    register_request.email,
+                    register_request.username,
+                    register_request.firebase_id,
+                ),
             )
             user = cursor.fetchone()
 
@@ -123,34 +118,23 @@ async def register(register_request: RegisterRequest):
                         status_code=status.HTTP_409_CONFLICT,
                         detail="Username already taken.",
                     )
+                elif user["firebase_id"] == register_request.firebase_id:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Firebase ID already registered.",
+                    )
 
-            try:
-                user = auth.create_user(
-                    email=register_request.email, password=register_request.password
-                )
-            except Exception as e:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=str(e),
-                )
-
-            try:
-                cursor.execute(
-                    "INSERT INTO users (email, username, first_name, last_name) VALUES (%s, %s, %s, %s)",
-                    (
-                        register_request.email,
-                        register_request.username,
-                        register_request.first_name,
-                        register_request.last_name,
-                    ),
-                )
-                conn.commit()
-            except Exception as e:
-                auth.delete_user(user.uid)
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=str(e),
-                )
+            cursor.execute(
+                "INSERT INTO users (email, username, first_name, last_name, firebase_id) VALUES (%s, %s, %s, %s, %s)",
+                (
+                    register_request.email,
+                    register_request.username,
+                    register_request.first_name,
+                    register_request.last_name,
+                    register_request.firebase_id,
+                ),
+            )
+            conn.commit()
 
             return UserDetails(
                 user_id=cursor.lastrowid,
@@ -159,6 +143,7 @@ async def register(register_request: RegisterRequest):
                 first_name=register_request.first_name,
                 last_name=register_request.last_name,
                 profile_picture_url="",
+                firebase_id=register_request.firebase_id,
             )
 
     except pymysql.MySQLError as e:
@@ -192,26 +177,11 @@ async def delete_user(user_id: int):
                     status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
                 )
 
-            try:
-                user = auth.get_user_by_email(user["email"])
-                auth.delete_user(user.uid)
-            except Exception as e:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=str(e),
-                )
-
-            try:
-                cursor.execute(
-                    "DELETE FROM users WHERE user_id = %s",
-                    (user_id),
-                )
-                conn.commit()
-            except Exception as e:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=str(e),
-                )
+            cursor.execute(
+                "DELETE FROM users WHERE user_id = %s",
+                (user_id),
+            )
+            conn.commit()
 
             return Response(status_code=200)
 
@@ -219,154 +189,6 @@ async def delete_user(user_id: int):
         print(f"Error executing query on the MySQL Database: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
-        )
-    finally:
-        conn.close()
-
-
-# TODO: move apple login to go through firebase
-@app.post("/apple_login", response_model=UserDetails)
-async def apple_login(login_request: AppleLoginRequest):
-    """
-    Endpoint that takes an apple login credential, checks if an account exists, if so returns the user
-    else returns an HTTP exception
-    """
-    print(login_request)
-
-    conn = mysql_connection()
-    if conn is None:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to connect to MySQL Database.",
-        )
-
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT * FROM users WHERE apple_id = %s OR email = %s
-                """,
-                (login_request.user, login_request.email),
-            )
-            user = cursor.fetchone()
-
-            if user:
-                if user["apple_id"] != login_request.user:
-                    cursor.execute(
-                        """
-                        UPDATE users SET apple_id = %s WHERE email = %s
-                        """,
-                        (login_request.user, login_request.email),
-                    )
-                    conn.commit()
-                    user["apple_id"] = login_request.user
-
-                return UserDetails(**user)
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="User not found."
-                )
-
-    except pymysql.MySQLError as e:
-        print(f"Error executing query on the MySQL Database: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="database error."
-        )
-    finally:
-        conn.close()
-
-
-@app.post("/apple_new_user", response_model=UserDetails)
-async def apple_new_user(login_request: AppleLoginRequest, username: str):
-    """
-    returns none if username taken, otherwise adds new user and returns user details
-    """
-    conn = mysql_connection()
-    if conn is None:
-        return "Failed to connect to MySQL Database."
-
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT * FROM users WHERE username = %s
-                """,
-                (username),
-            )
-            user = cursor.fetchone()
-
-            if user:
-                # Username already taken
-                raise HTTPException(status_code=400, detail="username already taken")
-            else:
-                cursor.execute(
-                    """
-                    INSERT INTO users (apple_id, username, email, first_name, last_name, profile_picture_url)
-                    VALUES (%s, %s, %s, %s, %s, %s)
-                    """,
-                    (
-                        login_request.user,
-                        username,
-                        login_request.email,
-                        login_request.fullName.givenName,
-                        login_request.fullName.familyName,
-                        None,
-                    ),
-                )
-                conn.commit()
-
-                return UserDetails(
-                    user_id=cursor.lastrowid,
-                    apple_id=login_request.user,
-                    username=username,
-                    email=login_request.email,
-                    first_name=login_request.fullName.givenName,
-                    last_name=login_request.fullName.familyName,
-                    profile_picture_url="",
-                )
-
-    except pymysql.MySQLError as e:
-        print(f"Error executing query on the MySQL Database: {e}")
-        raise HTTPException(status_code=500, detail="failed to create new user")
-    finally:
-        conn.close()
-
-
-@app.get("/get_user/{user_id}", response_model=UserDetails)
-async def get_user_details(user_id: int):
-    """
-    Endpoint that takes user_id, and returns all the details about that user
-    """
-
-    conn = mysql_connection()
-    if conn is None:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to connect to MySQL Database.",
-        )
-
-    try:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT * FROM users WHERE user_id = %s
-                """,
-                (user_id),
-            )
-            user = cursor.fetchone()
-
-            if user:
-                return UserDetails(**user)
-
-            else:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND, detail="user not found"
-                )
-
-    except pymysql.MySQLError as e:
-        print(f"Error executing query on the MySQL Database: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="database error."
         )
     finally:
         conn.close()

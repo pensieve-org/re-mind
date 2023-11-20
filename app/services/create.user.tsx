@@ -1,18 +1,18 @@
 import axios from "axios";
-import { API_BASE_URL, API_REGISTER } from "../assets/constants";
+import { API_BASE_URL, API_CREATE_USER } from "../assets/constants";
 
 interface RegisterRequest {
   username: string;
   email: string;
   first_name: string;
   last_name: string;
-  password: string;
+  firebase_id: string;
 }
 
-const register = async (registerRequest: RegisterRequest) => {
+const createUser = async (registerRequest: RegisterRequest) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}${API_REGISTER}`,
+      `${API_BASE_URL}${API_CREATE_USER}`,
       registerRequest
     );
     const user = response.data;
@@ -23,4 +23,4 @@ const register = async (registerRequest: RegisterRequest) => {
   }
 };
 
-export default register;
+export default createUser;
