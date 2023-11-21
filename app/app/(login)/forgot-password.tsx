@@ -1,26 +1,38 @@
 import React, { useState } from "react";
-import { ActivityIndicator, StyleSheet, View, Alert } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { router } from "expo-router";
+import { View as AnimatedView } from "react-native-animatable";
+
+import AlertBanner from "../../components/Alert";
+import BackArrow from "../../assets/arrow-left.svg";
+import Button from "../../components/Button";
 import Header from "../../components/Header";
 import Input from "../../components/Input";
-import Button from "../../components/Button";
-import AlertBanner from "../../components/Alert";
+import Subtitle from "../../components/Subtitle";
+
+import auth from "../../firebase.js";
 import theme from "../../assets/theme";
+
 import {
+  ANIMATION_DURATION,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
-import Subtitle from "../../components/Subtitle";
-import BackArrow from "../../assets/arrow-left.svg";
-import { sendPasswordResetEmail } from "firebase/auth";
-import auth from "../../firebase.js";
-import "react-native-get-random-values";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [animation, setAnimation] = useState("fadeIn");
+
+  const navigateBack = () => {
+    setAnimation("fadeOut");
+    setTimeout(() => {
+      router.back();
+    }, ANIMATION_DURATION);
+  };
 
   const handleResetPassword = async () => {
     setError(false);
@@ -31,7 +43,7 @@ export default function Login() {
       Alert.alert(
         "Password Reset Link Sent",
         "A link to reset your password has been sent to provided email",
-        [{ text: "OK", onPress: () => router.replace("/login") }]
+        [{ text: "OK", onPress: navigateBack }]
       );
     } catch (error) {
       if (error.code === "auth/invalid-email") {
@@ -48,47 +60,53 @@ export default function Login() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
+      <AnimatedView
+        animation={animation}
+        duration={ANIMATION_DURATION}
+        style={styles.page}
+      >
+        <Header
+          imageLeft={
+            <BackArrow
+              height={HEADER_ICON_DIMENSION}
+              width={HEADER_ICON_DIMENSION}
+            />
+          }
+          onPressLeft={navigateBack}
+        />
 
-      <View style={styles.alertContainer}>
-        {error && <AlertBanner text={errorMsg} />}
-      </View>
-
-      <View style={styles.container}>
-        <View style={styles.subtitle}>
-          <Subtitle>reset password</Subtitle>
+        <View style={styles.alertContainer}>
+          {error && <AlertBanner text={errorMsg} />}
         </View>
 
-        <Input
-          placeholder="enter email"
-          label="email"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Button
-          fill={theme.TEXT}
-          textColor={theme.BACKGROUND}
-          onPress={handleResetPassword}
-        >
-          send password reset link
-        </Button>
+        <View style={styles.container}>
+          <View style={styles.subtitle}>
+            <Subtitle>reset password</Subtitle>
+          </View>
 
-        {isLoading && (
-          <ActivityIndicator
-            style={styles.loading}
-            size={"large"}
-            color={theme.PRIMARY}
+          <Input
+            placeholder="enter email"
+            label="email"
+            value={email}
+            onChangeText={setEmail}
           />
-        )}
-      </View>
+          <Button
+            fill={theme.TEXT}
+            textColor={theme.BACKGROUND}
+            onPress={handleResetPassword}
+          >
+            send password reset link
+          </Button>
+
+          {isLoading && (
+            <ActivityIndicator
+              style={styles.loading}
+              size={"large"}
+              color={theme.PRIMARY}
+            />
+          )}
+        </View>
+      </AnimatedView>
     </View>
   );
 }

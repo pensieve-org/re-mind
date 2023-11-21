@@ -4,7 +4,7 @@ export const HEADER_ICON_DIMENSION = 30;
 export const CORNER_RADIUS = 10;
 export const COMPONENT_HEIGHT = 55;
 
-export const ANIMATION_DURATION = 600;
+export const ANIMATION_DURATION = 400;
 
 // For Home Screen
 export const ICON_GAP = 30;

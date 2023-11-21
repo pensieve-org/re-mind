@@ -1,31 +1,36 @@
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { router } from "expo-router";
-import Header from "../../components/Header";
-import { AppContext } from "../_layout";
-import Input from "../../components/Input";
-import Button from "../../components/Button";
-import getUser from "../../services/get.user";
-import Alert from "../../components/Alert";
-import theme from "../../assets/theme";
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-  ANIMATION_DURATION,
-} from "../../assets/constants";
-import Subtitle from "../../components/Subtitle";
-import BackArrow from "../../assets/arrow-left.svg";
-import getAllUserEvents from "../../services/get.allUserEvents";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   OAuthProvider,
   signInWithEmailAndPassword,
   signInWithCredential,
 } from "firebase/auth";
-import auth from "../../firebase.js";
-import Body from "../../components/Body";
+import { router } from "expo-router";
 import "react-native-get-random-values";
 import { View as AnimatedView } from "react-native-animatable";
+
+import Alert from "../../components/Alert";
+import BackArrow from "../../assets/arrow-left.svg";
+import Body from "../../components/Body";
+import Button from "../../components/Button";
+import Header from "../../components/Header";
+import Input from "../../components/Input";
+import Subtitle from "../../components/Subtitle";
+
+import { AppContext } from "../_layout";
+
+import auth from "../../firebase.js";
+import getAllUserEvents from "../../services/get.allUserEvents";
+import getUser from "../../services/get.user";
+
+import theme from "../../assets/theme";
+
+import {
+  ANIMATION_DURATION,
+  HEADER_ICON_DIMENSION,
+  HORIZONTAL_PADDING,
+} from "../../assets/constants";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -40,6 +45,13 @@ export default function Login() {
     setAnimation("fadeOut");
     setTimeout(() => {
       replace ? router.replace(route) : router.push(route);
+    }, ANIMATION_DURATION);
+  };
+
+  const navigateBack = () => {
+    setAnimation("fadeOut");
+    setTimeout(() => {
+      router.back();
     }, ANIMATION_DURATION);
   };
 
@@ -93,9 +105,8 @@ export default function Login() {
               width={HEADER_ICON_DIMENSION}
             />
           }
-          onPressLeft={() => router.back()}
+          onPressLeft={navigateBack}
         />
-
         <View style={styles.alertContainer}>
           {error && <Alert text={errorMsg} />}
         </View>

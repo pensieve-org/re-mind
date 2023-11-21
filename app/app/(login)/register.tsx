@@ -9,6 +9,7 @@ import theme from "../../assets/theme";
 import {
   HORIZONTAL_PADDING,
   HEADER_ICON_DIMENSION,
+  ANIMATION_DURATION,
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -18,6 +19,7 @@ import getAllUserEvents from "../../services/get.allUserEvents";
 import createUser from "../../services/create.user";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../firebase.js";
+import { View as AnimatedView } from "react-native-animatable";
 
 // TODO: Use Formik
 const Register = () => {
@@ -31,6 +33,22 @@ const Register = () => {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const { setUserDetails, setUserEvents } = useContext(AppContext);
+
+  const [animation, setAnimation] = useState("fadeIn");
+
+  const navigate = (route) => {
+    setAnimation("fadeOut");
+    setTimeout(() => {
+      router.replace(route);
+    }, ANIMATION_DURATION);
+  };
+
+  const navigateBack = () => {
+    setAnimation("fadeOut");
+    setTimeout(() => {
+      router.back();
+    }, ANIMATION_DURATION);
+  };
 
   const handleRegister = async () => {
     setError(false);
@@ -65,7 +83,7 @@ const Register = () => {
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserEvents(await getAllUserEvents(user.user_id));
       setIsLoading(false);
-      router.replace("/home");
+      navigate("/home");
     } catch (error) {
       if (error.code === "auth/weak-password") {
         setErrorMsg("password must be at least 6 characters");
@@ -85,75 +103,81 @@ const Register = () => {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
+      <AnimatedView
+        animation={animation}
+        duration={ANIMATION_DURATION}
+        style={styles.page}
+      >
+        <Header
+          imageLeft={
+            <BackArrow
+              height={HEADER_ICON_DIMENSION}
+              width={HEADER_ICON_DIMENSION}
+            />
+          }
+          onPressLeft={navigateBack}
+        />
 
-      {error && (
-        <View style={styles.alertContainer}>
-          <Alert text={errorMsg} />
-        </View>
-      )}
-
-      <ScrollView style={styles.container}>
-        <View style={{ paddingVertical: 50, paddingTop: 30 }}>
-          <Subtitle>register</Subtitle>
-        </View>
-        <Input
-          placeholder="enter first name"
-          label="first name"
-          value={firstName}
-          onChangeText={setFirstName}
-        />
-        <Input
-          placeholder="enter last name"
-          label="last name"
-          value={lastName}
-          onChangeText={setLastName}
-        />
-        <Input
-          placeholder="enter username"
-          label="username"
-          value={username}
-          onChangeText={setUsername}
-        />
-        <Input
-          placeholder="enter email"
-          label="email"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Input
-          placeholder="enter password"
-          label="password"
-          type="password"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <Input
-          placeholder="enter password"
-          label="confirm password"
-          type="password"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
-        <Button fill="white" textColor="black" onPress={handleRegister}>
-          register
-        </Button>
-        {isLoading && (
-          <ActivityIndicator
-            style={styles.loading}
-            size={"large"}
-            color={theme.PRIMARY}
-          />
+        {error && (
+          <View style={styles.alertContainer}>
+            <Alert text={errorMsg} />
+          </View>
         )}
-      </ScrollView>
+
+        <ScrollView style={styles.container}>
+          <View style={{ paddingVertical: 50, paddingTop: 30 }}>
+            <Subtitle>register</Subtitle>
+          </View>
+          <Input
+            placeholder="enter first name"
+            label="first name"
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+          <Input
+            placeholder="enter last name"
+            label="last name"
+            value={lastName}
+            onChangeText={setLastName}
+          />
+          <Input
+            placeholder="enter username"
+            label="username"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <Input
+            placeholder="enter email"
+            label="email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <Input
+            placeholder="enter password"
+            label="password"
+            type="password"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Input
+            placeholder="enter password"
+            label="confirm password"
+            type="password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+          />
+          <Button fill="white" textColor="black" onPress={handleRegister}>
+            register
+          </Button>
+          {isLoading && (
+            <ActivityIndicator
+              style={styles.loading}
+              size={"large"}
+              color={theme.PRIMARY}
+            />
+          )}
+        </ScrollView>
+      </AnimatedView>
     </View>
   );
 };

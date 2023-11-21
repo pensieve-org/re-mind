@@ -1,15 +1,18 @@
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import Title from "../../components/Title";
+import { router } from "expo-router";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View as AnimatedView } from "react-native-animatable";
+
 import Body from "../../components/Body";
 import Button from "../../components/Button";
-import theme from "../../assets/theme";
-import { HORIZONTAL_PADDING, ANIMATION_DURATION } from "../../assets/constants";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Title from "../../components/Title";
+
 import Logo from "../../assets/logo.svg";
-import { View as AnimatedView } from "react-native-animatable";
-import React, { useState, useEffect } from "react";
+import theme from "../../assets/theme";
+
+import { ANIMATION_DURATION, HORIZONTAL_PADDING } from "../../assets/constants";
 
 export default function Page() {
   const insets = useSafeAreaInsets();
