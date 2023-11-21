@@ -210,8 +210,8 @@ async def delete_user(user_id: int):
         conn.close()
 
 
-@app.post("/add_friend/{user_id}/{friend_id}", response_class=Response)
-async def add_friend(user_id: int, friend_id: int):
+@app.post("/add_friend/{user_id}/{friend_username}", response_class=Response)
+async def add_friend(user_id: int, friend_username: str):
     conn = mysql_connection()
     if not conn:
         raise HTTPException(
@@ -221,19 +221,31 @@ async def add_friend(user_id: int, friend_id: int):
 
     try:
         with conn.cursor() as cursor:
-            # Check if both users exist
-            for id in [user_id, friend_id]:
-                cursor.execute(
-                    "SELECT * FROM users WHERE user_id = %s",
-                    (id,),
-                )
-                user = cursor.fetchone()
+            # Check if user exists
+            cursor.execute(
+                "SELECT * FROM users WHERE user_id = %s",
+                (user_id,),
+            )
+            user = cursor.fetchone()
 
-                if not user:
-                    raise HTTPException(
-                        status_code=status.HTTP_404_NOT_FOUND,
-                        detail=f"User {id} not found.",
-                    )
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {user_id} not found.",
+                )
+
+            # Check if friend exists
+            cursor.execute(
+                "SELECT * FROM users WHERE username = %s",
+                (friend_username,),
+            )
+            friend = cursor.fetchone()
+
+            if not friend:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {friend_username} not found.",
+                )
 
             # Check if they are already friends
             cursor.execute(
@@ -241,7 +253,7 @@ async def add_friend(user_id: int, friend_id: int):
                 SELECT * FROM friends 
                 WHERE (user_id = %s AND friend_user_id = %s) OR (user_id = %s AND friend_user_id = %s)
                 """,
-                (user_id, friend_id, friend_id, user_id),
+                (user_id, friend["user_id"], friend["user_id"], user_id),
             )
             existing_friendship = cursor.fetchone()
 
@@ -254,6 +266,50 @@ async def add_friend(user_id: int, friend_id: int):
             # Add friend connection
             cursor.execute(
                 "INSERT INTO friends (user_id, friend_user_id) VALUES (%s, %s), (%s, %s)",
+                (user_id, friend["user_id"], friend["user_id"], user_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.post("/remove_friend/{user_id}/{friend_id}", response_class=Response)
+async def add_friend(user_id: int, friend_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT * FROM friends 
+                WHERE (user_id = %s AND friend_user_id = %s) OR (user_id = %s AND friend_user_id = %s)
+                """,
+                (user_id, friend_id, friend_id, user_id),
+            )
+            existing_friendship = cursor.fetchone()
+
+            if not existing_friendship:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Users are not friends.",
+                )
+
+            # Add friend connection
+            cursor.execute(
+                "DELETE FROM friends WHERE (user_id = %s AND friend_user_id = %s) OR (user_id = %s AND friend_user_id = %s)",
                 (user_id, friend_id, friend_id, user_id),
             )
             conn.commit()

@@ -7,6 +7,7 @@ import Plus from "/Users/jamesheavey/Documents/GitHub/re-mind/app/assets/plus.sv
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getRandomColor } from "../utils";
 
+// TODO: Remove the initials avatar when we add default profile image
 const InitialsAvatar = ({ initials }) => (
   <View style={[styles.imageContainer, { backgroundColor: getRandomColor() }]}>
     <Body style={styles.initialsText}>{initials}</Body>
