@@ -93,20 +93,20 @@ export default function Login() {
 
   return (
     <View style={styles.page}>
+      <Header
+        imageLeft={
+          <BackArrow
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+          />
+        }
+        onPressLeft={navigateBack}
+      />
       <AnimatedView
         animation={animation}
         duration={ANIMATION_DURATION}
         style={styles.page}
       >
-        <Header
-          imageLeft={
-            <BackArrow
-              height={HEADER_ICON_DIMENSION}
-              width={HEADER_ICON_DIMENSION}
-            />
-          }
-          onPressLeft={navigateBack}
-        />
         <View style={styles.alertContainer}>
           {error && <Alert text={errorMsg} />}
         </View>

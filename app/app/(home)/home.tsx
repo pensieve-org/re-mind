@@ -53,50 +53,47 @@ export default function Home() {
 
   return (
     <View style={styles.page}>
+      <Header
+        imageLeft={
+          <View
+            style={{
+              width: HEADER_ICON_DIMENSION,
+              height: HEADER_ICON_DIMENSION,
+              borderRadius: 100,
+              backgroundColor: userDetails.profile_picture_url
+                ? "transparent"
+                : "blue",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {userDetails.profile_picture_url ? (
+              <Image
+                source={{ uri: userDetails.profile_picture_url }}
+                style={{
+                  width: HEADER_ICON_DIMENSION,
+                  height: HEADER_ICON_DIMENSION,
+                  borderRadius: 100,
+                }}
+              />
+            ) : (
+              <Body style={{ textAlign: "center" }}>
+                {userDetails.first_name[0]}
+              </Body>
+            )}
+          </View>
+        }
+        onPressLeft={() => navigate("/profile")}
+        imageRight={
+          <Plus height={HEADER_ICON_DIMENSION} width={HEADER_ICON_DIMENSION} />
+        }
+        onPressRight={() => navigate("/create-event")}
+      />
       <AnimatedView
         animation={animation}
         duration={ANIMATION_DURATION}
         style={styles.page}
       >
-        <Header
-          imageLeft={
-            <View
-              style={{
-                width: HEADER_ICON_DIMENSION,
-                height: HEADER_ICON_DIMENSION,
-                borderRadius: 100,
-                backgroundColor: userDetails.profile_picture_url
-                  ? "transparent"
-                  : "blue",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {userDetails.profile_picture_url ? (
-                <Image
-                  source={{ uri: userDetails.profile_picture_url }}
-                  style={{
-                    width: HEADER_ICON_DIMENSION,
-                    height: HEADER_ICON_DIMENSION,
-                    borderRadius: 100,
-                  }}
-                />
-              ) : (
-                <Body style={{ textAlign: "center" }}>
-                  {userDetails.first_name[0]}
-                </Body>
-              )}
-            </View>
-          }
-          onPressLeft={() => navigate("/profile")}
-          imageRight={
-            <Plus
-              height={HEADER_ICON_DIMENSION}
-              width={HEADER_ICON_DIMENSION}
-            />
-          }
-          onPressRight={() => navigate("/create-event")}
-        />
         <ScrollView
           style={styles.container}
           refreshControl={

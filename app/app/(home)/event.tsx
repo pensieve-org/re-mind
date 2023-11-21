@@ -45,20 +45,20 @@ export default function Event() {
 
   return (
     <View style={styles.page}>
+      <Header
+        imageLeft={
+          <BackArrow
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+          />
+        }
+        onPressLeft={navigateBack}
+      />
       <AnimatedView
         animation={animation}
         duration={ANIMATION_DURATION}
         style={styles.page}
       >
-        <Header
-          imageLeft={
-            <BackArrow
-              height={HEADER_ICON_DIMENSION}
-              width={HEADER_ICON_DIMENSION}
-            />
-          }
-          onPressLeft={navigateBack}
-        />
         <ScrollView
           style={styles.container}
           refreshControl={
