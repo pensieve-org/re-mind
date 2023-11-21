@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../../components/Header";
 import Body from "../../components/Body";
@@ -73,8 +73,20 @@ export default function Profile() {
 
   const handleRemoveFriend = async (friend) => {
     try {
-      await removeFriend(userDetails.user_id, friend.user_id);
-      fetchFriends();
+      Alert.alert(
+        "Confirmation",
+        `Are you sure you want to remove '${friend.username}' as a friend?`,
+        [
+          { text: "No" },
+          {
+            text: "Yes",
+            onPress: async () => {
+              await removeFriend(userDetails.user_id, friend.user_id);
+              fetchFriends();
+            },
+          },
+        ]
+      );
     } catch (error) {
       alert(error.response.data.detail);
     }
