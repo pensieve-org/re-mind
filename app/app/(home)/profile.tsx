@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../../components/Header";
@@ -18,11 +18,17 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signOut } from "firebase/auth";
 import auth from "../../firebase.js";
 import { View as AnimatedView } from "react-native-animatable";
+import FriendList from "../../components/FriendList";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import getFriends from "../../services/get.friends";
 
+// TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
+  const [friends, setFriends] = useState([]);
+  const insets = useSafeAreaInsets();
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
@@ -51,8 +57,30 @@ export default function Profile() {
     }
   };
 
+  const handleUnfriend = async (friend) => {
+    try {
+      // await unfriend(friend.user_id); // TODO: add this api call
+      fetchFriends();
+    } catch (error) {
+      console.error("Error removing friend: ", error);
+    }
+  };
+
+  const fetchFriends = async () => {
+    try {
+      setFriends(await getFriends(userDetails.user_id));
+      // Do something with friends...
+    } catch (error) {
+      console.error("Error fetching friends: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFriends();
+  }, []);
+
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { paddingBottom: insets.bottom }]}>
       <Header
         imageLeft={
           <BackArrow
@@ -74,6 +102,15 @@ export default function Profile() {
           <Body style={{ paddingVertical: 20 }}>
             username: {userDetails.username}
           </Body>
+
+          {/* TODO: add a input to search for users by email or username to add
+          as friends adding a friend should also refresh the friends list */}
+
+          <View style={{ paddingVertical: 10, flex: 1 }}>
+            <Body size={14}>MY FRIENDS ({friends.length})</Body>
+
+            <FriendList friends={friends} onPress={handleUnfriend} />
+          </View>
           <Button
             fill={theme.TEXT}
             textColor={theme.BACKGROUND}

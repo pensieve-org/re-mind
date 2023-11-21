@@ -27,9 +27,13 @@ export const EVENT_IMAGE_WIDTH =
     (ROW_IMAGES - 1) * IMAGE_GAP) /
   ROW_IMAGES;
 
+// Profile Screen
+export const PROFILE_ICON_DIAMETER = 80;
+
 // TODO: replace localhost with computer ip (127.0.0.1), should work with expo app then
 export const API_BASE_URL = "http://localhost:8000/";
 export const API_GET_ALL_USER_EVENTS = "get_all_user_events/";
 export const API_GET_EVENT = "get_event/";
 export const API_CREATE_USER = "create_user";
 export const API_GET_USER = "get_user/";
+export const API_GET_FRIENDS = "get_friends/";

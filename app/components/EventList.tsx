@@ -10,7 +10,7 @@ import {
 
 interface Props {
   events: any[];
-  onPress?: (eventId) => void;
+  onPress?: (event) => void;
 }
 
 const EventList: React.FC<Props> = ({ events, onPress }) => {
