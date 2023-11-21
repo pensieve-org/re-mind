@@ -112,21 +112,24 @@ export default function Profile() {
           <Body style={{ paddingVertical: 20 }}>
             Hello, {userDetails.first_name}
           </Body>
-          <Body style={{ paddingVertical: 20 }}>
-            username: {userDetails.username}
-          </Body>
 
           {/* TODO: add a input to search for users by email or username to add
           as friends adding a friend should also refresh the friends list */}
-          <Input
-            placeholder="search for friends"
-            label="friend username"
-            value={friendUsername}
-            onChangeText={setFriendUsername}
-          />
-          <Body style={{ textAlign: "right" }} onPress={handleAddFriend}>
-            ADD
-          </Body>
+          <View style={{ paddingVertical: 10, paddingBottom: 20 }}>
+            <Input
+              placeholder="friend's username"
+              label="add friends"
+              value={friendUsername}
+              onChangeText={setFriendUsername}
+            />
+            <Body
+              style={{ textAlign: "right", paddingRight: 20 }}
+              onPress={handleAddFriend}
+              size={14}
+            >
+              ADD
+            </Body>
+          </View>
 
           <View style={{ paddingVertical: 10, flex: 1 }}>
             <Body size={14}>MY FRIENDS ({friends.length})</Body>
