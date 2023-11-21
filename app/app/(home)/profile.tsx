@@ -113,8 +113,8 @@ export default function Profile() {
             Hello, {userDetails.first_name}
           </Body>
 
-          {/* TODO: add a input to search for users by email or username to add
-          as friends adding a friend should also refresh the friends list */}
+          {/* TODO: update this to show the 5 most similar names in the database. 
+          Allow user to select by choosing from list */}
           <View style={{ paddingVertical: 10, paddingBottom: 20 }}>
             <Input
               placeholder="friend's username"
