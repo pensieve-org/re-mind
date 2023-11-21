@@ -39,3 +39,4 @@ export const API_GET_USER = "get_user/";
 export const API_GET_FRIENDS = "get_friends/";
 export const API_ADD_FRIEND = "add_friend/";
 export const API_REMOVE_FRIEND = "remove_friend/";
+export const API_CHECK_USER = "check_user";

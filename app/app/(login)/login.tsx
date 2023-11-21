@@ -86,7 +86,7 @@ export default function Login() {
       } else if (error.code === "auth/invalid-login-credentials") {
         setErrorMsg("invalid login credentials");
       } else {
-        setErrorMsg(error.code);
+        setErrorMsg(error.response.data.detail);
       }
       setError(true);
       setIsLoading(false);

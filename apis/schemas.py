@@ -23,6 +23,13 @@ class RegisterRequest(BaseModel):
     last_name: str
 
 
+class ValidateUserRequest(BaseModel):
+    username: str
+    email: str
+    first_name: str
+    last_name: str
+
+
 class ImageResponse(BaseModel):
     image_id: int
     url: str

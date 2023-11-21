@@ -9,6 +9,7 @@ from schemas import (
     EventResponse,
     EventsCategory,
     UserDetails,
+    ValidateUserRequest,
 )
 
 app = FastAPI()
@@ -102,6 +103,49 @@ async def get_user_details(firebase_id: str):
         conn.close()
 
 
+@app.post("/check_user", response_class=Response)
+async def check_user(validate_user_request: ValidateUserRequest):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT * FROM users WHERE email = %s OR username = %s",
+                (
+                    validate_user_request.email,
+                    validate_user_request.username,
+                ),
+            )
+            user = cursor.fetchone()
+
+            if user:
+                if user["email"] == validate_user_request.email:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Email already registered.",
+                    )
+                elif user["username"] == validate_user_request.username:
+                    raise HTTPException(
+                        status_code=status.HTTP_409_CONFLICT,
+                        detail="Username already taken.",
+                    )
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
 @app.post("/create_user", response_model=UserDetails)
 async def create_user(register_request: RegisterRequest):
     conn = mysql_connection()
@@ -113,33 +157,6 @@ async def create_user(register_request: RegisterRequest):
 
     try:
         with conn.cursor() as cursor:
-            cursor.execute(
-                "SELECT * FROM users WHERE email = %s OR username = %s OR firebase_id = %s",
-                (
-                    register_request.email,
-                    register_request.username,
-                    register_request.firebase_id,
-                ),
-            )
-            user = cursor.fetchone()
-
-            if user:
-                if user["email"] == register_request.email:
-                    raise HTTPException(
-                        status_code=status.HTTP_409_CONFLICT,
-                        detail="Email already registered.",
-                    )
-                elif user["username"] == register_request.username:
-                    raise HTTPException(
-                        status_code=status.HTTP_409_CONFLICT,
-                        detail="Username already taken.",
-                    )
-                elif user["firebase_id"] == register_request.firebase_id:
-                    raise HTTPException(
-                        status_code=status.HTTP_409_CONFLICT,
-                        detail="Firebase ID already registered.",
-                    )
-
             cursor.execute(
                 "INSERT INTO users (email, username, first_name, last_name, firebase_id) VALUES (%s, %s, %s, %s, %s)",
                 (
@@ -212,6 +229,9 @@ async def delete_user(user_id: int):
 
 @app.post("/add_friend/{user_id}/{friend_username}", response_class=Response)
 async def add_friend(user_id: int, friend_username: str):
+    # TODO: change this to send friend request instead of automatically adding friend
+    # TODO: add a friend requests table thta is structured the same as the friends table, except it only adds rows one way
+    # TODO: add a new endpoint called accept friend request that updates this table
     conn = mysql_connection()
     if not conn:
         raise HTTPException(

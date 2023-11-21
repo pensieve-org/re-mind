@@ -22,6 +22,7 @@ import createUser from "../../services/create.user";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import auth from "../../firebase.js";
 import { View as AnimatedView } from "react-native-animatable";
+import checkUser from "../../services/check.user";
 
 // TODO: Use Formik
 const Register = () => {
@@ -68,11 +69,20 @@ const Register = () => {
 
     try {
       setIsLoading(true);
+
+      await checkUser({
+        email: email,
+        username: username,
+        first_name: firstName,
+        last_name: lastName,
+      });
+
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
+
       const user = await createUser({
         email: email,
         username: username,
@@ -96,7 +106,7 @@ const Register = () => {
       } else if (error.code === "auth/email-already-in-use") {
         setErrorMsg("email already in use");
       } else {
-        setErrorMsg(error.code);
+        setErrorMsg(error.response.data.detail);
       }
       setError(true);
       setIsLoading(false);
