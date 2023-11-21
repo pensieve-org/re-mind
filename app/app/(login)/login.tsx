@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { router } from "expo-router";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
@@ -23,11 +23,8 @@ import {
   signInWithCredential,
 } from "firebase/auth";
 import auth from "../../firebase.js";
-import * as AppleAuthentication from "expo-apple-authentication";
 import Body from "../../components/Body";
-import AppleSignIn from "../../components/AppleSignIn";
 import "react-native-get-random-values";
-import { nanoid } from "nanoid";
 import { View as AnimatedView } from "react-native-animatable";
 
 export default function Login() {
@@ -81,47 +78,6 @@ export default function Login() {
       setIsLoading(false);
     }
   };
-
-  // const handleAppleSignIn = async () => {
-  //   // TODO: fix this
-  //   setError(false);
-  //   setIsLoading(true);
-
-  //   try {
-  //     const credentials = await AppleAuthentication.signInAsync({
-  //       requestedScopes: [
-  //         AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-  //         AppleAuthentication.AppleAuthenticationScope.EMAIL,
-  //       ],
-  //     });
-  //     console.log(credentials);
-  //     const provider = new OAuthProvider("apple.com");
-  //     const appleCredential = provider.credential({
-  //       idToken: credentials.identityToken,
-  //       rawNonce: nanoid(),
-  //       accessToken: credentials.authorizationCode,
-  //     });
-
-  //     const userCredential = await signInWithCredential(auth, appleCredential);
-  //     const user = await getUser(userCredential.user.uid);
-  //     setUserDetails(user);
-  //     await AsyncStorage.setItem("@user", JSON.stringify(user));
-  //     setUserEvents(await getAllUserEvents(user.user_id));
-  //     setIsLoading(false);
-  //     router.replace("/home");
-  //   } catch (error) {
-  //     if (error.code === "auth/invalid-email") {
-  //       setErrorMsg("invalid email address");
-  //     } else if (error.code === "auth/invalid-login-credentials") {
-  //       setErrorMsg("invalid login credentials");
-  //     } else {
-  //       setErrorMsg(error.message);
-  //     }
-  //     setError(true);
-  //     setIsLoading(false);
-  //     console.log(error.message);
-  //   }
-  // };
 
   return (
     <View style={styles.page}>
@@ -178,22 +134,6 @@ export default function Login() {
           >
             forgot password?
           </Body>
-
-          {/* {Platform.OS === "ios" && (
-          <>
-            <Body
-              style={{
-                width: "100%",
-                textAlign: "center",
-                paddingVertical: 30,
-              }}
-            >
-              or
-            </Body>
-
-            <AppleSignIn onPress={handleAppleSignIn} />
-          </>
-        )} */}
 
           {isLoading && (
             <ActivityIndicator
