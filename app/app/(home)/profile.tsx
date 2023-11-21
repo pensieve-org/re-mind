@@ -8,6 +8,8 @@ import {
   HORIZONTAL_PADDING,
   HEADER_ICON_DIMENSION,
   ANIMATION_DURATION,
+  ANIMATION_ENTRY,
+  ANIMATION_EXIT,
 } from "../../assets/constants";
 import { AppContext } from "../_layout";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -20,17 +22,17 @@ import { View as AnimatedView } from "react-native-animatable";
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
-  const [animation, setAnimation] = useState("fadeIn");
+  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
   const navigate = (route) => {
-    setAnimation("fadeOut");
+    setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
       router.replace(route);
     }, ANIMATION_DURATION);
   };
 
   const navigateBack = () => {
-    setAnimation("fadeOut");
+    setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
       router.back();
     }, ANIMATION_DURATION);

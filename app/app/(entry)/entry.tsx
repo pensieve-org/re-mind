@@ -12,14 +12,19 @@ import Title from "../../components/Title";
 import Logo from "../../assets/logo.svg";
 import theme from "../../assets/theme";
 
-import { ANIMATION_DURATION, HORIZONTAL_PADDING } from "../../assets/constants";
+import {
+  ANIMATION_DURATION,
+  ANIMATION_ENTRY,
+  ANIMATION_EXIT,
+  HORIZONTAL_PADDING,
+} from "../../assets/constants";
 
 export default function Page() {
   const insets = useSafeAreaInsets();
-  const [animation, setAnimation] = useState("fadeIn");
+  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
   const navigate = (route) => {
-    setAnimation("fadeOut");
+    setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
       router.push(route);
     }, ANIMATION_DURATION);

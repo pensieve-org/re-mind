@@ -18,6 +18,8 @@ import {
   ANIMATION_DURATION,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
+  ANIMATION_ENTRY,
+  ANIMATION_EXIT,
 } from "../../assets/constants";
 
 export default function Login() {
@@ -25,10 +27,10 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [animation, setAnimation] = useState("fadeIn");
+  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
   const navigateBack = () => {
-    setAnimation("fadeOut");
+    setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
       router.back();
     }, ANIMATION_DURATION);

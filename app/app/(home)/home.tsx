@@ -20,6 +20,8 @@ import theme from "../../assets/theme";
 
 import {
   ANIMATION_DURATION,
+  ANIMATION_ENTRY,
+  ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
@@ -31,10 +33,10 @@ export default function Home() {
   const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
-  const [animation, setAnimation] = useState("fadeIn");
+  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
   const navigate = (route) => {
-    setAnimation("fadeOut");
+    setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
       router.push(route);
     }, ANIMATION_DURATION);

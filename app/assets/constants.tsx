@@ -5,6 +5,8 @@ export const CORNER_RADIUS = 10;
 export const COMPONENT_HEIGHT = 55;
 
 export const ANIMATION_DURATION = 400;
+export const ANIMATION_ENTRY = "fadeIn";
+export const ANIMATION_EXIT = "fadeOut";
 
 // For Home Screen
 export const ICON_GAP = 30;

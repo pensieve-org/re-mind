@@ -17,6 +17,8 @@ import {
   IMAGE_GAP,
   ROW_IMAGES,
   ANIMATION_DURATION,
+  ANIMATION_ENTRY,
+  ANIMATION_EXIT,
 } from "../../assets/constants";
 import { AppContext } from "../_layout";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -28,10 +30,10 @@ export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
-  const [animation, setAnimation] = useState("fadeIn");
+  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
   const navigateBack = () => {
-    setAnimation("fadeOut");
+    setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
       router.back();
     }, ANIMATION_DURATION);

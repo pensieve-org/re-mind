@@ -10,6 +10,8 @@ import {
   HORIZONTAL_PADDING,
   HEADER_ICON_DIMENSION,
   ANIMATION_DURATION,
+  ANIMATION_ENTRY,
+  ANIMATION_EXIT,
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -34,17 +36,17 @@ const Register = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const { setUserDetails, setUserEvents } = useContext(AppContext);
 
-  const [animation, setAnimation] = useState("fadeIn");
+  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
   const navigate = (route) => {
-    setAnimation("fadeOut");
+    setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
       router.replace(route);
     }, ANIMATION_DURATION);
   };
 
   const navigateBack = () => {
-    setAnimation("fadeOut");
+    setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
       router.back();
     }, ANIMATION_DURATION);
