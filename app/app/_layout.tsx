@@ -6,6 +6,9 @@ import {
   Montserrat_400Regular_Italic,
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
+import theme from "../assets/theme";
+import React from "react";
+import { View } from "react-native";
 
 export const AppContext = createContext(null);
 

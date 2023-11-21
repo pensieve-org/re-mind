@@ -11,6 +11,7 @@ import theme from "../../assets/theme";
 import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
+  ANIMATION_DURATION,
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -27,6 +28,7 @@ import Body from "../../components/Body";
 import AppleSignIn from "../../components/AppleSignIn";
 import "react-native-get-random-values";
 import { nanoid } from "nanoid";
+import { View as AnimatedView } from "react-native-animatable";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -35,6 +37,14 @@ export default function Login() {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const { setUserDetails, setUserEvents } = useContext(AppContext);
+  const [animation, setAnimation] = useState("fadeIn");
+
+  const navigate = (route, replace = false) => {
+    setAnimation("fadeOut");
+    setTimeout(() => {
+      replace ? router.replace(route) : router.push(route);
+    }, ANIMATION_DURATION);
+  };
 
   const handleLogin = async () => {
     setError(false);
@@ -58,7 +68,7 @@ export default function Login() {
       await AsyncStorage.setItem("@user", JSON.stringify(user));
       setUserEvents(await getAllUserEvents(user.user_id));
       setIsLoading(false);
-      router.replace("/home");
+      navigate("/home", true);
     } catch (error) {
       if (error.code === "auth/invalid-email") {
         setErrorMsg("invalid email address");
@@ -115,54 +125,61 @@ export default function Login() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
+      <AnimatedView
+        animation={animation}
+        duration={ANIMATION_DURATION}
+        style={styles.page}
+      >
+        <Header
+          imageLeft={
+            <BackArrow
+              height={HEADER_ICON_DIMENSION}
+              width={HEADER_ICON_DIMENSION}
+            />
+          }
+          onPressLeft={() => router.back()}
+        />
 
-      <View style={styles.alertContainer}>
-        {error && <Alert text={errorMsg} />}
-      </View>
-
-      <View style={styles.container}>
-        <View style={styles.subtitle}>
-          <Subtitle>login</Subtitle>
+        <View style={styles.alertContainer}>
+          {error && <Alert text={errorMsg} />}
         </View>
 
-        <Input
-          placeholder="enter email"
-          label="email"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <Input
-          placeholder="enter password"
-          label="password"
-          type="password"
-          value={password}
-          onChangeText={setPassword}
-        />
-        <Button
-          fill={theme.TEXT}
-          textColor={theme.BACKGROUND}
-          onPress={handleLogin}
-        >
-          login
-        </Button>
+        <View style={styles.container}>
+          <View style={styles.subtitle}>
+            <Subtitle>login</Subtitle>
+          </View>
 
-        <Body
-          style={styles.forgotPassword}
-          onPress={() => router.push("/forgot-password")}
-        >
-          forgot password?
-        </Body>
+          <Input
+            placeholder="enter email"
+            label="email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <Input
+            placeholder="enter password"
+            label="password"
+            type="password"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <Button
+            fill={theme.TEXT}
+            textColor={theme.BACKGROUND}
+            onPress={handleLogin}
+          >
+            login
+          </Button>
 
-        {/* {Platform.OS === "ios" && (
+          <Body
+            style={styles.forgotPassword}
+            onPress={() => {
+              navigate("/forgot-password");
+            }}
+          >
+            forgot password?
+          </Body>
+
+          {/* {Platform.OS === "ios" && (
           <>
             <Body
               style={{
@@ -178,14 +195,15 @@ export default function Login() {
           </>
         )} */}
 
-        {isLoading && (
-          <ActivityIndicator
-            style={styles.loading}
-            size={"large"}
-            color={theme.PRIMARY}
-          />
-        )}
-      </View>
+          {isLoading && (
+            <ActivityIndicator
+              style={styles.loading}
+              size={"large"}
+              color={theme.PRIMARY}
+            />
+          )}
+        </View>
+      </AnimatedView>
     </View>
   );
 }
