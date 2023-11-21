@@ -1,29 +1,30 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
+import { View as AnimatedView } from "react-native-animatable";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import Header from "../../components/Header";
-import Body from "../../components/Body";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { signOut } from "firebase/auth";
+
+import BackArrow from "../../assets/arrow-left.svg";
 import theme from "../../assets/theme";
 import {
-  HORIZONTAL_PADDING,
-  HEADER_ICON_DIMENSION,
   ANIMATION_DURATION,
   ANIMATION_ENTRY,
   ANIMATION_EXIT,
+  HEADER_ICON_DIMENSION,
+  HORIZONTAL_PADDING,
 } from "../../assets/constants";
-import { AppContext } from "../_layout";
-import BackArrow from "../../assets/arrow-left.svg";
-import Button from "../../components/Button";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { signOut } from "firebase/auth";
 import auth from "../../firebase.js";
-import { View as AnimatedView } from "react-native-animatable";
+import Body from "../../components/Body";
+import Button from "../../components/Button";
 import FriendList from "../../components/FriendList";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Header from "../../components/Header";
+import Input from "../../components/Input";
+import { AppContext } from "../_layout";
+import addFriend from "../../services/add.friend";
 import getFriends from "../../services/get.friends";
 import removeFriend from "../../services/remove.friend";
-import addFriend from "../../services/add.friend";
-import Input from "../../components/Input";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
@@ -112,6 +113,7 @@ export default function Profile() {
           <BackArrow
             height={HEADER_ICON_DIMENSION}
             width={HEADER_ICON_DIMENSION}
+            style={{ color: theme.PRIMARY }}
           />
         }
         onPressLeft={navigateBack}

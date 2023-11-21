@@ -67,6 +67,7 @@ export default function Login() {
           <BackArrow
             height={HEADER_ICON_DIMENSION}
             width={HEADER_ICON_DIMENSION}
+            style={{ color: theme.PRIMARY }}
           />
         }
         onPressLeft={navigateBack}

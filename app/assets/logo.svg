@@ -2,8 +2,8 @@
 <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
 <defs>
     <style>
-        .cls-1{fill:#ffffff;}
-        .cls-2{fill:none;stroke:#ffffff;stroke-linecap:round;stroke-miterlimit:10;stroke-width:26.7px;}
+        .cls-1{fill:currentColor;}
+        .cls-2{fill:none;stroke:currentColor;stroke-linecap:round;stroke-miterlimit:10;stroke-width:26.7px;}
     </style>
 </defs>
 <rect class="cls-1" x="231.51" y="643.74" width="616.98" height="23.51" rx="11.76" ry="11.76"/>

@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
   },
   plusIconStyle: {
     transform: [{ rotate: "45deg" }],
+    color: theme.PLACEHOLDER,
   },
 });
 

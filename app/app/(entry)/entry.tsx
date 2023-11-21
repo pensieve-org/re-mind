@@ -45,7 +45,7 @@ export default function Page() {
           </View>
 
           <View style={styles.image}>
-            <Logo width={400} height={400} />
+            <Logo width={400} height={400} style={{ color: theme.PRIMARY }} />
           </View>
 
           <View style={styles.bottomContainer}>

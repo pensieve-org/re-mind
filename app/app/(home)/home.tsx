@@ -28,6 +28,7 @@ import {
 
 import { AppContext } from "../_layout";
 import getAllUserEvents from "../../services/get.allUserEvents";
+import { getRandomColor } from "../../utils";
 
 export default function Home() {
   const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
@@ -64,7 +65,7 @@ export default function Home() {
               borderRadius: 100,
               backgroundColor: userDetails.profile_picture_url
                 ? "transparent"
-                : "blue",
+                : getRandomColor(),
               alignItems: "center",
               justifyContent: "center",
             }}
@@ -87,7 +88,11 @@ export default function Home() {
         }
         onPressLeft={() => navigate("/profile")}
         imageRight={
-          <Plus height={HEADER_ICON_DIMENSION} width={HEADER_ICON_DIMENSION} />
+          <Plus
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+            style={{ color: theme.PRIMARY }}
+          />
         }
         onPressRight={() => navigate("/create-event")}
       />

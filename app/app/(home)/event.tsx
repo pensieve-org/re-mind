@@ -1,30 +1,31 @@
 import React, { useContext, useState } from "react";
 import {
-  StyleSheet,
-  View,
+  ActivityIndicator,
   Image,
   RefreshControl,
-  ActivityIndicator,
+  StyleSheet,
+  View,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
+import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
-import Header from "../../components/Header";
-import Body from "../../components/Body";
-import theme from "../../assets/theme";
+
+import BackArrow from "../../assets/arrow-left.svg";
 import {
-  HORIZONTAL_PADDING,
-  HEADER_ICON_DIMENSION,
-  EVENT_IMAGE_WIDTH,
-  IMAGE_GAP,
-  ROW_IMAGES,
   ANIMATION_DURATION,
   ANIMATION_ENTRY,
   ANIMATION_EXIT,
+  EVENT_IMAGE_WIDTH,
+  HEADER_ICON_DIMENSION,
+  HORIZONTAL_PADDING,
+  IMAGE_GAP,
+  ROW_IMAGES,
 } from "../../assets/constants";
-import { AppContext } from "../_layout";
-import BackArrow from "../../assets/arrow-left.svg";
-import { ScrollView } from "react-native-gesture-handler";
+import theme from "../../assets/theme";
+import Body from "../../components/Body";
+import Header from "../../components/Header";
 import getEvent from "../../services/get.event";
-import { View as AnimatedView } from "react-native-animatable";
+import { AppContext } from "../_layout";
 
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent } =
@@ -52,6 +53,7 @@ export default function Event() {
           <BackArrow
             height={HEADER_ICON_DIMENSION}
             width={HEADER_ICON_DIMENSION}
+            style={{ color: theme.PRIMARY }}
           />
         }
         onPressLeft={navigateBack}

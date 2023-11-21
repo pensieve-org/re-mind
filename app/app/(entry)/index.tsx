@@ -1,13 +1,14 @@
+import { useContext, useEffect } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { router } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import theme from "../../assets/theme";
-import { HORIZONTAL_PADDING } from "../../assets/constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import getAllUserEvents from "../../services/get.allUserEvents";
-import { useContext, useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { router } from "expo-router";
+
 import { AppContext } from "../_layout";
+import getAllUserEvents from "../../services/get.allUserEvents";
+import theme from "../../assets/theme";
+import { HORIZONTAL_PADDING } from "../../assets/constants";
 
 export default function Page() {
   const insets = useSafeAreaInsets();
