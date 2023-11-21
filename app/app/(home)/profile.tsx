@@ -26,6 +26,7 @@ import addFriend from "../../services/add.friend";
 import Input from "../../components/Input";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
+// TODO: add a notification bell in the header on the right to accept friend reqs
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
