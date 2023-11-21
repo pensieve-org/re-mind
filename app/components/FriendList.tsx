@@ -62,6 +62,8 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
       data={friends}
       renderItem={renderItem}
       keyExtractor={(item, index) => String(index)}
+      showsVerticalScrollIndicator={false}
+      showsHorizontalScrollIndicator={false}
     />
   );
 };

@@ -48,6 +48,11 @@ If it is not a get request, you will need to add the `-X` flag and specify the r
 curl http://localhost:8000/{endpoint} -X POST -d '{"key": "value"}'
 ```
 
+in a new terminal launch ngrok to forward local port 8000 to a public url
+```
+ngrok http --domain=sweet-rapidly-phoenix.ngrok-free.app 8000
+```
+
 ## Running in a local Container
 
 > Install Docker or a compatible container runtime if you don't have it

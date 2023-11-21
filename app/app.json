@@ -14,7 +14,8 @@
     },
     "ios": {
       "bundleIdentifier": "com.pensieve.remind"
-    }
+    },
+    "orientation": "portrait"
   },
   "ios": {
     "usesAppleSignIn": true
