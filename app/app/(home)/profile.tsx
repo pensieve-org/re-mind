@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View, Image, Pressable } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -20,13 +20,15 @@ import Body from "../../components/Body";
 import Button from "../../components/Button";
 import FriendList from "../../components/FriendList";
 import Header from "../../components/Header";
-import Input from "../../components/Input";
 import { AppContext } from "../_layout";
 import addFriend from "../../services/add.friend";
 import getFriends from "../../services/get.friends";
 import removeFriend from "../../services/remove.friend";
 import AddFriend from "../../components/AddFriend";
 import NotificationBell from "../../assets/bell.svg";
+import ProfileIcon from "../../assets/profile.svg";
+import CameraIcon from "../../assets/camera.svg";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
@@ -108,6 +110,14 @@ export default function Profile() {
     fetchFriends();
   }, []);
 
+  const handleProfilePictureUpload = () => {
+    console.log("upload profile picture");
+    // TODO: prompt user to upload a profile picture from their camera roll
+    // this will then be uploaded to firebase image store and the url will be
+    // saved to the user's profile_picture_url field in the database
+    // then we will refresh the user details and voila
+  };
+
   return (
     <View style={[styles.page, { paddingBottom: insets.bottom }]}>
       <Header
@@ -134,9 +144,55 @@ export default function Profile() {
         style={styles.page}
       >
         <View style={styles.container}>
-          <Body style={{ paddingVertical: 20 }}>
-            Hello, {userDetails.first_name}
-          </Body>
+          <View style={styles.profileImage}>
+            <View>
+              {userDetails.profile_picture_url ? (
+                <Image
+                  source={{ uri: userDetails.profile_picture_url }}
+                  style={{
+                    width: 150,
+                    height: 150,
+                    borderRadius: 100,
+                  }}
+                />
+              ) : (
+                <ProfileIcon
+                  height={40}
+                  width={40}
+                  style={{ color: theme.PRIMARY }}
+                />
+              )}
+              <Pressable
+                onPress={handleProfilePictureUpload}
+                style={({ pressed }) => [
+                  {
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                  },
+                  pressed ? { opacity: 0.8 } : {},
+                ]}
+              >
+                <CameraIcon
+                  height={37}
+                  width={37}
+                  style={{ color: theme.PRIMARY }}
+                />
+              </Pressable>
+            </View>
+
+            <View style={{ paddingTop: 10 }}>
+              <Body style={{ textAlign: "center" }} size={16}>
+                {userDetails.first_name} {userDetails.last_name}
+              </Body>
+              <Body
+                style={{ textAlign: "center", color: theme.PLACEHOLDER }}
+                size={14}
+              >
+                {userDetails.username}
+              </Body>
+            </View>
+          </View>
 
           {/* TODO: update this to show the 5 most similar names in the database. 
           Allow user to select by choosing from list */}
@@ -150,9 +206,10 @@ export default function Profile() {
             />
           </View>
 
-          <View style={{ paddingVertical: 10, flex: 1 }}>
-            <Body size={14}>MY FRIENDS ({friends.length})</Body>
-
+          <View style={{ flex: 1 }}>
+            <View style={{ paddingBottom: 10 }}>
+              <Body size={14}>MY FRIENDS ({friends.length})</Body>
+            </View>
             <FriendList friends={friends} onPress={handleRemoveFriend} />
           </View>
           <Button
@@ -176,5 +233,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: HORIZONTAL_PADDING,
+  },
+  profileImage: {
+    marginTop: 20,
+    width: "100%",
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
