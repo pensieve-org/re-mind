@@ -26,6 +26,7 @@ import addFriend from "../../services/add.friend";
 import getFriends from "../../services/get.friends";
 import removeFriend from "../../services/remove.friend";
 import AddFriend from "../../components/AddFriend";
+import NotificationBell from "../../assets/bell.svg";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
@@ -118,6 +119,14 @@ export default function Profile() {
           />
         }
         onPressLeft={navigateBack}
+        imageRight={
+          <NotificationBell
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+            style={{ color: theme.PRIMARY }}
+          />
+        }
+        onPressRight={() => {}}
       />
       <AnimatedView
         animation={animation}
