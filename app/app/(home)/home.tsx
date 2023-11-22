@@ -28,7 +28,7 @@ import {
 
 import { AppContext } from "../_layout";
 import getAllUserEvents from "../../services/get.allUserEvents";
-// import ProfileIcon from "../../assets/profile.svg";
+import ProfileIcon from "../../assets/profile.svg";
 
 export default function Home() {
   const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
@@ -80,9 +80,11 @@ export default function Home() {
                 }}
               />
             ) : (
-              <Body style={{ textAlign: "center" }}>
-                {userDetails.first_name[0]}
-              </Body>
+              <ProfileIcon
+                height={15}
+                width={15}
+                style={{ color: theme.PRIMARY }}
+              />
             )}
           </View>
         }
