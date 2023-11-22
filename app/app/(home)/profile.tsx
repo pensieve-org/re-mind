@@ -116,6 +116,7 @@ export default function Profile() {
     // this will then be uploaded to firebase image store and the url will be
     // saved to the user's profile_picture_url field in the database
     // then we will refresh the user details and voila
+    // will also need to delete old profile picture from firebase image store
   };
 
   return (
