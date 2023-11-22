@@ -28,7 +28,7 @@ import {
 
 import { AppContext } from "../_layout";
 import getAllUserEvents from "../../services/get.allUserEvents";
-import { getRandomColor } from "../../utils";
+// import ProfileIcon from "../../assets/profile.svg";
 
 export default function Home() {
   const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
@@ -65,7 +65,7 @@ export default function Home() {
               borderRadius: 100,
               backgroundColor: userDetails.profile_picture_url
                 ? "transparent"
-                : getRandomColor(),
+                : theme.DARK,
               alignItems: "center",
               justifyContent: "center",
             }}

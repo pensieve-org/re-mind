@@ -5,15 +5,7 @@ import { PROFILE_ICON_DIAMETER } from "../assets/constants";
 import theme from "../assets/theme";
 import Plus from "/Users/jamesheavey/Documents/GitHub/re-mind/app/assets/plus.svg";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { getRandomColor } from "../utils";
-
-// TODO: Remove the initials avatar when we add default profile image
-const InitialsAvatar = ({ initials }) => (
-  <View style={[styles.imageContainer, { backgroundColor: getRandomColor() }]}>
-    <Body style={styles.initialsText}>{initials}</Body>
-  </View>
-);
-
+import ProfileIcon from "../assets/profile.svg";
 interface Props {
   friends: any[];
   onPress?: (friend) => void;
@@ -29,14 +21,27 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
     return (
       <View style={styles.itemContainer}>
         <View style={styles.profileSection}>
-          <View style={styles.imageContainer}>
+          <View
+            style={[
+              styles.imageContainer,
+              {
+                backgroundColor: item.profile_picture_url
+                  ? "transparent"
+                  : theme.DARK,
+              },
+            ]}
+          >
             {item.profile_picture_url ? (
               <Image
                 source={{ uri: item.profile_picture_url }}
                 style={styles.image}
               />
             ) : (
-              <InitialsAvatar initials={initials} />
+              <ProfileIcon
+                height={40}
+                width={40}
+                style={{ color: theme.PRIMARY }}
+              />
             )}
           </View>
 
