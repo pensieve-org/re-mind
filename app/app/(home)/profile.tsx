@@ -163,6 +163,7 @@ export default function Profile() {
                   style={{ color: theme.PRIMARY }}
                 />
               )}
+
               <Pressable
                 onPress={handleProfilePictureUpload}
                 style={({ pressed }) => [
