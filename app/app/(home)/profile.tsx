@@ -25,6 +25,7 @@ import { AppContext } from "../_layout";
 import addFriend from "../../services/add.friend";
 import getFriends from "../../services/get.friends";
 import removeFriend from "../../services/remove.friend";
+import AddFriend from "../../components/AddFriend";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
@@ -131,19 +132,13 @@ export default function Profile() {
           {/* TODO: update this to show the 5 most similar names in the database. 
           Allow user to select by choosing from list */}
           <View style={{ paddingVertical: 10, paddingBottom: 20 }}>
-            <Input
+            <AddFriend
               placeholder="friend's username"
               label="add friends"
               value={friendUsername}
               onChangeText={setFriendUsername}
-            />
-            <Body
-              style={{ textAlign: "right", paddingRight: 20 }}
               onPress={handleAddFriend}
-              size={14}
-            >
-              ADD
-            </Body>
+            />
           </View>
 
           <View style={{ paddingVertical: 10, flex: 1 }}>
