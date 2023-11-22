@@ -57,10 +57,10 @@ export default function Profile() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      await AsyncStorage.clear();
       setUserDetails({});
       setSelectedEvent({ images: {}, id: "" });
       setUserEvents({ ongoing: {}, past: {} });
-      await AsyncStorage.clear();
       navigate("/");
     } catch (error) {
       console.error("Error signing out: ", error);
