@@ -136,6 +136,7 @@ export default function Profile() {
             style={{ color: theme.PRIMARY }}
           />
         }
+        // TODO: open friend requests from here, add a number to show how many are pending
         onPressRight={() => {}}
       />
       <AnimatedView
