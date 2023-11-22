@@ -24,7 +24,7 @@ import auth from "../../firebase.js";
 import { View as AnimatedView } from "react-native-animatable";
 import checkUser from "../../services/check.user";
 
-// TODO: Use Formik
+// TODO: Use React Hook Forms
 const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
