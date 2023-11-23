@@ -1,5 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, StyleSheet, View, Image, Pressable } from "react-native";
+import {
+  Alert,
+  StyleSheet,
+  View,
+  Image,
+  Pressable,
+  ScrollView,
+  Modal,
+  TouchableOpacity,
+} from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -43,6 +52,7 @@ export default function Profile() {
   const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
   const [friendUsername, setFriendUsername] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
   const navigate = (route) => {
@@ -77,6 +87,17 @@ export default function Profile() {
     try {
       await sendFriendRequest(userDetails.user_id, friendUsername);
       alert("Friend request sent!");
+    } catch (error) {
+      alert(error.response.data.detail);
+    }
+  };
+
+  const handleAcceptFriend = async (friend) => {
+    try {
+      await acceptFriendRequest(userDetails.user_id, friend.user_id);
+      setModalVisible(false);
+      fetchFriends();
+      fetchFriendRequests();
     } catch (error) {
       alert(error.response.data.detail);
     }
@@ -209,9 +230,58 @@ export default function Profile() {
             )}
           </View>
         }
-        // TODO: open friend requests from here, add a number to show how many are pending
-        onPressRight={() => {}}
+        onPressRight={() => {
+          if (friendRequests.length > 0) {
+            setModalVisible(!modalVisible);
+          }
+        }}
       />
+
+      <Modal
+        animationType="fade"
+        presentationStyle="overFullScreen"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+            backgroundColor: `${theme.BACKGROUND}95`,
+          }}
+          activeOpacity={1}
+          onPressOut={() => setModalVisible(!modalVisible)}
+        >
+          <View
+            style={{
+              backgroundColor: theme.BACKGROUND,
+              width: "80%",
+              maxHeight: "80%",
+              borderRadius: 20,
+              padding: 20,
+              borderColor: theme.PRIMARY,
+              borderWidth: 1,
+            }}
+            onStartShouldSetResponder={() => true}
+          >
+            <View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
+              <Body size={16}>FRIEND REQUESTS ({friendRequests.length})</Body>
+            </View>
+
+            <FriendList
+              friends={friendRequests}
+              onPress={handleAcceptFriend}
+              add={true}
+            />
+          </View>
+        </TouchableOpacity>
+      </Modal>
+
       <AnimatedView
         animation={animation}
         duration={ANIMATION_DURATION}

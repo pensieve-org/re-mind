@@ -3,21 +3,22 @@ import { StyleSheet, View, Image, FlatList } from "react-native";
 import Body from "./Body";
 import { PROFILE_ICON_DIAMETER } from "../assets/constants";
 import theme from "../assets/theme";
-import Plus from "/Users/jamesheavey/Documents/GitHub/re-mind/app/assets/plus.svg";
+import Plus from "../assets/plus.svg";
+import Check from "../assets/check-solid.svg";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ProfileIcon from "../assets/profile.svg";
 interface Props {
   friends: any[];
   onPress?: (friend) => void;
+  add?: boolean;
 }
 
-const FriendList: React.FC<Props> = ({ friends, onPress }) => {
+const FriendList: React.FC<Props> = ({ friends, onPress, add = false }) => {
   const handleOnPress = (friend) => {
     onPress(friend);
   };
 
   const renderItem = ({ item }) => {
-    const initials = item.first_name[0] + item.last_name[0];
     return (
       <View style={styles.itemContainer}>
         <View style={styles.profileSection}>
@@ -56,7 +57,11 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
         </View>
 
         <TouchableOpacity onPress={() => handleOnPress(item)}>
-          <Plus height={30} width={30} style={styles.plusIconStyle} />
+          {add ? (
+            <Check height={25} width={25} style={styles.checkIconStyle} />
+          ) : (
+            <Plus height={30} width={30} style={styles.plusIconStyle} />
+          )}
         </TouchableOpacity>
       </View>
     );
@@ -115,6 +120,9 @@ const styles = StyleSheet.create({
   plusIconStyle: {
     transform: [{ rotate: "45deg" }],
     color: theme.PLACEHOLDER,
+  },
+  checkIconStyle: {
+    color: theme.PRIMARY,
   },
 });
 
