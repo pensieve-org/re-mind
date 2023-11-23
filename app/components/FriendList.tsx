@@ -14,6 +14,7 @@ interface Props {
   scale?: number;
 }
 
+// TODO: revisit scale property
 const FriendList: React.FC<Props> = ({
   friends,
   onPress,
