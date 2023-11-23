@@ -95,7 +95,7 @@ export default function Profile() {
   const handleAcceptFriend = async (friend) => {
     try {
       await acceptFriendRequest(userDetails.user_id, friend.user_id);
-      setModalVisible(false);
+      // setModalVisible(false);
       fetchFriends();
       fetchFriendRequests();
     } catch (error) {
@@ -260,13 +260,16 @@ export default function Profile() {
         >
           <View
             style={{
-              backgroundColor: theme.BACKGROUND,
+              backgroundColor: `${theme.DARK}`,
               width: "80%",
               maxHeight: "80%",
               borderRadius: 20,
               padding: 20,
-              borderColor: theme.PRIMARY,
-              borderWidth: 1,
+              elevation: 200,
+              shadowColor: theme.DARK,
+              shadowOpacity: 1,
+              shadowOffset: { width: 0, height: 2 },
+              shadowRadius: 10,
             }}
             onStartShouldSetResponder={() => true}
           >

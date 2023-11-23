@@ -35,7 +35,7 @@ const FriendList: React.FC<Props> = ({
               {
                 backgroundColor: item.profile_picture_url
                   ? "transparent"
-                  : theme.DARK,
+                  : theme.PLACEHOLDER,
                 transform: [{ scale: scale }],
                 width: PROFILE_ICON_DIAMETER * scale,
                 height: PROFILE_ICON_DIAMETER * scale,
