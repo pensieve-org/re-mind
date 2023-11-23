@@ -28,7 +28,9 @@ import AddFriend from "../../components/AddFriend";
 import NotificationBell from "../../assets/bell.svg";
 import ProfileIcon from "../../assets/profile.svg";
 import CameraIcon from "../../assets/camera.svg";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import * as ImagePicker from "expo-image-picker";
+import updateProfilePicture from "../../services/update.profilePicture";
+import { uploadImageAsync } from "../../utils";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
@@ -110,13 +112,46 @@ export default function Profile() {
     fetchFriends();
   }, []);
 
-  const handleProfilePictureUpload = () => {
-    console.log("upload profile picture");
-    // TODO: prompt user to upload a profile picture from their camera roll
-    // this will then be uploaded to firebase image store and the url will be
-    // saved to the user's profile_picture_url field in the database
-    // then we will refresh the user details and voila
-    // will also need to delete old profile picture from firebase image store
+  const handleProfilePictureChange = async () => {
+    try {
+      // TODO: high quality makes the app crash, fix this
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3, 3],
+        quality: 0.2,
+      });
+
+      if (pickerResult.canceled) {
+        console.log("User cancelled image picker");
+        return null;
+      }
+
+      if (!pickerResult.assets[0].uri) {
+        console.log("No URI found");
+        return null;
+      }
+
+      console.log(pickerResult.assets[0].uri);
+
+      const uploadUrl = await uploadImageAsync(
+        pickerResult.assets[0].uri,
+        `/profile_pictures/${userDetails.user_id}`
+      );
+
+      console.log(uploadUrl);
+
+      const response = await updateProfilePicture(
+        userDetails.user_id,
+        uploadUrl
+      );
+
+      console.log(response);
+
+      setUserDetails({ ...userDetails, profile_picture_url: uploadUrl });
+    } catch (error) {
+      console.error("An error occurred:", error.response.data.detail);
+    }
   };
 
   return (
@@ -166,20 +201,26 @@ export default function Profile() {
               )}
 
               <Pressable
-                onPress={handleProfilePictureUpload}
+                onPress={handleProfilePictureChange}
                 style={({ pressed }) => [
                   {
                     position: "absolute",
                     right: 0,
                     bottom: 0,
+                    borderRadius: 100,
+                    backgroundColor: theme.PRIMARY,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 40,
+                    width: 40,
+                    transform: [{ scale: pressed ? 0.9 : 1 }],
                   },
-                  pressed ? { opacity: 0.8 } : {},
                 ]}
               >
                 <CameraIcon
-                  height={37}
-                  width={37}
-                  style={{ color: theme.PRIMARY }}
+                  height={20}
+                  width={20}
+                  style={{ color: theme.BACKGROUND }}
                 />
               </Pressable>
             </View>

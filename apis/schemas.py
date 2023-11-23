@@ -51,3 +51,7 @@ class EventResponse(BaseModel):
 class EventsCategory(BaseModel):
     ongoing: List[EventResponse]
     past: List[EventResponse]
+
+
+class ProfilePictureUpdate(BaseModel):
+    profile_picture_url: str

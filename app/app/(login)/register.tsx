@@ -70,12 +70,7 @@ const Register = () => {
     try {
       setIsLoading(true);
 
-      await checkUser({
-        email: email,
-        username: username,
-        first_name: firstName,
-        last_name: lastName,
-      });
+      await checkUser(email, username);
 
       const userCredentials = await createUserWithEmailAndPassword(
         auth,

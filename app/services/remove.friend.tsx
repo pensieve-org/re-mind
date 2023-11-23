@@ -1,16 +1,16 @@
 import axios from "axios";
 import { API_BASE_URL, API_REMOVE_FRIEND } from "../assets/constants";
 
-const getFriends = async (userId, friendId) => {
+const removeFriend = async (userId, friendId) => {
   try {
-    const response = await axios.post(
+    const response = await axios.delete(
       `${API_BASE_URL}${API_REMOVE_FRIEND}${userId}/${friendId}`
     );
     return response;
   } catch (error) {
-    console.error("Error fetching events:", error);
+    console.error("Error removing friend:", error);
     throw error;
   }
 };
 
-export default getFriends;
+export default removeFriend;

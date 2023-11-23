@@ -1,10 +1,11 @@
 from typing import List
-from fastapi import HTTPException, FastAPI, status, Response
+from fastapi import HTTPException, FastAPI, status, Response, Query
 from datetime import datetime, timedelta
 from firebase_admin import storage
 from utils import mysql_connection, firebase_connection
 import pymysql
 from schemas import (
+    ProfilePictureUpdate,
     RegisterRequest,
     EventResponse,
     EventsCategory,
@@ -103,8 +104,8 @@ async def get_user_details(firebase_id: str):
         conn.close()
 
 
-@app.post("/check_user", response_class=Response)
-async def check_user(validate_user_request: ValidateUserRequest):
+@app.get("/check_user", response_class=Response)
+async def check_user(email: str = None, username: str = None):
     conn = mysql_connection()
     if not conn:
         raise HTTPException(
@@ -117,19 +118,19 @@ async def check_user(validate_user_request: ValidateUserRequest):
             cursor.execute(
                 "SELECT * FROM users WHERE email = %s OR username = %s",
                 (
-                    validate_user_request.email,
-                    validate_user_request.username,
+                    email,
+                    username,
                 ),
             )
             user = cursor.fetchone()
 
             if user:
-                if user["email"] == validate_user_request.email:
+                if user["email"] == email:
                     raise HTTPException(
                         status_code=status.HTTP_409_CONFLICT,
                         detail="Email already registered.",
                     )
-                elif user["username"] == validate_user_request.username:
+                elif user["username"] == username:
                     raise HTTPException(
                         status_code=status.HTTP_409_CONFLICT,
                         detail="Username already taken.",
@@ -188,7 +189,7 @@ async def create_user(register_request: RegisterRequest):
         conn.close()
 
 
-@app.get("/delete_user/{user_id}", response_class=Response)
+@app.delete("/delete_user/{user_id}", response_class=Response)
 async def delete_user(user_id: int):
     conn = mysql_connection()
     if not conn:
@@ -301,7 +302,7 @@ async def add_friend(user_id: int, friend_username: str):
         conn.close()
 
 
-@app.post("/remove_friend/{user_id}/{friend_id}", response_class=Response)
+@app.delete("/remove_friend/{user_id}/{friend_id}", response_class=Response)
 async def add_friend(user_id: int, friend_id: int):
     conn = mysql_connection()
     if not conn:
@@ -389,7 +390,7 @@ async def get_friends(user_id: int):
         conn.close()
 
 
-@app.post("/add_user_to_event/{user_id}/{event_id}", response_class=Response)
+@app.patch("/add_user_to_event/{user_id}/{event_id}", response_class=Response)
 async def add_user_to_event(user_id: int, event_id: int):
     conn = mysql_connection()
     if not conn:
@@ -597,6 +598,48 @@ async def get_event(event_id: int):
         print(f"Error executing query on the MySQL Database: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.patch("/update_profile_picture/{user_id}", response_class=Response)
+async def update_profile_picture(user_id: int, data: ProfilePictureUpdate):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            # Check if the user and event exist
+            cursor.execute(
+                f"SELECT * FROM users WHERE user_id = %s",
+                (user_id),
+            )
+            user = cursor.fetchone()
+
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {user_id} not found.",
+                )
+
+            # Add user to event
+            cursor.execute(
+                "UPDATE users SET profile_picture_url = %s WHERE user_id = %s",
+                (data.profile_picture_url, user_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
         )
     finally:
         conn.close()
