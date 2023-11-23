@@ -396,6 +396,66 @@ async def accept_friend_request(user_id: int, friend_id: str):
         conn.close()
 
 
+@app.delete("/reject_friend_request/{user_id}/{friend_id}", response_class=Response)
+async def reject_friend_request(user_id: int, friend_id: str):
+    # remove connection from friend request table
+    # add to friends table
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            # Check if user exists
+            cursor.execute(
+                "SELECT * FROM users WHERE user_id = %s",
+                (user_id,),
+            )
+            user = cursor.fetchone()
+
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {user_id} not found.",
+                )
+
+            # Check if friend exists
+            cursor.execute(
+                "SELECT * FROM users WHERE user_id = %s",
+                (friend_id,),
+            )
+            friend = cursor.fetchone()
+
+            if not friend:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {friend_id} not found.",
+                )
+
+            # Remove the request
+            cursor.execute(
+                """
+                DELETE FROM friend_requests 
+                WHERE (user_id = %s AND friend_user_id = %s) OR (user_id = %s AND friend_user_id = %s)
+                """,
+                (user_id, friend_id, friend_id, user_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
 @app.get("/get_friend_requests/{user_id}", response_model=List[UserDetails])
 async def get_friend_requests(user_id: int):
     # remove connection from friend request table

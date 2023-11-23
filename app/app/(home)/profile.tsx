@@ -41,6 +41,8 @@ import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
 import updateProfilePicture from "../../services/update.profilePicture";
 import { uploadImageAsync } from "../../utils";
+import FriendRequestList from "../../components/FriendRequestList";
+import rejectFriendRequest from "../../services/reject.friendRequest";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
@@ -97,6 +99,15 @@ export default function Profile() {
       await acceptFriendRequest(userDetails.user_id, friend.user_id);
       // setModalVisible(false);
       fetchFriends();
+      fetchFriendRequests();
+    } catch (error) {
+      alert(error.response.data.detail);
+    }
+  };
+
+  const handleRejectFriend = async (friend) => {
+    try {
+      await rejectFriendRequest(userDetails.user_id, friend.user_id);
       fetchFriendRequests();
     } catch (error) {
       alert(error.response.data.detail);
@@ -273,15 +284,14 @@ export default function Profile() {
             }}
             onStartShouldSetResponder={() => true}
           >
-            <View style={{ paddingVertical: 10, paddingHorizontal: 5 }}>
+            <View style={{ paddingBottom: 10, paddingHorizontal: 5 }}>
               <Body size={16}>FRIEND REQUESTS ({friendRequests.length})</Body>
             </View>
 
-            <FriendList
-              friends={friendRequests}
-              onPress={handleAcceptFriend}
-              add={true}
-              scale={0.8}
+            <FriendRequestList
+              friendRequests={friendRequests}
+              onPressTick={handleAcceptFriend}
+              onPressCross={handleRejectFriend}
             />
           </View>
         </TouchableOpacity>

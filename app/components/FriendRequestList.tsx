@@ -4,18 +4,26 @@ import Body from "./Body";
 import { PROFILE_ICON_DIAMETER } from "../assets/constants";
 import theme from "../assets/theme";
 import Plus from "../assets/plus.svg";
+import Check from "../assets/check-solid.svg";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ProfileIcon from "../assets/profile.svg";
 interface Props {
-  friends: any[];
-  onPress?: (friend) => void;
+  friendRequests: any[];
+  onPressTick?: (friend) => void;
+  onPressCross?: (friend) => void;
 }
 
-const FriendList: React.FC<Props> = ({ friends, onPress }) => {
-  const handleOnPress = (friend) => {
-    onPress(friend);
+const FriendRequestList: React.FC<Props> = ({
+  friendRequests,
+  onPressTick,
+  onPressCross,
+}) => {
+  const handleOnPressCross = (friend) => {
+    onPressCross(friend);
   };
-
+  const handleOnPressTick = (friend) => {
+    onPressTick(friend);
+  };
   const renderItem = ({ item }) => {
     return (
       <View style={styles.itemContainer}>
@@ -27,8 +35,8 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
                 backgroundColor: item.profile_picture_url
                   ? "transparent"
                   : theme.PLACEHOLDER,
-                width: PROFILE_ICON_DIAMETER,
-                height: PROFILE_ICON_DIAMETER,
+                width: 35,
+                height: 35,
               },
             ]}
           >
@@ -39,33 +47,48 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
               />
             ) : (
               <ProfileIcon
-                height={40}
-                width={40}
+                height={20}
+                width={20}
                 style={{ color: theme.PRIMARY }}
               />
             )}
           </View>
 
-          <View style={{ marginLeft: 20 }}>
-            <Body adjustsFontSizeToFit>
+          <View style={{ marginLeft: 10 }}>
+            <Body size={13} adjustsFontSizeToFit>
               {item.first_name} {item.last_name}
             </Body>
-            <Body style={styles.usernameText} adjustsFontSizeToFit>
+            <Body size={11} style={styles.usernameText} adjustsFontSizeToFit>
               {item.username}
             </Body>
           </View>
         </View>
 
-        <TouchableOpacity onPress={() => handleOnPress(item)}>
-          <Plus height={30} width={30} style={styles.plusIconStyle} />
-        </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <TouchableOpacity
+            style={{ paddingRight: 5 }}
+            onPress={() => handleOnPressTick(item)}
+          >
+            <Check height={20} width={20} style={styles.checkIconStyle} />
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => handleOnPressCross(item)}>
+            <Plus height={25} width={25} style={styles.plusIconStyle} />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
 
   return (
     <FlatList
-      data={friends}
+      data={friendRequests}
       renderItem={renderItem}
       keyExtractor={(item, index) => String(index)}
       showsVerticalScrollIndicator={false}
@@ -98,7 +121,6 @@ const styles = StyleSheet.create({
   },
   usernameText: {
     color: theme.PLACEHOLDER,
-    fontSize: 14,
   },
   plusIconStyle: {
     transform: [{ rotate: "45deg" }],
@@ -109,4 +131,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendList;
+export default FriendRequestList;

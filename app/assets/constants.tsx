@@ -39,6 +39,7 @@ export const API_GET_FRIENDS = "get_friends/";
 export const API_GET_FRIEND_REQUESTS = "get_friend_requests/";
 export const API_SEND_FRIEND_REQUEST = "send_friend_request/";
 export const API_ACCEPT_FRIEND_REQUEST = "accept_friend_request/";
+export const API_REJECT_FRIEND_REQUEST = "reject_friend_request/";
 export const API_REMOVE_FRIEND = "remove_friend/";
 export const API_CHECK_USER = "check_user";
 export const API_UPDATE_PROFILE_PICTURE = "update_profile_picture/";
