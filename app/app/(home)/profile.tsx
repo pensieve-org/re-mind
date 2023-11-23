@@ -114,12 +114,11 @@ export default function Profile() {
 
   const handleProfilePictureChange = async () => {
     try {
-      // TODO: high quality makes the app crash, fix this
       const pickerResult = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [3, 3],
-        quality: 0.2,
+        quality: 1,
       });
 
       if (pickerResult.canceled) {
