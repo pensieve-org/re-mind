@@ -5,7 +5,6 @@ import {
   View,
   Image,
   Pressable,
-  ScrollView,
   Modal,
   TouchableOpacity,
 } from "react-native";
