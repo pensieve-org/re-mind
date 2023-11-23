@@ -35,8 +35,8 @@ const FriendRequestList: React.FC<Props> = ({
                 backgroundColor: item.profile_picture_url
                   ? "transparent"
                   : theme.PLACEHOLDER,
-                width: 35,
-                height: 35,
+                width: PROFILE_ICON_DIAMETER,
+                height: PROFILE_ICON_DIAMETER,
               },
             ]}
           >
@@ -47,18 +47,18 @@ const FriendRequestList: React.FC<Props> = ({
               />
             ) : (
               <ProfileIcon
-                height={20}
-                width={20}
+                height={40}
+                width={40}
                 style={{ color: theme.PRIMARY }}
               />
             )}
           </View>
 
           <View style={{ marginLeft: 10 }}>
-            <Body size={13} adjustsFontSizeToFit>
+            <Body adjustsFontSizeToFit>
               {item.first_name} {item.last_name}
             </Body>
-            <Body size={11} style={styles.usernameText} adjustsFontSizeToFit>
+            <Body style={styles.usernameText} adjustsFontSizeToFit>
               {item.username}
             </Body>
           </View>
@@ -75,11 +75,11 @@ const FriendRequestList: React.FC<Props> = ({
             style={{ paddingRight: 5 }}
             onPress={() => handleOnPressTick(item)}
           >
-            <Check height={20} width={20} style={styles.checkIconStyle} />
+            <Check height={30} width={30} style={styles.checkIconStyle} />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => handleOnPressCross(item)}>
-            <Plus height={25} width={25} style={styles.plusIconStyle} />
+            <Plus height={30} width={30} style={styles.plusIconStyle} />
           </TouchableOpacity>
         </View>
       </View>
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
   },
   usernameText: {
     color: theme.PLACEHOLDER,
+    fontSize: 14,
   },
   plusIconStyle: {
     transform: [{ rotate: "45deg" }],
