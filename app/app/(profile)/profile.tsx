@@ -1,13 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Alert,
-  StyleSheet,
-  View,
-  Image,
-  Pressable,
-  Modal,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Image, Pressable } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -27,23 +19,15 @@ import {
 import auth from "../../firebase.js";
 import Body from "../../components/Body";
 import Button from "../../components/Button";
-import FriendList from "../../components/FriendList";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
-import sendFriendRequest from "../../services/send.friendRequest";
-import acceptFriendRequest from "../../services/accept.friendRequest";
 import getFriendRequests from "../../services/get.friendRequests";
-import getFriends from "../../services/get.friends";
-import removeFriend from "../../services/remove.friend";
-import AddFriend from "../../components/AddFriend";
 import FriendsIcon from "../../assets/friends.svg";
 import ProfileIcon from "../../assets/profile.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
 import updateProfilePicture from "../../services/update.profilePicture";
 import { uploadImageAsync } from "../../utils";
-import FriendRequestList from "../../components/FriendRequestList";
-import rejectFriendRequest from "../../services/reject.friendRequest";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
@@ -51,10 +35,7 @@ export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
-  const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
-  const [friendUsername, setFriendUsername] = useState("");
-  const [modalVisible, setModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
 
   const navigate = (route) => {
@@ -132,6 +113,19 @@ export default function Profile() {
     }
   };
 
+  const fetchFriendRequests = async () => {
+    try {
+      setFriendRequests(await getFriendRequests(userDetails.user_id));
+    } catch (error) {
+      alert(error.response.data.detail);
+    }
+  };
+
+  useEffect(() => {
+    fetchFriendRequests();
+    console.log(friendRequests);
+  }, []);
+
   return (
     <View style={[styles.page, { paddingBottom: insets.bottom }]}>
       <Header
@@ -144,11 +138,36 @@ export default function Profile() {
         }
         onPressLeft={navigateBack}
         imageRight={
-          <FriendsIcon
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
+          <View>
+            <FriendsIcon
+              height={HEADER_ICON_DIMENSION}
+              width={HEADER_ICON_DIMENSION}
+              style={{ color: theme.PRIMARY }}
+            />
+            {friendRequests.length > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -12,
+                  top: -10,
+                  backgroundColor: theme.RED,
+                  borderRadius: 100,
+                  height: 20,
+                  width: 20,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Body
+                  adjustsFontSizeToFit={true}
+                  bold={true}
+                  style={{ color: theme.PRIMARY }}
+                >
+                  {friendRequests.length}
+                </Body>
+              </View>
+            )}
+          </View>
         }
         onPressRight={() => {
           navigatePush("/friends");

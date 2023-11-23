@@ -183,6 +183,7 @@ export default function MyFriends() {
           <FloatingActionBar
             items={["Friends", "Requests"]}
             initialSelectedItem={selectedItem}
+            friendRequests={friendRequests.length}
             onPressItem={(item) => {
               setSelectedItem(item);
             }}
