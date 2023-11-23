@@ -21,6 +21,10 @@ import getFriends from "../../services/get.friends";
 import removeFriend from "../../services/remove.friend";
 import AddFriend from "../../components/AddFriend";
 import FloatingActionBar from "../../components/FloatingActionBar";
+import FriendRequestList from "../../components/FriendRequestList";
+import rejectFriendRequest from "../../services/reject.friendRequest";
+import acceptFriendRequest from "../../services/accept.friendRequest";
+import getFriendRequests from "../../services/get.friendRequests";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
@@ -29,6 +33,8 @@ export default function MyFriends() {
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [friends, setFriends] = useState([]);
   const [friendUsername, setFriendUsername] = useState("");
+  const [selectedItem, setSelectedItem] = useState("Friends");
+  const [friendRequests, setFriendRequests] = useState([]);
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
@@ -75,6 +81,31 @@ export default function MyFriends() {
       alert(error.response.data.detail);
     }
   };
+  const handleAcceptFriend = async (friend) => {
+    try {
+      await acceptFriendRequest(userDetails.user_id, friend.user_id);
+      fetchFriendRequests();
+    } catch (error) {
+      alert(error.response.data.detail);
+    }
+  };
+
+  const handleRejectFriend = async (friend) => {
+    try {
+      await rejectFriendRequest(userDetails.user_id, friend.user_id);
+      fetchFriendRequests();
+    } catch (error) {
+      alert(error.response.data.detail);
+    }
+  };
+
+  const fetchFriendRequests = async () => {
+    try {
+      setFriendRequests(await getFriendRequests(userDetails.user_id));
+    } catch (error) {
+      alert(error.response.data.detail);
+    }
+  };
 
   const fetchFriends = async () => {
     try {
@@ -86,6 +117,7 @@ export default function MyFriends() {
 
   useEffect(() => {
     fetchFriends();
+    fetchFriendRequests();
   }, []);
 
   return (
@@ -118,34 +150,45 @@ export default function MyFriends() {
             />
           </View>
 
-          <View style={{ flex: 1 }}>
-            <View style={{ paddingBottom: 10 }}>
-              <Body size={14}>MY FRIENDS ({friends.length})</Body>
+          {selectedItem === "Friends" ? (
+            <View style={{ flex: 1 }}>
+              <View style={{ paddingBottom: 10 }}>
+                <Body size={14}>MY FRIENDS ({friends.length})</Body>
+              </View>
+              <FriendList friends={friends} onPress={handleRemoveFriend} />
             </View>
-            <FriendList friends={friends} onPress={handleRemoveFriend} />
-          </View>
+          ) : (
+            <View style={{ flex: 1 }}>
+              <View style={{ paddingBottom: 10 }}>
+                <Body size={14}>FRIEND REQUESTS ({friendRequests.length})</Body>
+              </View>
+              <FriendRequestList
+                friendRequests={friendRequests}
+                onPressTick={handleAcceptFriend}
+                onPressCross={handleRejectFriend}
+              />
+            </View>
+          )}
+        </View>
+        <View
+          style={{
+            position: "absolute",
+            bottom: 30,
+            left: 0,
+            right: 0,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <FloatingActionBar
+            items={["Friends", "Requests"]}
+            initialSelectedItem={selectedItem}
+            onPressItem={(item) => {
+              setSelectedItem(item);
+            }}
+          />
         </View>
       </AnimatedView>
-      <View
-        style={{
-          position: "absolute",
-          bottom: 30,
-          left: 0,
-          right: 0,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <FloatingActionBar
-          items={["Friends", "Requests"]}
-          selectedItem="Friends"
-          onPressItem={(item) => {
-            if (item === "Requests") {
-              navigate("/friend-requests");
-            }
-          }}
-        />
-      </View>
     </View>
   );
 }

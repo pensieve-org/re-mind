@@ -5,13 +5,13 @@ import theme from "../assets/theme";
 
 interface Props {
   items: string[];
-  selectedItem: string;
+  initialSelectedItem: string;
   onPressItem: (item: string) => void;
 }
 
 const FloatingActionBar: React.FC<Props> = ({
   items,
-  selectedItem: initialSelectedItem,
+  initialSelectedItem: initialSelectedItem,
   onPressItem,
 }) => {
   const [selectedItem, setSelectedItem] = useState<string | null>(

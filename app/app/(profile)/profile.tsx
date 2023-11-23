@@ -151,7 +151,7 @@ export default function Profile() {
           />
         }
         onPressRight={() => {
-          navigatePush("/my-friends");
+          navigatePush("/friends");
         }}
       />
 
