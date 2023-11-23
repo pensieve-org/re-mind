@@ -22,6 +22,7 @@ import {
   ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
+  PROFILE_ICON_DIMENSION,
 } from "../../assets/constants";
 import auth from "../../firebase.js";
 import Body from "../../components/Body";
@@ -304,22 +305,35 @@ export default function Profile() {
         <View style={styles.container}>
           <View style={styles.profileImage}>
             <View>
-              {userDetails.profile_picture_url ? (
-                <Image
-                  source={{ uri: userDetails.profile_picture_url }}
-                  style={{
-                    width: 150,
-                    height: 150,
-                    borderRadius: 100,
-                  }}
-                />
-              ) : (
-                <ProfileIcon
-                  height={40}
-                  width={40}
-                  style={{ color: theme.PRIMARY }}
-                />
-              )}
+              <View
+                style={{
+                  width: PROFILE_ICON_DIMENSION,
+                  height: PROFILE_ICON_DIMENSION,
+                  borderRadius: 100,
+                  backgroundColor: userDetails.profile_picture_url
+                    ? "transparent"
+                    : theme.PLACEHOLDER,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {userDetails.profile_picture_url ? (
+                  <Image
+                    source={{ uri: userDetails.profile_picture_url }}
+                    style={{
+                      width: PROFILE_ICON_DIMENSION,
+                      height: PROFILE_ICON_DIMENSION,
+                      borderRadius: 100,
+                    }}
+                  />
+                ) : (
+                  <ProfileIcon
+                    height={90}
+                    width={90}
+                    style={{ color: theme.PRIMARY }}
+                  />
+                )}
+              </View>
 
               <Pressable
                 onPress={handleProfilePictureChange}

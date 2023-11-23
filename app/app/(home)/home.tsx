@@ -65,7 +65,7 @@ export default function Home() {
               borderRadius: 100,
               backgroundColor: userDetails.profile_picture_url
                 ? "transparent"
-                : theme.DARK,
+                : theme.PLACEHOLDER,
               alignItems: "center",
               justifyContent: "center",
             }}
