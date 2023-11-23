@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 
 import BackArrow from "../../assets/arrow-left.svg";
@@ -14,26 +13,23 @@ import {
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
 import Body from "../../components/Body";
-import FriendList from "../../components/FriendList";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
 import sendFriendRequest from "../../services/send.friendRequest";
 import acceptFriendRequest from "../../services/accept.friendRequest";
 import getFriendRequests from "../../services/get.friendRequests";
-import getFriends from "../../services/get.friends";
-import removeFriend from "../../services/remove.friend";
 import AddFriend from "../../components/AddFriend";
 import rejectFriendRequest from "../../services/reject.friendRequest";
+import FloatingActionBar from "../../components/FloatingActionBar";
+import FriendRequestList from "../../components/FriendRequestList";
 
 // TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
 // TODO: add a notification bell in the header on the right to accept friend reqs
 export default function MyFriends() {
   const { userDetails } = useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
-  const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
   const [friendUsername, setFriendUsername] = useState("");
-  const insets = useSafeAreaInsets();
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
@@ -63,8 +59,6 @@ export default function MyFriends() {
   const handleAcceptFriend = async (friend) => {
     try {
       await acceptFriendRequest(userDetails.user_id, friend.user_id);
-      // setModalVisible(false);
-      fetchFriends();
       fetchFriendRequests();
     } catch (error) {
       alert(error.response.data.detail);
@@ -80,35 +74,6 @@ export default function MyFriends() {
     }
   };
 
-  const handleRemoveFriend = async (friend) => {
-    try {
-      Alert.alert(
-        "Confirmation",
-        `Are you sure you want to remove '${friend.username}' as a friend?`,
-        [
-          { text: "No" },
-          {
-            text: "Yes",
-            onPress: async () => {
-              await removeFriend(userDetails.user_id, friend.user_id);
-              fetchFriends();
-            },
-          },
-        ]
-      );
-    } catch (error) {
-      alert(error.response.data.detail);
-    }
-  };
-
-  const fetchFriends = async () => {
-    try {
-      setFriends(await getFriends(userDetails.user_id));
-    } catch (error) {
-      alert(error.response.data.detail);
-    }
-  };
-
   const fetchFriendRequests = async () => {
     try {
       setFriendRequests(await getFriendRequests(userDetails.user_id));
@@ -118,13 +83,12 @@ export default function MyFriends() {
   };
 
   useEffect(() => {
-    fetchFriends();
     fetchFriendRequests();
     console.log(friendRequests);
   }, []);
 
   return (
-    <View style={[styles.page, { paddingBottom: insets.bottom }]}>
+    <View style={styles.page}>
       <Header
         imageLeft={
           <BackArrow
@@ -156,12 +120,36 @@ export default function MyFriends() {
 
           <View style={{ flex: 1 }}>
             <View style={{ paddingBottom: 10 }}>
-              <Body size={14}>MY FRIENDS ({friends.length})</Body>
+              <Body size={14}>FRIEND REQUESTS ({friendRequests.length})</Body>
             </View>
-            <FriendList friends={friends} onPress={handleRemoveFriend} />
+            <FriendRequestList
+              friendRequests={friendRequests}
+              onPressTick={handleAcceptFriend}
+              onPressCross={handleRejectFriend}
+            />
           </View>
         </View>
       </AnimatedView>
+      <View
+        style={{
+          position: "absolute",
+          bottom: 30,
+          left: 0,
+          right: 0,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <FloatingActionBar
+          items={["Friends", "Requests"]}
+          selectedItem="Requests"
+          onPressItem={(item) => {
+            if (item === "Friends") {
+              navigate("/my-friends");
+            }
+          }}
+        />
+      </View>
     </View>
   );
 }
