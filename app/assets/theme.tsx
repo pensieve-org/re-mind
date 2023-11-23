@@ -7,4 +7,5 @@ export default {
   TEXT: "#FFFFFF",
   ERROR_BACKGROUND: "#FFFFFF",
   ERROR_TEXT: "#000000",
+  RED: "#FF0000",
 };

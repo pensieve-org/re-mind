@@ -49,3 +49,11 @@ CREATE TABLE IF NOT EXISTS event_attendees (
     FOREIGN KEY (attendee_user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS friend_requests (
+    user_id BIGINT UNSIGNED,
+    friend_user_id BIGINT UNSIGNED,
+    PRIMARY KEY (user_id, friend_user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (friend_user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+

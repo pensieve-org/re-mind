@@ -10,7 +10,6 @@ from schemas import (
     EventResponse,
     EventsCategory,
     UserDetails,
-    ValidateUserRequest,
 )
 
 app = FastAPI()
@@ -27,16 +26,13 @@ async def test():
     if conn is not None:
         try:
             with conn.cursor() as cursor:
-                cursor.execute(
-                    "SELECT COLUMN_NAME, DATA_TYPE, IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'users';"
-                )
-                column_types = cursor.fetchall()
-
+                cursor.execute("SELECT * FROM friend_requests")
+                fr = cursor.fetchall()
                 cursor.execute("SELECT * FROM users;")
                 users = cursor.fetchall()
                 print(f"Successfully connected to MySQL Database. Users: {users}")
 
-            return users, column_types
+            return users, fr
         except pymysql.MySQLError as e:
             print(f"Error executing query on the MySQL Database: {e}")
             return str(e)
@@ -228,8 +224,8 @@ async def delete_user(user_id: int):
         conn.close()
 
 
-@app.post("/add_friend/{user_id}/{friend_username}", response_class=Response)
-async def add_friend(user_id: int, friend_username: str):
+@app.post("/send_friend_request/{user_id}/{friend_username}", response_class=Response)
+async def send_friend_request(user_id: int, friend_username: str):
     # TODO: change this to send friend request instead of automatically adding friend
     # TODO: add a friend requests table thta is structured the same as the friends table, except it only adds rows one way
     # TODO: add a new endpoint called accept friend request that updates this table
@@ -284,14 +280,158 @@ async def add_friend(user_id: int, friend_username: str):
                     detail="Users are already friends.",
                 )
 
-            # Add friend connection
+            # Check if a friend request has already been sent
             cursor.execute(
-                "INSERT INTO friends (user_id, friend_user_id) VALUES (%s, %s), (%s, %s)",
-                (user_id, friend["user_id"], friend["user_id"], user_id),
+                """
+                SELECT * FROM friend_requests 
+                WHERE (user_id = %s AND friend_user_id = %s)
+                """,
+                (user_id, friend["user_id"]),
+            )
+            existing_request = cursor.fetchone()
+
+            if existing_request:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Friend request has already been sent.",
+                )
+
+            cursor.execute(
+                "INSERT INTO friend_requests (user_id, friend_user_id) VALUES (%s, %s)",
+                (user_id, friend["user_id"]),
             )
             conn.commit()
 
             return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.post("/accept_friend_request/{user_id}/{friend_id}", response_class=Response)
+async def accept_friend_request(user_id: int, friend_id: str):
+    # remove connection from friend request table
+    # add to friends table
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            # Check if user exists
+            cursor.execute(
+                "SELECT * FROM users WHERE user_id = %s",
+                (user_id,),
+            )
+            user = cursor.fetchone()
+
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {user_id} not found.",
+                )
+
+            # Check if friend exists
+            cursor.execute(
+                "SELECT * FROM users WHERE user_id = %s",
+                (friend_id,),
+            )
+            friend = cursor.fetchone()
+
+            if not friend:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {friend_id} not found.",
+                )
+
+            # Check if they are already friends
+            cursor.execute(
+                """
+                SELECT * FROM friends 
+                WHERE (user_id = %s AND friend_user_id = %s) OR (user_id = %s AND friend_user_id = %s)
+                """,
+                (user_id, friend_id, friend_id, user_id),
+            )
+            existing_friendship = cursor.fetchone()
+
+            if existing_friendship:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Users are already friends.",
+                )
+
+            # Add friend connection
+            cursor.execute(
+                "INSERT INTO friends (user_id, friend_user_id) VALUES (%s, %s), (%s, %s)",
+                (user_id, friend_id, friend_id, user_id),
+            )
+            conn.commit()
+
+            # Remove the request
+            cursor.execute(
+                """
+                DELETE FROM friend_requests 
+                WHERE (user_id = %s AND friend_user_id = %s) OR (user_id = %s AND friend_user_id = %s)
+                """,
+                (user_id, friend_id, friend_id, user_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.get("/get_friend_requests/{user_id}", response_model=List[UserDetails])
+async def get_friend_requests(user_id: int):
+    # remove connection from friend request table
+    # add to friends table
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT * FROM users WHERE user_id = %s",
+                (user_id),
+            )
+            user = cursor.fetchone()
+
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Event {user_id} not found.",
+                )
+            # Get friends
+            cursor.execute(
+                """
+                SELECT * FROM users
+                INNER JOIN friend_requests ON users.user_id = friend_requests.user_id
+                WHERE friend_requests.friend_user_id = %s
+                """,
+                (user_id),
+            )
+            friend_requests = cursor.fetchall()
+
+            return [UserDetails(**friend) for friend in friend_requests]
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")

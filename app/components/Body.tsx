@@ -12,6 +12,7 @@ interface BodyProps {
   children?: React.ReactNode;
   style?: TextStyle;
   italic?: boolean;
+  bold?: boolean;
   adjustsFontSizeToFit?: boolean;
   numberOfLines?: number;
   onPress?: (event: GestureResponderEvent) => void;
@@ -22,13 +23,18 @@ const Body: React.FC<BodyProps> = ({
   size = 16,
   children,
   italic = false,
+  bold = false,
   adjustsFontSizeToFit = false,
   numberOfLines = 1,
   onPress,
 }) => {
   const textStyle: TextStyle = {
     fontSize: size,
-    fontFamily: italic ? "MontserratItalic" : "MontserratRegular",
+    fontFamily: italic
+      ? "MontserratItalic"
+      : bold
+      ? "MontserratSemiBold"
+      : "MontserratRegular",
   };
 
   return (

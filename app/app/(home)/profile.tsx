@@ -21,7 +21,9 @@ import Button from "../../components/Button";
 import FriendList from "../../components/FriendList";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
-import addFriend from "../../services/add.friend";
+import sendFriendRequest from "../../services/send.friendRequest";
+import acceptFriendRequest from "../../services/accept.friendRequest";
+import getFriendRequests from "../../services/get.friendRequests";
 import getFriends from "../../services/get.friends";
 import removeFriend from "../../services/remove.friend";
 import AddFriend from "../../components/AddFriend";
@@ -39,6 +41,7 @@ export default function Profile() {
     useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [friends, setFriends] = useState([]);
+  const [friendRequests, setFriendRequests] = useState([]);
   const [friendUsername, setFriendUsername] = useState("");
   const insets = useSafeAreaInsets();
 
@@ -70,10 +73,10 @@ export default function Profile() {
   };
 
   // TODO: remove alerts and do better error display
-  const handleAddFriend = async () => {
+  const handleSendFriendRequest = async () => {
     try {
-      await addFriend(userDetails.user_id, friendUsername);
-      fetchFriends();
+      await sendFriendRequest(userDetails.user_id, friendUsername);
+      alert("Friend request sent!");
     } catch (error) {
       alert(error.response.data.detail);
     }
@@ -108,8 +111,18 @@ export default function Profile() {
     }
   };
 
+  const fetchFriendRequests = async () => {
+    try {
+      setFriendRequests(await getFriendRequests(userDetails.user_id));
+    } catch (error) {
+      alert(error.response.data.detail);
+    }
+  };
+
   useEffect(() => {
     fetchFriends();
+    fetchFriendRequests();
+    console.log(friendRequests);
   }, []);
 
   const handleProfilePictureChange = async () => {
@@ -165,11 +178,36 @@ export default function Profile() {
         }
         onPressLeft={navigateBack}
         imageRight={
-          <NotificationBell
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
+          <View>
+            <NotificationBell
+              height={HEADER_ICON_DIMENSION}
+              width={HEADER_ICON_DIMENSION}
+              style={{ color: theme.PRIMARY }}
+            />
+            {friendRequests.length > 0 && (
+              <View
+                style={{
+                  position: "absolute",
+                  right: -5,
+                  top: 0,
+                  backgroundColor: theme.RED,
+                  borderRadius: 100,
+                  height: 20,
+                  width: 20,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Body
+                  adjustsFontSizeToFit={true}
+                  bold={true}
+                  style={{ color: theme.PRIMARY }}
+                >
+                  {friendRequests.length}
+                </Body>
+              </View>
+            )}
+          </View>
         }
         // TODO: open friend requests from here, add a number to show how many are pending
         onPressRight={() => {}}
@@ -245,7 +283,7 @@ export default function Profile() {
               label="add friends"
               value={friendUsername}
               onChangeText={setFriendUsername}
-              onPress={handleAddFriend}
+              onPress={handleSendFriendRequest}
             />
           </View>
 
