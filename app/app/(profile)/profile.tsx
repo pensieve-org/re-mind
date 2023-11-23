@@ -36,7 +36,7 @@ import getFriendRequests from "../../services/get.friendRequests";
 import getFriends from "../../services/get.friends";
 import removeFriend from "../../services/remove.friend";
 import AddFriend from "../../components/AddFriend";
-import NotificationBell from "../../assets/bell.svg";
+import FriendsIcon from "../../assets/friends.svg";
 import ProfileIcon from "../../assets/profile.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
@@ -64,6 +64,13 @@ export default function Profile() {
     }, ANIMATION_DURATION);
   };
 
+  const navigatePush = (route) => {
+    setAnimation(ANIMATION_EXIT);
+    setTimeout(() => {
+      router.push(route);
+    }, ANIMATION_DURATION);
+  };
+
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
@@ -83,80 +90,6 @@ export default function Profile() {
       console.error("Error signing out: ", error);
     }
   };
-
-  // TODO: remove alerts and do better error display
-  const handleSendFriendRequest = async () => {
-    if (!friendUsername) return;
-    try {
-      await sendFriendRequest(userDetails.user_id, friendUsername);
-      alert("Friend request sent!");
-    } catch (error) {
-      alert(error.response.data.detail);
-    }
-  };
-
-  const handleAcceptFriend = async (friend) => {
-    try {
-      await acceptFriendRequest(userDetails.user_id, friend.user_id);
-      // setModalVisible(false);
-      fetchFriends();
-      fetchFriendRequests();
-    } catch (error) {
-      alert(error.response.data.detail);
-    }
-  };
-
-  const handleRejectFriend = async (friend) => {
-    try {
-      await rejectFriendRequest(userDetails.user_id, friend.user_id);
-      fetchFriendRequests();
-    } catch (error) {
-      alert(error.response.data.detail);
-    }
-  };
-
-  const handleRemoveFriend = async (friend) => {
-    try {
-      Alert.alert(
-        "Confirmation",
-        `Are you sure you want to remove '${friend.username}' as a friend?`,
-        [
-          { text: "No" },
-          {
-            text: "Yes",
-            onPress: async () => {
-              await removeFriend(userDetails.user_id, friend.user_id);
-              fetchFriends();
-            },
-          },
-        ]
-      );
-    } catch (error) {
-      alert(error.response.data.detail);
-    }
-  };
-
-  const fetchFriends = async () => {
-    try {
-      setFriends(await getFriends(userDetails.user_id));
-    } catch (error) {
-      alert(error.response.data.detail);
-    }
-  };
-
-  const fetchFriendRequests = async () => {
-    try {
-      setFriendRequests(await getFriendRequests(userDetails.user_id));
-    } catch (error) {
-      alert(error.response.data.detail);
-    }
-  };
-
-  useEffect(() => {
-    fetchFriends();
-    fetchFriendRequests();
-    console.log(friendRequests);
-  }, []);
 
   const handleProfilePictureChange = async () => {
     try {
@@ -211,91 +144,16 @@ export default function Profile() {
         }
         onPressLeft={navigateBack}
         imageRight={
-          <View>
-            <NotificationBell
-              height={HEADER_ICON_DIMENSION}
-              width={HEADER_ICON_DIMENSION}
-              style={{ color: theme.PRIMARY }}
-            />
-            {friendRequests.length > 0 && (
-              <View
-                style={{
-                  position: "absolute",
-                  right: -5,
-                  top: 0,
-                  backgroundColor: theme.RED,
-                  borderRadius: 100,
-                  height: 20,
-                  width: 20,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Body
-                  adjustsFontSizeToFit={true}
-                  bold={true}
-                  style={{ color: theme.PRIMARY }}
-                >
-                  {friendRequests.length}
-                </Body>
-              </View>
-            )}
-          </View>
+          <FriendsIcon
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+            style={{ color: theme.PRIMARY }}
+          />
         }
         onPressRight={() => {
-          if (friendRequests.length > 0) {
-            setModalVisible(!modalVisible);
-          }
+          navigatePush("/my-friends");
         }}
       />
-
-      {/* TODO: FIX THE SCROLL IN THE MODAL */}
-      <Modal
-        animationType="fade"
-        presentationStyle="overFullScreen"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 20,
-            backgroundColor: `${theme.BACKGROUND}95`,
-          }}
-          activeOpacity={1}
-          onPressOut={() => setModalVisible(!modalVisible)}
-        >
-          <View
-            style={{
-              backgroundColor: `${theme.DARK}`,
-              width: "80%",
-              maxHeight: "80%",
-              borderRadius: 20,
-              padding: 20,
-              elevation: 200,
-              shadowColor: theme.DARK,
-              shadowOpacity: 1,
-              shadowOffset: { width: 0, height: 2 },
-              shadowRadius: 10,
-            }}
-            onStartShouldSetResponder={() => true}
-          >
-            <View style={{ paddingBottom: 10, paddingHorizontal: 5 }}>
-              <Body size={16}>FRIEND REQUESTS ({friendRequests.length})</Body>
-            </View>
-            <FriendRequestList
-              friendRequests={friendRequests}
-              onPressTick={handleAcceptFriend}
-              onPressCross={handleRejectFriend}
-            />
-          </View>
-        </TouchableOpacity>
-      </Modal>
 
       <AnimatedView
         animation={animation}
@@ -373,24 +231,8 @@ export default function Profile() {
             </View>
           </View>
 
-          {/* TODO: update this to show the 5 most similar names in the database. 
-          Allow user to select by choosing from list */}
-          <View style={{ paddingVertical: 10, paddingBottom: 20 }}>
-            <AddFriend
-              placeholder="friend's username"
-              label="add friends"
-              value={friendUsername}
-              onChangeText={setFriendUsername}
-              onPress={handleSendFriendRequest}
-            />
-          </View>
+          <View style={{ flex: 1 }} />
 
-          <View style={{ flex: 1 }}>
-            <View style={{ paddingBottom: 10 }}>
-              <Body size={14}>MY FRIENDS ({friends.length})</Body>
-            </View>
-            <FriendList friends={friends} onPress={handleRemoveFriend} />
-          </View>
           <Button
             fill={theme.TEXT}
             textColor={theme.BACKGROUND}
