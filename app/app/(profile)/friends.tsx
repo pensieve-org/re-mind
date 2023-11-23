@@ -72,7 +72,7 @@ export default function MyFriends() {
             text: "Yes",
             onPress: async () => {
               await removeFriend(userDetails.user_id, friend.user_id);
-              fetchFriends();
+              await fetchFriends();
             },
           },
         ]
@@ -84,7 +84,8 @@ export default function MyFriends() {
   const handleAcceptFriend = async (friend) => {
     try {
       await acceptFriendRequest(userDetails.user_id, friend.user_id);
-      fetchFriendRequests();
+      await fetchFriendRequests();
+      await fetchFriends();
     } catch (error) {
       alert(error.response.data.detail);
     }
@@ -93,7 +94,8 @@ export default function MyFriends() {
   const handleRejectFriend = async (friend) => {
     try {
       await rejectFriendRequest(userDetails.user_id, friend.user_id);
-      fetchFriendRequests();
+      await fetchFriendRequests();
+      await fetchFriends();
     } catch (error) {
       alert(error.response.data.detail);
     }
@@ -185,6 +187,8 @@ export default function MyFriends() {
             initialSelectedItem={selectedItem}
             friendRequests={friendRequests.length}
             onPressItem={(item) => {
+              fetchFriends();
+              fetchFriendRequests();
               setSelectedItem(item);
             }}
           />
