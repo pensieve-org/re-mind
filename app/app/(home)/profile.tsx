@@ -84,6 +84,7 @@ export default function Profile() {
 
   // TODO: remove alerts and do better error display
   const handleSendFriendRequest = async () => {
+    if (!friendUsername) return;
     try {
       await sendFriendRequest(userDetails.user_id, friendUsername);
       alert("Friend request sent!");
