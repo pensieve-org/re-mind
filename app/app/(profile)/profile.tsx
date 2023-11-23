@@ -29,8 +29,6 @@ import * as ImagePicker from "expo-image-picker";
 import updateProfilePicture from "../../services/update.profilePicture";
 import { uploadImageAsync } from "../../utils";
 
-// TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
-// TODO: add a notification bell in the header on the right to accept friend reqs
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
     useContext(AppContext);

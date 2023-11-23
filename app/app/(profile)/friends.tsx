@@ -26,8 +26,6 @@ import rejectFriendRequest from "../../services/reject.friendRequest";
 import acceptFriendRequest from "../../services/accept.friendRequest";
 import getFriendRequests from "../../services/get.friendRequests";
 
-// TODO: add bottom nav and have 3 tabs, profile, add friends and my friends
-// TODO: add a notification bell in the header on the right to accept friend reqs
 export default function MyFriends() {
   const { userDetails } = useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
@@ -35,13 +33,6 @@ export default function MyFriends() {
   const [friendUsername, setFriendUsername] = useState("");
   const [selectedItem, setSelectedItem] = useState("Friends");
   const [friendRequests, setFriendRequests] = useState([]);
-
-  const navigate = (route) => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.replace(route);
-    }, ANIMATION_DURATION);
-  };
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
