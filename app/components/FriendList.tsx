@@ -70,7 +70,7 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
       keyExtractor={(item, index) => String(index)}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 100 }}
+      contentContainerStyle={{ paddingBottom: 80 }}
     />
   );
 };
