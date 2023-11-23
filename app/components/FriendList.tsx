@@ -11,9 +11,15 @@ interface Props {
   friends: any[];
   onPress?: (friend) => void;
   add?: boolean;
+  scale?: number;
 }
 
-const FriendList: React.FC<Props> = ({ friends, onPress, add = false }) => {
+const FriendList: React.FC<Props> = ({
+  friends,
+  onPress,
+  add = false,
+  scale = 1,
+}) => {
   const handleOnPress = (friend) => {
     onPress(friend);
   };
@@ -29,6 +35,9 @@ const FriendList: React.FC<Props> = ({ friends, onPress, add = false }) => {
                 backgroundColor: item.profile_picture_url
                   ? "transparent"
                   : theme.DARK,
+                transform: [{ scale: scale }],
+                width: PROFILE_ICON_DIAMETER * scale,
+                height: PROFILE_ICON_DIAMETER * scale,
               },
             ]}
           >
@@ -39,14 +48,16 @@ const FriendList: React.FC<Props> = ({ friends, onPress, add = false }) => {
               />
             ) : (
               <ProfileIcon
-                height={40}
-                width={40}
+                height={40 * scale}
+                width={40 * scale}
                 style={{ color: theme.PRIMARY }}
               />
             )}
           </View>
 
-          <View style={styles.textContainer}>
+          <View
+            style={{ marginLeft: 20 * scale, transform: [{ scale: scale }] }}
+          >
             <Body adjustsFontSizeToFit>
               {item.first_name} {item.last_name}
             </Body>
@@ -56,7 +67,10 @@ const FriendList: React.FC<Props> = ({ friends, onPress, add = false }) => {
           </View>
         </View>
 
-        <TouchableOpacity onPress={() => handleOnPress(item)}>
+        <TouchableOpacity
+          style={{ transform: [{ scale: scale }] }}
+          onPress={() => handleOnPress(item)}
+        >
           {add ? (
             <Check height={25} width={25} style={styles.checkIconStyle} />
           ) : (
@@ -87,31 +101,18 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   imageContainer: {
-    width: PROFILE_ICON_DIAMETER,
-    height: PROFILE_ICON_DIAMETER,
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
-  },
-  text: {
-    textAlign: "left",
   },
   image: {
     width: "100%",
     height: "100%",
     borderRadius: 100,
   },
-  initialsText: {
-    color: "#fff",
-    fontSize: 20,
-  },
-
   profileSection: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  textContainer: {
-    marginLeft: 20,
   },
   usernameText: {
     color: theme.PLACEHOLDER,

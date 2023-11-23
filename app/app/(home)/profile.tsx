@@ -237,6 +237,7 @@ export default function Profile() {
         }}
       />
 
+      {/* TODO: FIX THE SCROLL IN THE MODAL */}
       <Modal
         animationType="fade"
         presentationStyle="overFullScreen"
@@ -277,6 +278,7 @@ export default function Profile() {
               friends={friendRequests}
               onPress={handleAcceptFriend}
               add={true}
+              scale={0.8}
             />
           </View>
         </TouchableOpacity>
