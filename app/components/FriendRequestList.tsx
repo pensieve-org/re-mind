@@ -93,6 +93,7 @@ const FriendRequestList: React.FC<Props> = ({
       keyExtractor={(item, index) => String(index)}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 100 }}
     />
   );
 };
