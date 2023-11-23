@@ -287,7 +287,6 @@ export default function Profile() {
             <View style={{ paddingBottom: 10, paddingHorizontal: 5 }}>
               <Body size={16}>FRIEND REQUESTS ({friendRequests.length})</Body>
             </View>
-
             <FriendRequestList
               friendRequests={friendRequests}
               onPressTick={handleAcceptFriend}
