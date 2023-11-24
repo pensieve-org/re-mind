@@ -26,7 +26,7 @@ pip install -r requirements.txt
 Run the application
 
 ```
-uvicorn app.main:app --reload
+uvicorn main:app --reload
 ```
 
 Set up and run the cloud sql socket
