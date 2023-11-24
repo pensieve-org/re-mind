@@ -39,7 +39,15 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [selectedEventCategory, setSelectedEventCategory] =
-    useState<EventCategory>("current");
+    useState<EventCategory>(
+      userEvents.current.length > 0
+        ? "current"
+        : userEvents.upcoming.length > 0
+        ? "upcoming"
+        : userEvents.past.length > 0
+        ? "past"
+        : "current"
+    );
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
