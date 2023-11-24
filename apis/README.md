@@ -32,7 +32,7 @@ uvicorn main:app --reload
 Set up and run the cloud sql socket
 
 ```
-gcloud auth login or gcloud auth application-default login
+gcloud auth application-default login
 cloud-sql-proxy re-mind-405009:europe-west2:remind-mysql --unix-socket=/Users/jamesheavey/Documents/GitHub/re-mind/apis/sql_socket
 ```
 
