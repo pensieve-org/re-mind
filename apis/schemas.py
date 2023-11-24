@@ -49,7 +49,8 @@ class EventResponse(BaseModel):
 
 
 class EventsCategory(BaseModel):
-    ongoing: List[EventResponse]
+    current: List[EventResponse]
+    upcoming: List[EventResponse]
     past: List[EventResponse]
 
 

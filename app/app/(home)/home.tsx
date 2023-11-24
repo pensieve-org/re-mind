@@ -121,14 +121,29 @@ export default function Home() {
             <Subtitle size={23}>memories</Subtitle>
           </View>
           <View style={{ paddingBottom: 20 }}>
-            <Subtitle size={20}>ongoing</Subtitle>
+            <Subtitle size={20}>current</Subtitle>
           </View>
 
-          {userEvents.ongoing.length > 0 ? (
-            <EventList events={userEvents.ongoing} onPress={handleEventPress} />
+          {userEvents.current.length > 0 ? (
+            <EventList events={userEvents.current} onPress={handleEventPress} />
           ) : (
             <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-              no ongoing events
+              no current events
+            </Body>
+          )}
+
+          <View style={{ paddingVertical: 20 }}>
+            <Subtitle size={20}>upcoming</Subtitle>
+          </View>
+
+          {userEvents.upcoming.length > 0 ? (
+            <EventList
+              events={userEvents.upcoming}
+              onPress={handleEventPress}
+            />
+          ) : (
+            <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+              no upcoming events
             </Body>
           )}
 
