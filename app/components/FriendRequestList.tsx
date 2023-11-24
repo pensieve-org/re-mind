@@ -54,7 +54,7 @@ const FriendRequestList: React.FC<Props> = ({
             )}
           </View>
 
-          <View style={{ marginLeft: 10 }}>
+          <View style={{ marginLeft: 20 }}>
             <Body adjustsFontSizeToFit>
               {item.first_name} {item.last_name}
             </Body>
