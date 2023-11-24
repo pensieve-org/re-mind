@@ -728,20 +728,20 @@ async def get_all_user_events(user_id: int):
 
                 # Categorize events into ongoing and past
                 event_categories = EventsCategory(
-                    current=[
+                    live=[
                         e
                         for e in all_events
                         if e.end_time >= datetime.now()
                         and e.start_time <= datetime.now()
                     ],
-                    upcoming=[e for e in all_events if e.start_time > datetime.now()],
+                    future=[e for e in all_events if e.start_time > datetime.now()],
                     past=[e for e in all_events if e.end_time < datetime.now()],
                 )
 
                 return event_categories
 
             else:
-                return EventsCategory(current=[], upcoming=[], past=[])
+                return EventsCategory(live=[], future=[], past=[])
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")

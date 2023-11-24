@@ -31,7 +31,7 @@ import { AppContext } from "../_layout";
 import getAllUserEvents from "../../services/get.allUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 
-type EventCategory = "current" | "upcoming" | "past";
+type EventCategory = "live" | "future" | "past";
 
 export default function Home() {
   const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
@@ -40,13 +40,13 @@ export default function Home() {
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [selectedEventCategory, setSelectedEventCategory] =
     useState<EventCategory>(
-      userEvents.current.length > 0
-        ? "current"
-        : userEvents.upcoming.length > 0
-        ? "upcoming"
+      userEvents.live.length > 0
+        ? "live"
+        : userEvents.future.length > 0
+        ? "future"
         : userEvents.past.length > 0
         ? "past"
-        : "current"
+        : "live"
     );
 
   const navigate = (route) => {
@@ -128,30 +128,30 @@ export default function Home() {
               justifyContent: "space-between",
             }}
           >
-            <Pressable onPress={() => setSelectedEventCategory("current")}>
+            <Pressable onPress={() => setSelectedEventCategory("live")}>
               <Subtitle
                 size={20}
                 style={{
                   color:
-                    selectedEventCategory === "current"
+                    selectedEventCategory === "live"
                       ? theme.PRIMARY
                       : theme.PLACEHOLDER,
                 }}
               >
-                current
+                live
               </Subtitle>
             </Pressable>
-            <Pressable onPress={() => setSelectedEventCategory("upcoming")}>
+            <Pressable onPress={() => setSelectedEventCategory("future")}>
               <Subtitle
                 size={20}
                 style={{
                   color:
-                    selectedEventCategory === "upcoming"
+                    selectedEventCategory === "future"
                       ? theme.PRIMARY
                       : theme.PLACEHOLDER,
                 }}
               >
-                upcoming
+                future
               </Subtitle>
             </Pressable>
             <Pressable onPress={() => setSelectedEventCategory("past")}>
@@ -182,27 +182,27 @@ export default function Home() {
                 color={theme.PRIMARY}
               />
             )}
-            {selectedEventCategory === "current" &&
-              (userEvents.current.length > 0 ? (
+            {selectedEventCategory === "live" &&
+              (userEvents.live.length > 0 ? (
                 <EventList
-                  events={userEvents.current}
+                  events={userEvents.live}
                   onPress={handleEventPress}
                 />
               ) : (
                 <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                  no current events
+                  no live events
                 </Body>
               ))}
 
-            {selectedEventCategory === "upcoming" &&
-              (userEvents.upcoming.length > 0 ? (
+            {selectedEventCategory === "future" &&
+              (userEvents.future.length > 0 ? (
                 <EventList
-                  events={userEvents.upcoming}
+                  events={userEvents.future}
                   onPress={handleEventPress}
                 />
               ) : (
                 <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                  no upcoming events
+                  no future events
                 </Body>
               ))}
 
