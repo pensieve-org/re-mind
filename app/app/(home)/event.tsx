@@ -76,10 +76,11 @@ export default function Event() {
               color={theme.PRIMARY}
             />
           )}
-
-          <Body style={{ paddingVertical: 20 }}>
-            Event id: {selectedEvent.event_id}
-          </Body>
+          <View style={{ paddingVertical: 20 }}>
+            <Body>Event id: {selectedEvent.event_id}</Body>
+            <Body>Start Time: {selectedEvent.start_time}</Body>
+            <Body>End Time: {selectedEvent.end_time}</Body>
+          </View>
           <View style={styles.imageContainer}>
             {selectedEvent.images.map((image, index) => (
               <Image
