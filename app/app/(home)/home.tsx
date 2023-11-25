@@ -168,6 +168,13 @@ export default function Home() {
               </Subtitle>
             </Pressable>
           </View>
+          {refreshing && (
+            <ActivityIndicator
+              style={{ paddingTop: 10 }}
+              size={"large"}
+              color={theme.PRIMARY}
+            />
+          )}
 
           <ScrollView
             style={{ flex: 1, paddingBottom: 50 }}
@@ -175,13 +182,6 @@ export default function Home() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
-            {refreshing && (
-              <ActivityIndicator
-                style={{ paddingBottom: 30 }}
-                size={"large"}
-                color={theme.PRIMARY}
-              />
-            )}
             {selectedEventCategory === "live" &&
               (userEvents.live.length > 0 ? (
                 <EventList

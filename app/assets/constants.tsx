@@ -9,6 +9,15 @@ export const ANIMATION_DURATION = 400;
 export const ANIMATION_ENTRY = "fadeIn";
 export const ANIMATION_EXIT = "fadeOut";
 
+export const FRIEND_ICON_GAP = 10;
+export const FRIEND_ICON_GAP_BOTTOM = 10;
+export const FRIEND_ROW_ICONS = 4;
+export const FRIEND_ICON_DIAMETER =
+  (Dimensions.get("window").width -
+    2 * HORIZONTAL_PADDING -
+    (FRIEND_ROW_ICONS - 1) * FRIEND_ICON_GAP) /
+  FRIEND_ROW_ICONS;
+
 // For Home Screen
 export const ICON_GAP = 30;
 export const ICON_GAP_BOTTOM = 10;

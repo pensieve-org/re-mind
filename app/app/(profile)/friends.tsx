@@ -19,7 +19,7 @@ import { AppContext } from "../_layout";
 import sendFriendRequest from "../../services/send.friendRequest";
 import getFriends from "../../services/get.friends";
 import removeFriend from "../../services/remove.friend";
-import AddFriend from "../../components/AddFriend";
+import AddFriend from "../../components/AddFriendInput";
 import FloatingActionBar from "../../components/FloatingActionBar";
 import FriendRequestList from "../../components/FriendRequestList";
 import rejectFriendRequest from "../../services/reject.friendRequest";

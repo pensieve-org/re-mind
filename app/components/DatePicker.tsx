@@ -66,10 +66,6 @@ const DatePicker: React.FC<Props> = ({
             </>
           )}
         </Pressable>
-
-        <View style={{ paddingTop: 10, height: 30 }}>
-          {startDate && <Body>start date</Body>}
-        </View>
       </View>
 
       <View style={styles.pickerContainer}>
@@ -82,10 +78,6 @@ const DatePicker: React.FC<Props> = ({
             </>
           )}
         </Pressable>
-
-        <View style={{ paddingTop: 10, height: 30 }}>
-          {endDate && <Body>end date</Body>}
-        </View>
       </View>
 
       <DateTimePickerModal
@@ -120,9 +112,9 @@ const styles = StyleSheet.create({
     backgroundColor: theme.BACKGROUND,
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 20,
     flexDirection: "row",
     width: "100%",
+    paddingVertical: 20,
   },
   pickerContainer: {
     flexDirection: "column",
@@ -137,6 +129,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 100,
-    marginBottom: 10,
   },
 });

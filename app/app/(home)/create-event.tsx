@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
@@ -18,6 +18,8 @@ import { AppContext } from "../_layout";
 import Subtitle from "../../components/Subtitle";
 import SubtitleInput from "../../components/SubtitleInput";
 import DatePicker from "../../components/DatePicker";
+import AddFriendsList from "../../components/AddFriendsList";
+import getFriends from "../../services/get.friends";
 
 export default function CreateEvent() {
   const { userDetails } = useContext(AppContext);
@@ -25,6 +27,7 @@ export default function CreateEvent() {
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [friends, setFriends] = useState([]);
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -32,6 +35,19 @@ export default function CreateEvent() {
       router.back();
     }, ANIMATION_DURATION);
   };
+
+  const fetchFriends = async () => {
+    try {
+      setFriends(await getFriends(userDetails.user_id));
+    } catch (error) {
+      alert(error.response.data.detail);
+    }
+  };
+
+  useEffect(() => {
+    fetchFriends();
+  }, []);
+
   return (
     <View style={styles.page}>
       <Header
@@ -60,12 +76,17 @@ export default function CreateEvent() {
             onChangeText={setEventName}
           />
 
+          <View style={{ paddingTop: 20 }}>
+            <Subtitle size={20}>event duration</Subtitle>
+          </View>
+
           <DatePicker
             selectedStartDate={setStartDate}
             selectedEndDate={setEndDate}
           />
 
           <Subtitle size={20}>add friends</Subtitle>
+          <AddFriendsList friends={friends} onPress={() => {}} />
         </View>
       </AnimatedView>
     </View>
