@@ -20,6 +20,7 @@ import SubtitleInput from "../../components/SubtitleInput";
 import DatePicker from "../../components/DatePicker";
 import AddFriendsList from "../../components/AddFriendsList";
 import getFriends from "../../services/get.friends";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function CreateEvent() {
   const { userDetails } = useContext(AppContext);
@@ -27,7 +28,8 @@ export default function CreateEvent() {
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [friends, setFriends] = useState([]);
+  const [unselectedFriends, setUnselectedFriends] = useState([]);
+  const [selectedFriends, setSelectedFriends] = useState([]);
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -38,7 +40,7 @@ export default function CreateEvent() {
 
   const fetchFriends = async () => {
     try {
-      setFriends(await getFriends(userDetails.user_id));
+      setUnselectedFriends(await getFriends(userDetails.user_id));
     } catch (error) {
       alert(error.response.data.detail);
     }
@@ -70,23 +72,66 @@ export default function CreateEvent() {
             <Subtitle size={25}>new event</Subtitle>
           </View>
 
-          <SubtitleInput
-            size={20}
-            text={"event name..."}
-            onChangeText={setEventName}
-          />
+          <ScrollView>
+            <SubtitleInput
+              size={20}
+              text={"event name..."}
+              onChangeText={setEventName}
+            />
 
-          <View style={{ paddingTop: 20 }}>
-            <Subtitle size={20}>event duration</Subtitle>
-          </View>
+            <View style={{ paddingTop: 20 }}>
+              <Subtitle size={20}>event duration</Subtitle>
+            </View>
 
-          <DatePicker
-            selectedStartDate={setStartDate}
-            selectedEndDate={setEndDate}
-          />
+            <DatePicker
+              selectedStartDate={setStartDate}
+              selectedEndDate={setEndDate}
+            />
 
-          <Subtitle size={20}>add friends</Subtitle>
-          <AddFriendsList friends={friends} onPress={() => {}} />
+            <Subtitle size={20} style={{ paddingBottom: 10 }}>
+              attendees
+            </Subtitle>
+            {selectedFriends.length > 0 ? (
+              <AddFriendsList
+                unselectedFriends={selectedFriends}
+                selectedFriends={unselectedFriends}
+                setSelectedFriends={setUnselectedFriends}
+                setUnselectedFriends={setSelectedFriends}
+              />
+            ) : (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingVertical: 10,
+                }}
+              >
+                <Body style={{ paddingBottom: 10 }}>no friends invited</Body>
+              </View>
+            )}
+
+            <Subtitle size={20} style={{ paddingBottom: 10 }}>
+              invite friends
+            </Subtitle>
+            {unselectedFriends.length > 0 ? (
+              <AddFriendsList
+                unselectedFriends={unselectedFriends}
+                selectedFriends={selectedFriends}
+                setSelectedFriends={setSelectedFriends}
+                setUnselectedFriends={setUnselectedFriends}
+              />
+            ) : (
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingVertical: 10,
+                }}
+              >
+                <Body style={{ paddingBottom: 10 }}>no friends to add</Body>
+              </View>
+            )}
+          </ScrollView>
         </View>
       </AnimatedView>
     </View>

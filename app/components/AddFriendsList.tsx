@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import Body from "./Body";
 import {
@@ -11,18 +11,26 @@ import ProfileIcon from "../assets/profile.svg";
 import theme from "../assets/theme";
 
 interface Props {
-  friends: any[];
-  onPress?: (event) => void;
+  unselectedFriends: any[];
+  selectedFriends: any[];
+  setSelectedFriends: (friends: any[]) => void;
+  setUnselectedFriends: (friends: any[]) => void;
 }
 
-const AddFriendsList: React.FC<Props> = ({ friends, onPress }) => {
+const AddFriendsList: React.FC<Props> = ({
+  unselectedFriends,
+  selectedFriends,
+  setSelectedFriends,
+  setUnselectedFriends,
+}) => {
   const handleOnPress = (friend) => {
-    onPress(friend);
+    setSelectedFriends([...selectedFriends, friend]);
+    setUnselectedFriends(unselectedFriends.filter((f) => f !== friend));
   };
 
   return (
     <View style={styles.container}>
-      {friends.map((friend, index) => (
+      {unselectedFriends.map((friend, index) => (
         <TouchableOpacity
           key={index}
           style={{
@@ -64,6 +72,7 @@ const AddFriendsList: React.FC<Props> = ({ friends, onPress }) => {
     </View>
   );
 };
+// ... rest of your code
 
 const styles = StyleSheet.create({
   container: {
