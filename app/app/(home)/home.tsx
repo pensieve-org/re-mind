@@ -42,10 +42,10 @@ export default function Home() {
     useState<EventCategory>(
       userEvents.live.length > 0
         ? "live"
-        : userEvents.future.length > 0
-        ? "future"
         : userEvents.past.length > 0
         ? "past"
+        : userEvents.future.length > 0
+        ? "future"
         : "live"
     );
 
@@ -128,6 +128,19 @@ export default function Home() {
               justifyContent: "space-between",
             }}
           >
+            <Pressable onPress={() => setSelectedEventCategory("past")}>
+              <Subtitle
+                size={20}
+                style={{
+                  color:
+                    selectedEventCategory === "past"
+                      ? theme.PRIMARY
+                      : theme.PLACEHOLDER,
+                }}
+              >
+                past
+              </Subtitle>
+            </Pressable>
             <Pressable onPress={() => setSelectedEventCategory("live")}>
               <Subtitle
                 size={20}
@@ -152,19 +165,6 @@ export default function Home() {
                 }}
               >
                 future
-              </Subtitle>
-            </Pressable>
-            <Pressable onPress={() => setSelectedEventCategory("past")}>
-              <Subtitle
-                size={20}
-                style={{
-                  color:
-                    selectedEventCategory === "past"
-                      ? theme.PRIMARY
-                      : theme.PLACEHOLDER,
-                }}
-              >
-                past
               </Subtitle>
             </Pressable>
           </View>
