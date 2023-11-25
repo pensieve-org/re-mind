@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  Pressable,
   RefreshControl,
   StyleSheet,
   View,
@@ -30,11 +31,23 @@ import { AppContext } from "../_layout";
 import getAllUserEvents from "../../services/get.allUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 
+type EventCategory = "live" | "future" | "past";
+
 export default function Home() {
   const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
+  const [selectedEventCategory, setSelectedEventCategory] =
+    useState<EventCategory>(
+      userEvents.live.length > 0
+        ? "live"
+        : userEvents.past.length > 0
+        ? "past"
+        : userEvents.future.length > 0
+        ? "future"
+        : "live"
+    );
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
@@ -103,47 +116,109 @@ export default function Home() {
         duration={ANIMATION_DURATION}
         style={styles.page}
       >
-        <ScrollView
-          style={styles.container}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        >
-          {refreshing && (
-            <ActivityIndicator
-              style={{ padding: 10 }}
-              size={"large"}
-              color={theme.PRIMARY}
-            />
-          )}
-
+        <View style={styles.container}>
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={23}>memories</Subtitle>
           </View>
-          <View style={{ paddingBottom: 20 }}>
-            <Subtitle size={20}>ongoing</Subtitle>
+
+          <View
+            style={{
+              paddingBottom: 20,
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
+          >
+            <Pressable onPress={() => setSelectedEventCategory("past")}>
+              <Subtitle
+                size={20}
+                style={{
+                  color:
+                    selectedEventCategory === "past"
+                      ? theme.PRIMARY
+                      : theme.PLACEHOLDER,
+                }}
+              >
+                past
+              </Subtitle>
+            </Pressable>
+            <Pressable onPress={() => setSelectedEventCategory("live")}>
+              <Subtitle
+                size={20}
+                style={{
+                  color:
+                    selectedEventCategory === "live"
+                      ? theme.PRIMARY
+                      : theme.PLACEHOLDER,
+                }}
+              >
+                live
+              </Subtitle>
+            </Pressable>
+            <Pressable onPress={() => setSelectedEventCategory("future")}>
+              <Subtitle
+                size={20}
+                style={{
+                  color:
+                    selectedEventCategory === "future"
+                      ? theme.PRIMARY
+                      : theme.PLACEHOLDER,
+                }}
+              >
+                future
+              </Subtitle>
+            </Pressable>
           </View>
 
-          {userEvents.ongoing.length > 0 ? (
-            <EventList events={userEvents.ongoing} onPress={handleEventPress} />
-          ) : (
-            <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-              no ongoing events
-            </Body>
-          )}
+          <ScrollView
+            style={{ flex: 1, paddingBottom: 50 }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
+            {refreshing && (
+              <ActivityIndicator
+                style={{ paddingBottom: 30 }}
+                size={"large"}
+                color={theme.PRIMARY}
+              />
+            )}
+            {selectedEventCategory === "live" &&
+              (userEvents.live.length > 0 ? (
+                <EventList
+                  events={userEvents.live}
+                  onPress={handleEventPress}
+                />
+              ) : (
+                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                  no live events
+                </Body>
+              ))}
 
-          <View style={{ paddingVertical: 20 }}>
-            <Subtitle size={20}>past</Subtitle>
-          </View>
+            {selectedEventCategory === "future" &&
+              (userEvents.future.length > 0 ? (
+                <EventList
+                  events={userEvents.future}
+                  onPress={handleEventPress}
+                />
+              ) : (
+                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                  no future events
+                </Body>
+              ))}
 
-          {userEvents.past.length > 0 ? (
-            <EventList events={userEvents.past} onPress={handleEventPress} />
-          ) : (
-            <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-              no past events
-            </Body>
-          )}
-        </ScrollView>
+            {selectedEventCategory === "past" &&
+              (userEvents.past.length > 0 ? (
+                <EventList
+                  events={userEvents.past}
+                  onPress={handleEventPress}
+                />
+              ) : (
+                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                  no past events
+                </Body>
+              ))}
+          </ScrollView>
+        </View>
       </AnimatedView>
     </View>
   );
@@ -157,6 +232,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: HORIZONTAL_PADDING,
-    paddingBottom: 50,
   },
 });
