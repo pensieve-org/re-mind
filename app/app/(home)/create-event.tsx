@@ -15,10 +15,13 @@ import {
 import Body from "../../components/Body";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
+import Subtitle from "../../components/Subtitle";
+import SubtitleInput from "../../components/SubtitleInput";
 
 export default function CreateEvent() {
   const { userDetails } = useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
+  const [eventName, setEventName] = useState("");
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -44,7 +47,17 @@ export default function CreateEvent() {
         style={styles.page}
       >
         <View style={styles.container}>
-          <Body style={{ paddingVertical: 20 }}>Create event screen</Body>
+          <View style={{ paddingVertical: 20 }}>
+            <Subtitle size={25}>new event</Subtitle>
+          </View>
+
+          <SubtitleInput
+            size={20}
+            text={"event name..."}
+            onChangeText={setEventName}
+          />
+
+          <Subtitle size={20}>add friends</Subtitle>
         </View>
       </AnimatedView>
     </View>

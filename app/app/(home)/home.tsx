@@ -118,7 +118,7 @@ export default function Home() {
       >
         <View style={styles.container}>
           <View style={{ paddingVertical: 20 }}>
-            <Subtitle size={23}>memories</Subtitle>
+            <Subtitle size={25}>memories</Subtitle>
           </View>
 
           <View
