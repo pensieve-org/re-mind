@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Pressable, StyleSheet, View, Image } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Image,
+  Alert as RNAlert,
+} from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
 
@@ -26,9 +32,14 @@ import ImageIcon from "../../assets/image.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImageAsync } from "../../utils";
+import createEvent from "../../services/create.event";
+import updateEventThumbnail from "../../services/update.eventThumbnail";
+import getAllUserEvents from "../../services/get.allUserEvents";
+import Alert from "../../components/Alert";
+import Button from "../../components/Button";
 
 export default function CreateEvent() {
-  const { userDetails } = useContext(AppContext);
+  const { userDetails, setUserEvents } = useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -36,6 +47,9 @@ export default function CreateEvent() {
   const [unselectedFriends, setUnselectedFriends] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [thumbnail, setThumbnail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -43,6 +57,7 @@ export default function CreateEvent() {
       router.back();
     }, ANIMATION_DURATION);
   };
+
   const handleThumbnailChange = async () => {
     try {
       const pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -71,17 +86,49 @@ export default function CreateEvent() {
   };
 
   const handleCreateEvent = async () => {
-    // step 1: create a new event with name, duration, attendees...
-    // if thumbnail is empty, jump to step 5 else...
-    // step 2: return new event Id
-    // step 3: upload new event to friebase server as below
-    // const uploadUrl = await uploadImageAsync(
-    //   thumbnail,
-    //   `/events/${newEvent.event_id}`
-    // );
-    // step 4: update the event with new thumbnail url
-    // const response = await updateProfilePicture(userDetails.user_id, uploadUrl);
-    // step 5: navigate to home
+    setError(false);
+
+    if (!startDate || !endDate || !eventName || selectedFriends.length === 0) {
+      setError(true);
+      setErrorMsg("please fill out all required fields");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const newEvent = await createEvent({
+        start_time: startDate,
+        end_time: endDate,
+        name: eventName,
+        attendees: [...selectedFriends, userDetails],
+      });
+
+      if (thumbnail) {
+        const uploadUrl = await uploadImageAsync(
+          thumbnail,
+          `/events/${newEvent.event_id}`
+        );
+        const response = await updateEventThumbnail(
+          newEvent.event_id,
+          uploadUrl
+        );
+      }
+
+      setUserEvents(await getAllUserEvents(userDetails.user_id));
+
+      setIsLoading(false);
+
+      RNAlert.alert(
+        "Event Created",
+        "Your event has been successfully created.",
+        [{ text: "OK", onPress: navigateBack }]
+      );
+    } catch (error) {
+      setError(true);
+      setIsLoading(false);
+      setErrorMsg(error.response.data.detail);
+    }
   };
 
   const fetchFriends = async () => {
@@ -113,6 +160,12 @@ export default function CreateEvent() {
         duration={ANIMATION_DURATION}
         style={styles.page}
       >
+        {error && (
+          <View style={styles.alertContainer}>
+            <Alert text={errorMsg} />
+          </View>
+        )}
+
         <View style={styles.container}>
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={25}>new event</Subtitle>
@@ -235,6 +288,15 @@ export default function CreateEvent() {
                 <Body style={{ paddingBottom: 10 }}>no friends to add</Body>
               </View>
             )}
+            <View style={{ paddingVertical: 20 }}>
+              <Button
+                fill={theme.TEXT}
+                textColor={theme.BACKGROUND}
+                onPress={handleCreateEvent}
+              >
+                create event
+              </Button>
+            </View>
           </ScrollView>
         </View>
       </AnimatedView>
@@ -256,5 +318,9 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
+  },
+  alertContainer: {
+    alignItems: "center",
+    height: 80,
   },
 });

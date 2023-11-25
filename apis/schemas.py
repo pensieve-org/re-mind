@@ -47,6 +47,14 @@ class EventResponse(BaseModel):
     images: Optional[List[ImageResponse]] = []
 
 
+class CreateEventRequest(BaseModel):
+    start_time: datetime
+    end_time: datetime
+    name: str
+    attendees: Optional[List[UserDetails]] = []
+    thumbnail: Optional[str] = None
+
+
 class EventsCategory(BaseModel):
     live: List[EventResponse]
     future: List[EventResponse]
@@ -55,3 +63,7 @@ class EventsCategory(BaseModel):
 
 class ProfilePictureUpdate(BaseModel):
     profile_picture_url: str
+
+
+class ThumbnailUpdate(BaseModel):
+    thumbnail: str

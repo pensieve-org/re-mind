@@ -5,10 +5,12 @@ from firebase_admin import storage
 from utils import mysql_connection, firebase_connection
 import pymysql
 from schemas import (
+    CreateEventRequest,
     ProfilePictureUpdate,
     RegisterRequest,
     EventResponse,
     EventsCategory,
+    ThumbnailUpdate,
     UserDetails,
 )
 
@@ -30,9 +32,11 @@ async def test():
                 fr = cursor.fetchall()
                 cursor.execute("SELECT * FROM users;")
                 users = cursor.fetchall()
+                cursor.execute("SELECT * FROM events;")
+                events = cursor.fetchall()
                 print(f"Successfully connected to MySQL Database. Users: {users}")
 
-            return users, fr
+            return events, users, fr
         except pymysql.MySQLError as e:
             print(f"Error executing query on the MySQL Database: {e}")
             return str(e)
@@ -837,6 +841,127 @@ async def update_profile_picture(user_id: int, data: ProfilePictureUpdate):
             cursor.execute(
                 "UPDATE users SET profile_picture_url = %s WHERE user_id = %s",
                 (data.profile_picture_url, user_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.post("/create_event", response_model=EventResponse)
+async def create_event(create_event_request: CreateEventRequest):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO events (start_time, end_time, thumbnail, name) VALUES (%s, %s, %s, %s)",
+                (
+                    create_event_request.start_time,
+                    create_event_request.end_time,
+                    create_event_request.thumbnail,
+                    create_event_request.name,
+                ),
+            )
+            conn.commit()
+
+            return EventResponse(
+                event_id=cursor.lastrowid,
+                start_time=create_event_request.start_time,
+                end_time=create_event_request.end_time,
+                thumbnail=create_event_request.thumbnail,
+                name=create_event_request.name,
+                attendees=create_event_request.attendees,
+            )
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.delete("/delete_event/{event_id}", response_class=Response)
+async def delete_event(event_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT * FROM events WHERE event_id = %s",
+                (event_id),
+            )
+            event = cursor.fetchone()
+
+            print(event)
+
+            if not event:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail="Event not found."
+                )
+
+            cursor.execute(
+                "DELETE FROM events WHERE event_id = %s",
+                (event_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+@app.patch("/update_event_thumbnail/{event_id}", response_class=Response)
+async def update_event_thumbnail(event_id: int, data: ThumbnailUpdate):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                f"SELECT * FROM events WHERE event_id = %s",
+                event_id,
+            )
+            event = cursor.fetchone()
+
+            if not event:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"User {event_id} not found.",
+                )
+
+            cursor.execute(
+                "UPDATE events SET thumbnail = %s WHERE event_id = %s",
+                (data.thumbnail, event_id),
             )
             conn.commit()
 

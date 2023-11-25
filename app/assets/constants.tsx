@@ -40,10 +40,13 @@ export const EVENT_IMAGE_WIDTH =
 // Profile Screen
 export const PROFILE_ICON_DIAMETER = 80;
 
+// API Endpoints
 export const API_BASE_URL = "https://sweet-rapidly-phoenix.ngrok-free.app/";
 export const API_GET_ALL_USER_EVENTS = "get_all_user_events/";
 export const API_GET_EVENT = "get_event/";
 export const API_CREATE_USER = "create_user";
+export const API_CREATE_EVENT = "create_event";
+export const API_DELETE_EVENT = "delete_event/";
 export const API_GET_USER = "get_user/";
 export const API_GET_FRIENDS = "get_friends/";
 export const API_GET_FRIEND_REQUESTS = "get_friend_requests/";
@@ -53,3 +56,4 @@ export const API_REJECT_FRIEND_REQUEST = "reject_friend_request/";
 export const API_REMOVE_FRIEND = "remove_friend/";
 export const API_CHECK_USER = "check_user";
 export const API_UPDATE_PROFILE_PICTURE = "update_profile_picture/";
+export const API_UPDATE_EVENT_THUMBNAIL = "update_event_thumbnail/";
