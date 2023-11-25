@@ -17,11 +17,14 @@ import Header from "../../components/Header";
 import { AppContext } from "../_layout";
 import Subtitle from "../../components/Subtitle";
 import SubtitleInput from "../../components/SubtitleInput";
+import DatePicker from "../../components/DatePicker";
 
 export default function CreateEvent() {
   const { userDetails } = useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [eventName, setEventName] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -55,6 +58,11 @@ export default function CreateEvent() {
             size={20}
             text={"event name..."}
             onChangeText={setEventName}
+          />
+
+          <DatePicker
+            selectedStartDate={setStartDate}
+            selectedEndDate={setEndDate}
           />
 
           <Subtitle size={20}>add friends</Subtitle>
