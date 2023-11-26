@@ -1,41 +1,27 @@
 import React, { useContext, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  RefreshControl,
-  StyleSheet,
-  View,
-} from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
 
 import BackArrow from "../../assets/arrow-left.svg";
-import ThreeDots from "../../assets/three-dots.svg";
 import {
   ANIMATION_DURATION,
   ANIMATION_ENTRY,
   ANIMATION_EXIT,
-  EVENT_IMAGE_WIDTH,
   HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-  IMAGE_GAP,
-  ROW_IMAGES,
 } from "../../assets/constants";
 import theme from "../../assets/theme";
-import Body from "../../components/Body";
 import Header from "../../components/Header";
-import getEvent from "../../services/get.event";
 import { AppContext } from "../_layout";
 import Subtitle from "../../components/Subtitle";
 import Button from "../../components/Button";
 import deleteEvent from "../../services/delete.event";
-import getAllUserEvents from "../../services/get.allUserEvents";
 
 export default function Event() {
-  const { userDetails, selectedEvent, setUserEvents } = useContext(AppContext);
+  const { userDetails, selectedEvent, setUserEvents, userEvents } =
+    useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -60,11 +46,18 @@ export default function Event() {
         {
           text: "Yes",
           onPress: async () => {
+            setIsLoading(true);
             try {
               await deleteEvent(selectedEvent.event_id);
-              setUserEvents(await getAllUserEvents(userDetails.user_id));
+              setUserEvents(
+                userEvents.filter(
+                  (event) => event.event_id !== selectedEvent.event_id
+                )
+              );
+              setIsLoading(false);
               navigateHome();
             } catch (error) {
+              setIsLoading(false);
               console.error(error);
               Alert.alert(
                 "Error",
@@ -94,6 +87,13 @@ export default function Event() {
         duration={ANIMATION_DURATION}
         style={styles.page}
       >
+        {isLoading && (
+          <ActivityIndicator
+            style={styles.loading}
+            size={"large"}
+            color={theme.PRIMARY}
+          />
+        )}
         <View style={{ paddingVertical: 20 }}>
           <Subtitle size={25}>edit event</Subtitle>
         </View>
@@ -114,5 +114,10 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: theme.BACKGROUND,
     flex: 1,
+  },
+  loading: {
+    width: "100%",
+    justifyContent: "center",
+    paddingVertical: 30,
   },
 });
