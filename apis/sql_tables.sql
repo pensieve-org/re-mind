@@ -57,3 +57,11 @@ CREATE TABLE IF NOT EXISTS friend_requests (
     FOREIGN KEY (friend_user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+
+CREATE TABLE IF NOT EXISTS event_admins (
+    event_id BIGINT UNSIGNED, 
+    admin_user_id BIGINT UNSIGNED, 
+    PRIMARY KEY (event_id, admin_user_id),
+    FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);

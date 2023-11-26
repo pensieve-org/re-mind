@@ -34,6 +34,7 @@ async def test():
                 users = cursor.fetchall()
                 cursor.execute("SELECT * FROM events;")
                 events = cursor.fetchall()
+                conn.commit()
                 print(f"Successfully connected to MySQL Database. Users: {users}")
 
             return events, users, fr
@@ -892,6 +893,12 @@ async def create_event(create_event_request: CreateEventRequest):
             cursor.execute(query, params)
             conn.commit()
 
+            cursor.execute(
+                "INSERT INTO event_admins (event_id, admin_user_id) VALUES (%s, %s)",
+                (event_id, create_event_request.admin.user_id),
+            )
+            conn.commit()
+
             return Response(status_code=200)
 
     except pymysql.MySQLError as e:
@@ -935,6 +942,12 @@ async def delete_event(event_id: int):
 
             cursor.execute(
                 "DELETE FROM event_attendees WHERE event_id = %s",
+                (event_id,),
+            )
+            conn.commit()
+
+            cursor.execute(
+                "DELETE FROM event_admins WHERE event_id = %s",
                 (event_id,),
             )
             conn.commit()

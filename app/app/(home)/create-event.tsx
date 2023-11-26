@@ -105,6 +105,7 @@ export default function CreateEvent() {
         end_time: endDate,
         name: eventName,
         attendees: [...selectedFriends, userDetails],
+        admin: userDetails,
       });
 
       // if (thumbnail) {

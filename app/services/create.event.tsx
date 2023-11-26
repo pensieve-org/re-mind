@@ -16,6 +16,7 @@ interface CreateEventRequest {
   end_time: Date;
   name: string;
   attendees?: User[];
+  admin: User;
   thumbnail?: string;
 }
 

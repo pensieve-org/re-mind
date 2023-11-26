@@ -52,6 +52,7 @@ class CreateEventRequest(BaseModel):
     end_time: datetime
     name: str
     attendees: Optional[List[UserDetails]] = []
+    admin: UserDetails
     thumbnail: Optional[str] = None
 
 
