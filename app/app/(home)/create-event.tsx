@@ -181,6 +181,14 @@ export default function CreateEvent() {
             <Subtitle size={25}>new event</Subtitle>
           </View>
 
+          {isLoading && (
+            <ActivityIndicator
+              style={styles.loading}
+              size={"large"}
+              color={theme.PRIMARY}
+            />
+          )}
+
           <ScrollView style={{ paddingBottom: 80 }}>
             {/* <View style={styles.thumbnailContainer}>
               <View>
@@ -307,13 +315,6 @@ export default function CreateEvent() {
                 create event
               </Button>
             </View>
-            {isLoading && (
-              <ActivityIndicator
-                style={styles.loading}
-                size={"large"}
-                color={theme.PRIMARY}
-              />
-            )}
           </ScrollView>
         </View>
       </AnimatedView>
