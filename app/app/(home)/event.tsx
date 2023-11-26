@@ -11,6 +11,7 @@ import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
 
 import BackArrow from "../../assets/arrow-left.svg";
+import ThreeDots from "../../assets/three-dots.svg";
 import {
   ANIMATION_DURATION,
   ANIMATION_ENTRY,
@@ -40,6 +41,13 @@ export default function Event() {
     }, ANIMATION_DURATION);
   };
 
+  const navigate = (route) => {
+    setAnimation(ANIMATION_EXIT);
+    setTimeout(() => {
+      router.push(route);
+    }, ANIMATION_DURATION);
+  };
+
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     setSelectedEvent(await getEvent(selectedEvent.event_id));
@@ -57,6 +65,15 @@ export default function Event() {
           />
         }
         onPressLeft={navigateBack}
+        // TODO: only show this if the user is an admin
+        imageRight={
+          <ThreeDots
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+            style={{ color: theme.PRIMARY }}
+          />
+        }
+        onPressRight={() => navigate("/edit-event")}
       />
       <AnimatedView
         animation={animation}
