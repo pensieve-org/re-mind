@@ -34,6 +34,10 @@ export default function Event() {
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
+  const isAdmin = selectedEvent.admins.some(
+    (admin) => admin.user_id === userDetails.user_id
+  );
+
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
     setTimeout(() => {
@@ -65,15 +69,20 @@ export default function Event() {
           />
         }
         onPressLeft={navigateBack}
-        // TODO: only show this if the user is an admin
         imageRight={
-          <ThreeDots
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
+          isAdmin && (
+            <ThreeDots
+              height={HEADER_ICON_DIMENSION}
+              width={HEADER_ICON_DIMENSION}
+              style={{ color: theme.PRIMARY }}
+            />
+          )
         }
-        onPressRight={() => navigate("/edit-event")}
+        onPressRight={() => {
+          if (isAdmin) {
+            navigate("/edit-event");
+          }
+        }}
       />
       <AnimatedView
         animation={animation}

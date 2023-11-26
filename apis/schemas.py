@@ -43,6 +43,7 @@ class EventResponse(BaseModel):
     end_time: datetime
     name: str
     attendees: Optional[List[UserDetails]] = []
+    admins: List[UserDetails]
     thumbnail: Optional[str] = None
     images: Optional[List[ImageResponse]] = []
 

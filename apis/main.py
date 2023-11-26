@@ -638,6 +638,49 @@ async def add_user_to_event(user_id: int, event_id: int):
         conn.close()
 
 
+@app.patch("/add_admin_to_event/{user_id}/{event_id}", response_class=Response)
+async def add_admin_to_event(user_id: int, event_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            # Check if the user and event exist
+            for table, id in [("users", user_id), ("events", event_id)]:
+                cursor.execute(
+                    f"SELECT * FROM {table} WHERE {table[:-1]}_id = %s",
+                    (id),
+                )
+                item = cursor.fetchone()
+
+                if not item:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"{table[:-1].capitalize()} {id} not found.",
+                    )
+
+            # Add user to event
+            cursor.execute(
+                "INSERT INTO event_admins (event_id, admin_user_id) VALUES (%s, %s)",
+                (event_id, user_id),
+            )
+            conn.commit()
+
+            return Response(status_code=200)
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
 async def get_event_attendees(event_id: int):
     conn = mysql_connection()
     if not conn:
@@ -648,19 +691,6 @@ async def get_event_attendees(event_id: int):
 
     try:
         with conn.cursor() as cursor:
-            # Check if the event exists
-            cursor.execute(
-                "SELECT * FROM events WHERE event_id = %s",
-                (event_id),
-            )
-            event = cursor.fetchone()
-
-            if not event:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Event {event_id} not found.",
-                )
-
             # Get attendee details
             cursor.execute(
                 """
@@ -673,6 +703,38 @@ async def get_event_attendees(event_id: int):
             attendees = cursor.fetchall()
 
             return [UserDetails(**attendee) for attendee in attendees]
+
+    except pymysql.MySQLError as e:
+        print(f"Error executing query on the MySQL Database: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Database error."
+        )
+    finally:
+        conn.close()
+
+
+async def get_event_admins(event_id: int):
+    conn = mysql_connection()
+    if not conn:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to connect to MySQL Database.",
+        )
+
+    try:
+        with conn.cursor() as cursor:
+            # Get admin details
+            cursor.execute(
+                """
+                SELECT * FROM users
+                INNER JOIN event_admins ON users.user_id = event_admins.admin_user_id
+                WHERE event_admins.event_id = %s
+                """,
+                (event_id,),
+            )
+            admins = cursor.fetchall()
+
+            return [UserDetails(**admin) for admin in admins]
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")
@@ -719,6 +781,8 @@ async def get_all_user_events(user_id: int):
 
                     attendees = await get_event_attendees(event["event_id"])
 
+                    admins = await get_event_admins(event["event_id"])
+
                     # Construct EventResponse for each event
                     event_response = EventResponse(
                         event_id=event["event_id"],
@@ -727,6 +791,7 @@ async def get_all_user_events(user_id: int):
                         end_time=event["end_time"],
                         thumbnail=event["thumbnail"],
                         attendees=attendees,
+                        admins=admins,
                         images=images,
                     )
                     all_events.append(event_response)
@@ -791,6 +856,8 @@ async def get_event(event_id: int):
 
                 attendees = await get_event_attendees(event_id)
 
+                admins = await get_event_admins(event_id)
+
                 return EventResponse(
                     event_id=event["event_id"],
                     name=event["name"],
@@ -798,6 +865,7 @@ async def get_event(event_id: int):
                     end_time=event["end_time"],
                     images=images,
                     attendees=attendees,
+                    admins=admins,
                 )
 
             else:
