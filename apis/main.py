@@ -855,7 +855,7 @@ async def update_profile_picture(user_id: int, data: ProfilePictureUpdate):
         conn.close()
 
 
-@app.post("/create_event", response_model=EventResponse)
+@app.post("/create_event", response_class=Response)
 async def create_event(create_event_request: CreateEventRequest):
     conn = mysql_connection()
     if not conn:
@@ -877,14 +877,22 @@ async def create_event(create_event_request: CreateEventRequest):
             )
             conn.commit()
 
-            return EventResponse(
-                event_id=cursor.lastrowid,
-                start_time=create_event_request.start_time,
-                end_time=create_event_request.end_time,
-                thumbnail=create_event_request.thumbnail,
-                name=create_event_request.name,
-                attendees=create_event_request.attendees,
-            )
+            event_id = cursor.lastrowid
+
+            values = ", ".join(["(%s, %s)"] * len(create_event_request.attendees))
+            query = f"INSERT INTO event_attendees (event_id, attendee_user_id) VALUES {values}"
+            params = [
+                val
+                for sublist in [
+                    (event_id, attendee.user_id)
+                    for attendee in create_event_request.attendees
+                ]
+                for val in sublist
+            ]
+            cursor.execute(query, params)
+            conn.commit()
+
+            return Response(status_code=200)
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")
@@ -922,6 +930,12 @@ async def delete_event(event_id: int):
             cursor.execute(
                 "DELETE FROM events WHERE event_id = %s",
                 (event_id),
+            )
+            conn.commit()
+
+            cursor.execute(
+                "DELETE FROM event_attendees WHERE event_id = %s",
+                (event_id,),
             )
             conn.commit()
 

@@ -5,6 +5,7 @@ import {
   View,
   Image,
   Alert as RNAlert,
+  ActivityIndicator,
 } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
@@ -58,36 +59,36 @@ export default function CreateEvent() {
     }, ANIMATION_DURATION);
   };
 
-  const handleThumbnailChange = async () => {
-    try {
-      const pickerResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [3, 3],
-        quality: 1,
-      });
+  // const handleThumbnailChange = async () => {
+  //   try {
+  //     const pickerResult = await ImagePicker.launchImageLibraryAsync({
+  //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //       allowsEditing: true,
+  //       aspect: [3, 3],
+  //       quality: 1,
+  //     });
 
-      if (pickerResult.canceled) {
-        console.log("User cancelled image picker");
-        return null;
-      }
+  //     if (pickerResult.canceled) {
+  //       console.log("User cancelled image picker");
+  //       return null;
+  //     }
 
-      if (!pickerResult.assets[0].uri) {
-        console.log("No URI found");
-        return null;
-      }
+  //     if (!pickerResult.assets[0].uri) {
+  //       console.log("No URI found");
+  //       return null;
+  //     }
 
-      console.log(pickerResult.assets[0].uri);
+  //     console.log(pickerResult.assets[0].uri);
 
-      setThumbnail(pickerResult.assets[0].uri);
-    } catch (error) {
-      console.error("An error occurred:", error.response.data.detail);
-    }
-  };
+  //     setThumbnail(pickerResult.assets[0].uri);
+  //   } catch (error) {
+  //     console.error("An error occurred:", error.response.data.detail);
+  //   }
+  // };
 
   const handleCreateEvent = async () => {
-    // TODO: this crashes if you double click, fix that
-    // TODO: user not added to their own event
+    if (isLoading) return;
+
     setError(false);
 
     if (!startDate || !endDate || !eventName) {
@@ -103,26 +104,26 @@ export default function CreateEvent() {
         start_time: startDate,
         end_time: endDate,
         name: eventName,
-        attendees: [userDetails, ...selectedFriends],
+        attendees: [...selectedFriends, userDetails],
       });
 
-      if (thumbnail) {
-        try {
-          console.log(thumbnail);
-          const uploadUrl = await uploadImageAsync(
-            thumbnail,
-            `/events/${newEvent.event_id}`
-          );
-          console.log(uploadUrl);
-          const response = await updateEventThumbnail(
-            newEvent.event_id,
-            uploadUrl
-          );
-          console.log(response);
-        } catch (e) {
-          console.error("Error updating event thumbnail");
-        }
-      }
+      // if (thumbnail) {
+      //   try {
+      //     console.log(thumbnail);
+      //     const uploadUrl = await uploadImageAsync(
+      //       thumbnail,
+      //       `/events/${newEvent.event_id}`
+      //     );
+      //     console.log(uploadUrl);
+      //     const response = await updateEventThumbnail(
+      //       newEvent.event_id,
+      //       uploadUrl
+      //     );
+      //     console.log(response);
+      //   } catch (e) {
+      //     console.error("Error updating event thumbnail");
+      //   }
+      // }
 
       setUserEvents(await getAllUserEvents(userDetails.user_id));
 
@@ -181,7 +182,7 @@ export default function CreateEvent() {
           </View>
 
           <ScrollView style={{ paddingBottom: 80 }}>
-            <View style={styles.thumbnailContainer}>
+            {/* <View style={styles.thumbnailContainer}>
               <View>
                 <View
                   style={{
@@ -237,7 +238,7 @@ export default function CreateEvent() {
                   />
                 </Pressable>
               </View>
-            </View>
+            </View> */}
 
             <SubtitleInput
               size={20}
@@ -306,6 +307,13 @@ export default function CreateEvent() {
                 create event
               </Button>
             </View>
+            {isLoading && (
+              <ActivityIndicator
+                style={styles.loading}
+                size={"large"}
+                color={theme.PRIMARY}
+              />
+            )}
           </ScrollView>
         </View>
       </AnimatedView>
@@ -331,5 +339,10 @@ const styles = StyleSheet.create({
   alertContainer: {
     alignItems: "center",
     height: 80,
+  },
+  loading: {
+    width: "100%",
+    justifyContent: "center",
+    paddingVertical: 30,
   },
 });
