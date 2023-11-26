@@ -9,6 +9,7 @@ import {
   ANIMATION_ENTRY,
   ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
+  HORIZONTAL_PADDING,
 } from "../../assets/constants";
 import theme from "../../assets/theme";
 import Header from "../../components/Header";
@@ -49,11 +50,17 @@ export default function Event() {
             setIsLoading(true);
             try {
               await deleteEvent(selectedEvent.event_id);
-              setUserEvents(
-                userEvents.filter(
+              setUserEvents({
+                live: userEvents.live.filter(
                   (event) => event.event_id !== selectedEvent.event_id
-                )
-              );
+                ),
+                past: userEvents.past.filter(
+                  (event) => event.event_id !== selectedEvent.event_id
+                ),
+                future: userEvents.future.filter(
+                  (event) => event.event_id !== selectedEvent.event_id
+                ),
+              });
               setIsLoading(false);
               navigateHome();
             } catch (error) {
@@ -94,17 +101,19 @@ export default function Event() {
             color={theme.PRIMARY}
           />
         )}
-        <View style={{ paddingVertical: 20 }}>
-          <Subtitle size={25}>edit event</Subtitle>
-        </View>
+        <View style={styles.container}>
+          <View style={{ paddingVertical: 20 }}>
+            <Subtitle size={25}>edit event</Subtitle>
+          </View>
 
-        <Button
-          fill={theme.TEXT}
-          textColor={theme.BACKGROUND}
-          onPress={handleDeleteEvent}
-        >
-          delete event
-        </Button>
+          <Button
+            fill={theme.TEXT}
+            textColor={theme.BACKGROUND}
+            onPress={handleDeleteEvent}
+          >
+            delete event
+          </Button>
+        </View>
       </AnimatedView>
     </View>
   );
@@ -114,6 +123,10 @@ const styles = StyleSheet.create({
   page: {
     backgroundColor: theme.BACKGROUND,
     flex: 1,
+  },
+  container: {
+    flex: 1,
+    marginHorizontal: HORIZONTAL_PADDING,
   },
   loading: {
     width: "100%",
