@@ -87,6 +87,7 @@ export default function CreateEvent() {
 
   const handleCreateEvent = async () => {
     // TODO: this crashes if you double click, fix that
+    // TODO: user not added to their own event
     setError(false);
 
     if (!startDate || !endDate || !eventName) {
