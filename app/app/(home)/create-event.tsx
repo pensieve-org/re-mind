@@ -86,11 +86,12 @@ export default function CreateEvent() {
   };
 
   const handleCreateEvent = async () => {
+    // TODO: this crashes if you double click, fix that
     setError(false);
 
-    if (!startDate || !endDate || !eventName || selectedFriends.length === 0) {
+    if (!startDate || !endDate || !eventName) {
       setError(true);
-      setErrorMsg("please fill out all required fields");
+      setErrorMsg("Please fill out all required fields");
       return;
     }
 
@@ -101,18 +102,25 @@ export default function CreateEvent() {
         start_time: startDate,
         end_time: endDate,
         name: eventName,
-        attendees: [...selectedFriends, userDetails],
+        attendees: [userDetails, ...selectedFriends],
       });
 
       if (thumbnail) {
-        const uploadUrl = await uploadImageAsync(
-          thumbnail,
-          `/events/${newEvent.event_id}`
-        );
-        const response = await updateEventThumbnail(
-          newEvent.event_id,
-          uploadUrl
-        );
+        try {
+          console.log(thumbnail);
+          const uploadUrl = await uploadImageAsync(
+            thumbnail,
+            `/events/${newEvent.event_id}`
+          );
+          console.log(uploadUrl);
+          const response = await updateEventThumbnail(
+            newEvent.event_id,
+            uploadUrl
+          );
+          console.log(response);
+        } catch (e) {
+          console.error("Error updating event thumbnail");
+        }
       }
 
       setUserEvents(await getAllUserEvents(userDetails.user_id));
@@ -127,7 +135,7 @@ export default function CreateEvent() {
     } catch (error) {
       setError(true);
       setIsLoading(false);
-      setErrorMsg(error.response.data.detail);
+      setErrorMsg(error.response?.data?.detail || "An error occurred");
     }
   };
 
