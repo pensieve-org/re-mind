@@ -7,6 +7,8 @@ import {
   ICON_GAP_BOTTOM,
   ROW_ICONS,
 } from "../assets/constants";
+import theme from "../assets/theme";
+import ImageIcon from "../assets/image.svg";
 
 interface Props {
   events: any[];
@@ -30,8 +32,27 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
           }}
           onPress={() => handleOnPress(event)}
         >
-          <View style={styles.imageContainer}>
-            <Image source={{ uri: event.thumbnail }} style={styles.image} />
+          <View
+            style={[
+              styles.imageContainer,
+              {
+                backgroundColor: event.thumbnail
+                  ? "transparent"
+                  : theme.PLACEHOLDER,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            ]}
+          >
+            {event.thumbnail ? (
+              <Image source={{ uri: event.thumbnail }} style={styles.image} />
+            ) : (
+              <ImageIcon
+                height={EVENT_ICON_DIAMETER - 80}
+                width={EVENT_ICON_DIAMETER - 80}
+                style={{ color: theme.PRIMARY }}
+              />
+            )}
           </View>
           <Body style={styles.text} adjustsFontSizeToFit numberOfLines={1}>
             {event.name}
