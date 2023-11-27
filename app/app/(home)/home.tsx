@@ -36,6 +36,7 @@ import ProfileIcon from "../../assets/profile.svg";
 import Calendar from "../../components/Calendar";
 
 type Tab = "memories" | "calendar";
+type EventRoutes = "live" | "past" | "future";
 
 const blinkAnimation = {
   0: { opacity: 1 },
@@ -64,15 +65,30 @@ export default function Home() {
     }, ANIMATION_DURATION);
   };
 
+  const navigateEvents = (route: EventRoutes) => {
+    setAnimation(ANIMATION_EXIT);
+    setTimeout(() => {
+      router.push(`/${route}`);
+    }, ANIMATION_DURATION);
+  };
+
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     setUserEvents(await getAllUserEvents(userDetails.user_id));
     setRefreshing(false);
   }, []);
 
-  const handleEventPress = async (event) => {
+  const handleLiveEventPress = async (event) => {
     setSelectedEvent(event);
-    navigate("/event");
+    navigateEvents("live");
+  };
+  const handlePastEventPress = async (event) => {
+    setSelectedEvent(event);
+    navigateEvents("past");
+  };
+  const handleFutureEventPress = async (event) => {
+    setSelectedEvent(event);
+    navigateEvents("future");
   };
 
   return (
@@ -206,7 +222,7 @@ export default function Home() {
                 {userEvents.live.length > 0 ? (
                   <EventList
                     events={userEvents.live}
-                    onPress={handleEventPress}
+                    onPress={handleLiveEventPress}
                   />
                 ) : (
                   <Body style={{ textAlign: "center", paddingVertical: 10 }}>
@@ -227,7 +243,7 @@ export default function Home() {
                 {userEvents.past.length > 0 ? (
                   <EventList
                     events={userEvents.past}
-                    onPress={handleEventPress}
+                    onPress={handlePastEventPress}
                   />
                 ) : (
                   <Body style={{ textAlign: "center", paddingVertical: 10 }}>
@@ -240,7 +256,7 @@ export default function Home() {
                 {userEvents.future.length > 0 ? (
                   <Calendar
                     events={userEvents.future}
-                    onPress={handleEventPress}
+                    onPress={handleFutureEventPress}
                   />
                 ) : (
                   <Body style={{ textAlign: "center", paddingVertical: 10 }}>

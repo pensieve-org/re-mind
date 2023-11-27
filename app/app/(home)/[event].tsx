@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { View as AnimatedView } from "react-native-animatable";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 
 import BackArrow from "../../assets/arrow-left.svg";
 import ThreeDots from "../../assets/three-dots.svg";
@@ -31,6 +31,8 @@ import Subtitle from "../../components/Subtitle";
 import ShowAttendees from "../../components/ShowAttendees";
 
 export default function Event() {
+  const local = useLocalSearchParams();
+
   const { userDetails, selectedEvent, setSelectedEvent } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
@@ -139,42 +141,48 @@ export default function Event() {
             {/* TODO: Replace this with a timeline with length = event duration and split into 
             mins if event < 1hr, hours if event < 1 day, otherwise days
             have a line graph for umber of photos uploaded in each segment */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-around",
-                paddingVertical: 10,
-              }}
-            >
-              <View style={{ alignItems: "center" }}>
-                <Body size={18}>
-                  {formatDate(new Date(selectedEvent.start_time))}
-                </Body>
-                <Body size={18}>
-                  {formatTime(new Date(selectedEvent.start_time))}
-                </Body>
-              </View>
+            {local.event === "past" ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                  paddingVertical: 10,
+                }}
+              >
+                <View style={{ alignItems: "center" }}>
+                  <Body size={18}>
+                    {formatDate(new Date(selectedEvent.start_time))}
+                  </Body>
+                  <Body size={18}>
+                    {formatTime(new Date(selectedEvent.start_time))}
+                  </Body>
+                </View>
 
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <BackArrow
-                  height={20}
-                  width={20}
-                  style={{
-                    color: theme.PRIMARY,
-                    transform: [{ rotate: "180deg" }],
-                  }}
-                />
-              </View>
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <BackArrow
+                    height={20}
+                    width={20}
+                    style={{
+                      color: theme.PRIMARY,
+                      transform: [{ rotate: "180deg" }],
+                    }}
+                  />
+                </View>
 
-              <View style={{ alignItems: "center" }}>
-                <Body size={18}>
-                  {formatDate(new Date(selectedEvent.end_time))}
-                </Body>
-                <Body size={18}>
-                  {formatTime(new Date(selectedEvent.end_time))}
-                </Body>
+                <View style={{ alignItems: "center" }}>
+                  <Body size={18}>
+                    {formatDate(new Date(selectedEvent.end_time))}
+                  </Body>
+                  <Body size={18}>
+                    {formatTime(new Date(selectedEvent.end_time))}
+                  </Body>
+                </View>
               </View>
-            </View>
+            ) : (
+              local.event === "live" && <Body>countdown</Body>
+            )}
 
             <Subtitle
               size={20}

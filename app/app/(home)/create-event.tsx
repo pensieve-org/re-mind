@@ -182,7 +182,10 @@ export default function CreateEvent() {
             <Subtitle size={25}>new event</Subtitle>
           </View>
 
-          <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 80 }}
+            showsVerticalScrollIndicator={false}
+          >
             <View style={styles.thumbnailContainer}>
               <View>
                 <View

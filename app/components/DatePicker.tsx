@@ -51,6 +51,15 @@ const DatePicker: React.FC<Props> = ({
       : "";
   };
 
+  const getMinEndDate = () => {
+    if (startDate) {
+      let minEndDate = new Date(startDate);
+      minEndDate.setHours(minEndDate.getHours() + 1);
+      return minEndDate;
+    }
+    return new Date();
+  };
+
   return (
     <View style={styles.container}>
       <Pressable
@@ -115,11 +124,7 @@ const DatePicker: React.FC<Props> = ({
         onConfirm={handleConfirmEnd}
         onCancel={() => setEndVisibility(false)}
         date={endDate || new Date()}
-        minimumDate={
-          startDate
-            ? new Date(startDate.setHours(startDate.getHours() + 1))
-            : new Date()
-        }
+        minimumDate={getMinEndDate()}
         is24Hour={true}
       />
     </View>
