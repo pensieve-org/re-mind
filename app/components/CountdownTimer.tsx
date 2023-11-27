@@ -48,7 +48,7 @@ function CountdownTimer({ endTime }) {
           setCountdown(`${minutes}:${seconds}`);
         }
       } else {
-        setCountdown("Event has ended");
+        setCountdown("event has ended");
         clearInterval(interval);
       }
     }, 1000);
