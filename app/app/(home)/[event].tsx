@@ -34,6 +34,7 @@ import Subtitle from "../../components/Subtitle";
 import ShowAttendees from "../../components/ShowAttendees";
 import CountdownTimer from "../../components/CountdownTimer";
 import Swiper from "react-native-swiper";
+import { PanGestureHandler, State } from "react-native-gesture-handler";
 
 export default function Event() {
   const local = useLocalSearchParams();
@@ -43,7 +44,6 @@ export default function Event() {
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const isAdmin = selectedEvent.admins.some(
@@ -88,6 +88,12 @@ export default function Event() {
           hour12: false,
         })
       : "";
+  };
+  const onSwipeUp = ({ nativeEvent }) => {
+    if (!modalVisible) return;
+    if (nativeEvent.translationY < -50 && nativeEvent.state === State.ACTIVE) {
+      setModalVisible(false);
+    }
   };
 
   return (
@@ -212,7 +218,6 @@ export default function Event() {
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
-                    setSelectedImage(image.url);
                     setSelectedImageIndex(index);
                     setModalVisible(true);
                   }}
@@ -244,7 +249,7 @@ export default function Event() {
               setModalVisible(!modalVisible);
             }}
           >
-            <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <PanGestureHandler onGestureEvent={onSwipeUp}>
               <View
                 style={{
                   flex: 1,
@@ -253,44 +258,42 @@ export default function Event() {
                   backgroundColor: "rgba(0, 0, 0, 0.8)",
                 }}
               >
-                <TouchableWithoutFeedback>
-                  <Swiper
-                    showsButtons={true}
-                    index={selectedImageIndex}
-                    dotColor={theme.PLACEHOLDER}
-                    activeDotColor={theme.PRIMARY}
-                    nextButton={
-                      <BackArrow
-                        height={20}
-                        width={20}
-                        style={{
-                          color: theme.PRIMARY,
-                          transform: [{ rotate: "180deg" }],
-                        }}
-                      />
-                    }
-                    prevButton={
-                      <BackArrow
-                        height={20}
-                        width={20}
-                        style={{
-                          color: theme.PRIMARY,
-                        }}
-                      />
-                    }
-                  >
-                    {selectedEvent.images.map((image, index) => (
-                      <Image
-                        key={index}
-                        source={{ uri: image.url }}
-                        style={{ width: "100%", height: "100%" }}
-                        resizeMode="contain"
-                      />
-                    ))}
-                  </Swiper>
-                </TouchableWithoutFeedback>
+                <Swiper
+                  showsButtons={true}
+                  index={selectedImageIndex}
+                  dotColor={theme.PLACEHOLDER}
+                  activeDotColor={theme.PRIMARY}
+                  nextButton={
+                    <BackArrow
+                      height={20}
+                      width={20}
+                      style={{
+                        color: theme.PRIMARY,
+                        transform: [{ rotate: "180deg" }],
+                      }}
+                    />
+                  }
+                  prevButton={
+                    <BackArrow
+                      height={20}
+                      width={20}
+                      style={{
+                        color: theme.PRIMARY,
+                      }}
+                    />
+                  }
+                >
+                  {selectedEvent.images.map((image, index) => (
+                    <Image
+                      key={index}
+                      source={{ uri: image.url }}
+                      style={{ width: "100%", height: "100%" }}
+                      resizeMode="contain"
+                    />
+                  ))}
+                </Swiper>
               </View>
-            </TouchableWithoutFeedback>
+            </PanGestureHandler>
           </Modal>
         </ScrollView>
       </AnimatedView>

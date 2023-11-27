@@ -1,6 +1,5 @@
 import React, { useContext, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   Pressable,
   RefreshControl,
@@ -176,16 +175,10 @@ export default function Home() {
               </Subtitle>
             </Pressable>
           </View>
-          {refreshing && (
-            <ActivityIndicator
-              style={{ paddingTop: 10 }}
-              size={"large"}
-              color={theme.PRIMARY}
-            />
-          )}
 
           <ScrollView
             style={{ flex: 1, paddingBottom: 50 }}
+            showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }

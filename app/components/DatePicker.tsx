@@ -123,7 +123,7 @@ const DatePicker: React.FC<Props> = ({
         mode="datetime"
         onConfirm={handleConfirmEnd}
         onCancel={() => setEndVisibility(false)}
-        date={endDate || new Date()}
+        date={endDate || getMinEndDate()}
         minimumDate={getMinEndDate()}
         is24Hour={true}
       />

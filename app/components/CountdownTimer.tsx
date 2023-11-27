@@ -36,16 +36,11 @@ function CountdownTimer({ endTime }) {
         const minutes = Math.floor((diff / (1000 * 60)) % 60)
           .toString()
           .padStart(2, "0");
-        const seconds = Math.floor((diff / 1000) % 60)
-          .toString()
-          .padStart(2, "0");
 
         if (days > 0) {
-          setCountdown(`${days}:${hours}:${minutes}:${seconds}`);
-        } else if (hours !== "00") {
-          setCountdown(`${hours}:${minutes}:${seconds}`);
+          setCountdown(`${days}:${hours}:${minutes}`);
         } else {
-          setCountdown(`${minutes}:${seconds}`);
+          setCountdown(`${hours}:${minutes}`);
         }
       } else {
         setCountdown("event has ended");
