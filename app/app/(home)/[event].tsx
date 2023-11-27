@@ -137,6 +137,7 @@ export default function Event() {
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 80 }}
+          showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
