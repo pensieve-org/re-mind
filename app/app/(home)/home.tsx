@@ -9,7 +9,10 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { router } from "expo-router";
-import { View as AnimatedView } from "react-native-animatable";
+import {
+  View as AnimatedView,
+  initializeRegistryWithDefinitions,
+} from "react-native-animatable";
 
 import Body from "../../components/Body";
 import EventList from "../../components/EventList";
@@ -31,23 +34,27 @@ import { AppContext } from "../_layout";
 import getAllUserEvents from "../../services/get.allUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 
-type EventCategory = "live" | "future" | "past";
+type Tab = "memories" | "calendar";
+
+const blinkAnimation = {
+  0: { opacity: 1 },
+  0.8: { opacity: 1 },
+  0.81: { opacity: 0 },
+  1.2: { opacity: 0 },
+  1.21: { opacity: 1 },
+  2: { opacity: 1 },
+};
+
+initializeRegistryWithDefinitions({
+  blinkAnimation,
+});
 
 export default function Home() {
   const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
-  const [selectedEventCategory, setSelectedEventCategory] =
-    useState<EventCategory>(
-      userEvents.live.length > 0
-        ? "live"
-        : userEvents.past.length > 0
-        ? "past"
-        : userEvents.future.length > 0
-        ? "future"
-        : "live"
-    );
+  const [selectedTab, setSelectedTab] = useState<Tab>("memories");
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
@@ -117,54 +124,38 @@ export default function Home() {
         style={styles.page}
       >
         <View style={styles.container}>
-          <View style={{ paddingVertical: 20 }}>
-            <Subtitle size={25}>memories</Subtitle>
-          </View>
-
           <View
             style={{
-              paddingBottom: 20,
+              paddingVertical: 20,
               flexDirection: "row",
               justifyContent: "space-between",
             }}
           >
-            <Pressable onPress={() => setSelectedEventCategory("past")}>
+            <Pressable onPress={() => setSelectedTab("memories")}>
               <Subtitle
-                size={20}
+                size={25}
                 style={{
                   color:
-                    selectedEventCategory === "past"
+                    selectedTab === "memories"
                       ? theme.PRIMARY
                       : theme.PLACEHOLDER,
                 }}
               >
-                past
+                memories
               </Subtitle>
             </Pressable>
-            <Pressable onPress={() => setSelectedEventCategory("live")}>
+
+            <Pressable onPress={() => setSelectedTab("calendar")}>
               <Subtitle
-                size={20}
+                size={25}
                 style={{
                   color:
-                    selectedEventCategory === "live"
+                    selectedTab === "calendar"
                       ? theme.PRIMARY
                       : theme.PLACEHOLDER,
                 }}
               >
-                live
-              </Subtitle>
-            </Pressable>
-            <Pressable onPress={() => setSelectedEventCategory("future")}>
-              <Subtitle
-                size={20}
-                style={{
-                  color:
-                    selectedEventCategory === "future"
-                      ? theme.PRIMARY
-                      : theme.PLACEHOLDER,
-                }}
-              >
-                future
+                calendar
               </Subtitle>
             </Pressable>
           </View>
@@ -182,41 +173,58 @@ export default function Home() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
-            {selectedEventCategory === "live" &&
-              (userEvents.live.length > 0 ? (
-                <EventList
-                  events={userEvents.live}
-                  onPress={handleEventPress}
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Subtitle
+                size={20}
+                style={{
+                  color: theme.PRIMARY,
+                  paddingBottom: 10,
+                }}
+              >
+                live
+              </Subtitle>
+              {userEvents.live.length > 0 && (
+                <AnimatedView
+                  animation="blinkAnimation"
+                  iterationCount="infinite"
+                  duration={2000}
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 100,
+                    backgroundColor: theme.RED,
+                    marginLeft: 5,
+                    marginBottom: 25,
+                  }}
                 />
-              ) : (
-                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                  no live events
-                </Body>
-              ))}
+              )}
+            </View>
 
-            {selectedEventCategory === "future" &&
-              (userEvents.future.length > 0 ? (
-                <EventList
-                  events={userEvents.future}
-                  onPress={handleEventPress}
-                />
-              ) : (
-                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                  no future events
-                </Body>
-              ))}
+            {userEvents.live.length > 0 ? (
+              <EventList events={userEvents.live} onPress={handleEventPress} />
+            ) : (
+              <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                no live events
+              </Body>
+            )}
 
-            {selectedEventCategory === "past" &&
-              (userEvents.past.length > 0 ? (
-                <EventList
-                  events={userEvents.past}
-                  onPress={handleEventPress}
-                />
-              ) : (
-                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                  no past events
-                </Body>
-              ))}
+            <Subtitle
+              size={20}
+              style={{
+                color: theme.PRIMARY,
+                paddingVertical: 10,
+              }}
+            >
+              past
+            </Subtitle>
+
+            {userEvents.past.length > 0 ? (
+              <EventList events={userEvents.past} onPress={handleEventPress} />
+            ) : (
+              <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                no past events
+              </Body>
+            )}
           </ScrollView>
         </View>
       </AnimatedView>
