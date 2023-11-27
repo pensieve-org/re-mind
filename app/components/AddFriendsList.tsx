@@ -72,7 +72,6 @@ const AddFriendsList: React.FC<Props> = ({
     </View>
   );
 };
-// ... rest of your code
 
 const styles = StyleSheet.create({
   container: {

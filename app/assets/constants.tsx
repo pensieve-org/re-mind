@@ -32,10 +32,7 @@ export const EVENT_ICON_DIAMETER =
 export const IMAGE_GAP = 5;
 export const ROW_IMAGES = 3;
 export const EVENT_IMAGE_WIDTH =
-  (Dimensions.get("window").width -
-    2 * HORIZONTAL_PADDING -
-    (ROW_IMAGES - 1) * IMAGE_GAP) /
-  ROW_IMAGES;
+  (Dimensions.get("window").width - (ROW_IMAGES - 1) * IMAGE_GAP) / ROW_IMAGES;
 
 // Profile Screen
 export const PROFILE_ICON_DIAMETER = 80;
