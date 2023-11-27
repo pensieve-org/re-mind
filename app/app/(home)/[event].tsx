@@ -29,6 +29,7 @@ import getEvent from "../../services/get.event";
 import { AppContext } from "../_layout";
 import Subtitle from "../../components/Subtitle";
 import ShowAttendees from "../../components/ShowAttendees";
+import CountdownTimer from "../../components/CountdownTimer";
 
 export default function Event() {
   const local = useLocalSearchParams();
@@ -37,6 +38,7 @@ export default function Event() {
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
+  const [countdown, setCountdown] = useState("");
 
   const isAdmin = selectedEvent.admins.some(
     (admin) => admin.user_id === userDetails.user_id
@@ -181,7 +183,9 @@ export default function Event() {
                 </View>
               </View>
             ) : (
-              local.event === "live" && <Body>countdown</Body>
+              local.event === "live" && (
+                <CountdownTimer endTime={selectedEvent.end_time} />
+              )
             )}
 
             <Subtitle
