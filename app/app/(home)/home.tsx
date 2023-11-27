@@ -33,6 +33,7 @@ import {
 import { AppContext } from "../_layout";
 import getAllUserEvents from "../../services/get.allUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
+import Calendar from "../../components/Calendar";
 
 type Tab = "memories" | "calendar";
 
@@ -173,57 +174,80 @@ export default function Home() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Subtitle
-                size={20}
-                style={{
-                  color: theme.PRIMARY,
-                  paddingBottom: 10,
-                }}
-              >
-                live
-              </Subtitle>
-              {userEvents.live.length > 0 && (
-                <AnimatedView
-                  animation="blinkAnimation"
-                  iterationCount="infinite"
-                  duration={2000}
+            {selectedTab === "memories" ? (
+              <>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <Subtitle
+                    size={20}
+                    style={{
+                      color: theme.PRIMARY,
+                      paddingBottom: 10,
+                    }}
+                  >
+                    live
+                  </Subtitle>
+                  {userEvents.live.length > 0 && (
+                    <AnimatedView
+                      animation="blinkAnimation"
+                      iterationCount="infinite"
+                      duration={2000}
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 100,
+                        backgroundColor: theme.RED,
+                        marginLeft: 5,
+                        marginBottom: 25,
+                      }}
+                    />
+                  )}
+                </View>
+
+                {userEvents.live.length > 0 ? (
+                  <EventList
+                    events={userEvents.live}
+                    onPress={handleEventPress}
+                  />
+                ) : (
+                  <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                    no live events
+                  </Body>
+                )}
+
+                <Subtitle
+                  size={20}
                   style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 100,
-                    backgroundColor: theme.RED,
-                    marginLeft: 5,
-                    marginBottom: 25,
+                    color: theme.PRIMARY,
+                    paddingVertical: 10,
                   }}
-                />
-              )}
-            </View>
+                >
+                  past
+                </Subtitle>
 
-            {userEvents.live.length > 0 ? (
-              <EventList events={userEvents.live} onPress={handleEventPress} />
+                {userEvents.past.length > 0 ? (
+                  <EventList
+                    events={userEvents.past}
+                    onPress={handleEventPress}
+                  />
+                ) : (
+                  <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                    no past events
+                  </Body>
+                )}
+              </>
             ) : (
-              <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                no live events
-              </Body>
-            )}
-
-            <Subtitle
-              size={20}
-              style={{
-                color: theme.PRIMARY,
-                paddingVertical: 10,
-              }}
-            >
-              past
-            </Subtitle>
-
-            {userEvents.past.length > 0 ? (
-              <EventList events={userEvents.past} onPress={handleEventPress} />
-            ) : (
-              <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                no past events
-              </Body>
+              <>
+                {userEvents.future.length > 0 ? (
+                  <Calendar
+                    events={userEvents.future}
+                    onPress={handleEventPress}
+                  />
+                ) : (
+                  <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                    no upcoming events
+                  </Body>
+                )}
+              </>
             )}
           </ScrollView>
         </View>

@@ -796,16 +796,24 @@ async def get_all_user_events(user_id: int):
                     )
                     all_events.append(event_response)
 
-                # Categorize events into ongoing and past
+                all_events.sort(key=lambda e: e.start_time)
+
+                live_events = []
+                future_events = []
+                past_events = []
+
+                for e in all_events:
+                    if e.end_time >= datetime.now() and e.start_time <= datetime.now():
+                        live_events.append(e)
+                    elif e.start_time > datetime.now():
+                        future_events.append(e)
+                    elif e.end_time < datetime.now():
+                        past_events.append(e)
+
                 event_categories = EventsCategory(
-                    live=[
-                        e
-                        for e in all_events
-                        if e.end_time >= datetime.now()
-                        and e.start_time <= datetime.now()
-                    ],
-                    future=[e for e in all_events if e.start_time > datetime.now()],
-                    past=[e for e in all_events if e.end_time < datetime.now()],
+                    live=live_events,
+                    future=future_events,
+                    past=past_events,
                 )
 
                 return event_categories
