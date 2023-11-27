@@ -2,8 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  Modal,
   RefreshControl,
   StyleSheet,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -30,6 +33,7 @@ import { AppContext } from "../_layout";
 import Subtitle from "../../components/Subtitle";
 import ShowAttendees from "../../components/ShowAttendees";
 import CountdownTimer from "../../components/CountdownTimer";
+import Swiper from "react-native-swiper";
 
 export default function Event() {
   const local = useLocalSearchParams();
@@ -38,7 +42,9 @@ export default function Event() {
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
-  const [countdown, setCountdown] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const isAdmin = selectedEvent.admins.some(
     (admin) => admin.user_id === userDetails.user_id
@@ -203,17 +209,25 @@ export default function Event() {
           <View style={styles.imageContainer}>
             {selectedEvent.images.length > 0 ? (
               selectedEvent.images.map((image, index) => (
-                <Image
+                <TouchableOpacity
                   key={index}
-                  source={{ uri: image.url }}
-                  style={[
-                    styles.image,
-                    {
-                      marginRight:
-                        (index + 1) % ROW_IMAGES === 0 ? 0 : IMAGE_GAP,
-                    },
-                  ]}
-                />
+                  onPress={() => {
+                    setSelectedImage(image.url);
+                    setSelectedImageIndex(index);
+                    setModalVisible(true);
+                  }}
+                >
+                  <Image
+                    source={{ uri: image.url }}
+                    style={[
+                      styles.image,
+                      {
+                        marginRight:
+                          (index + 1) % ROW_IMAGES === 0 ? 0 : IMAGE_GAP,
+                      },
+                    ]}
+                  />
+                </TouchableOpacity>
               ))
             ) : (
               <View style={{ paddingVertical: 20, justifyContent: "center" }}>
@@ -221,6 +235,63 @@ export default function Event() {
               </View>
             )}
           </View>
+
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0, 0, 0, 0.8)",
+                }}
+              >
+                <TouchableWithoutFeedback>
+                  <Swiper
+                    showsButtons={true}
+                    index={selectedImageIndex}
+                    dotColor={theme.PLACEHOLDER}
+                    activeDotColor={theme.PRIMARY}
+                    nextButton={
+                      <BackArrow
+                        height={20}
+                        width={20}
+                        style={{
+                          color: theme.PRIMARY,
+                          transform: [{ rotate: "180deg" }],
+                        }}
+                      />
+                    }
+                    prevButton={
+                      <BackArrow
+                        height={20}
+                        width={20}
+                        style={{
+                          color: theme.PRIMARY,
+                        }}
+                      />
+                    }
+                  >
+                    {selectedEvent.images.map((image, index) => (
+                      <Image
+                        key={index}
+                        source={{ uri: image.url }}
+                        style={{ width: "100%", height: "100%" }}
+                        resizeMode="contain"
+                      />
+                    ))}
+                  </Swiper>
+                </TouchableWithoutFeedback>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
         </ScrollView>
       </AnimatedView>
     </View>
