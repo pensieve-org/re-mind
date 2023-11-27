@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Dimensions, Pressable } from "react-native";
+import { View, StyleSheet, Pressable } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import Body from "./Body";
 import theme from "../assets/theme";
-import { HORIZONTAL_PADDING } from "../assets/constants";
+import BackArrow from "../assets/arrow-left.svg";
 
 interface Props {
   selectedStartDate: (date: Date) => void;
@@ -53,40 +53,50 @@ const DatePicker: React.FC<Props> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.pickerContainer}>
-        <Pressable
-          onPress={() => setStartVisibility(true)}
-          style={styles.circle}
-        >
-          {!startDate && (
-            <Body bold={true} size={18}>
-              start
-            </Body>
-          )}
-          {startDate && (
-            <>
-              <Body size={18}>{formatDate(startDate)}</Body>
-              <Body size={18}>{formatTime(startDate)}</Body>
-            </>
-          )}
-        </Pressable>
+      <Pressable
+        style={styles.pickerContainer}
+        onPress={() => setStartVisibility(true)}
+      >
+        {!startDate && (
+          <Body bold={true} size={18}>
+            start
+          </Body>
+        )}
+        {startDate && (
+          <>
+            <Body size={18}>{formatDate(startDate)}</Body>
+            <Body size={18}>{formatTime(startDate)}</Body>
+          </>
+        )}
+      </Pressable>
+
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <BackArrow
+          height={20}
+          width={20}
+          style={{
+            color: theme.PRIMARY,
+            transform: [{ rotate: "180deg" }],
+          }}
+        />
       </View>
 
-      <View style={styles.pickerContainer}>
-        <Pressable onPress={() => setEndVisibility(true)} style={styles.circle}>
-          {!endDate && (
-            <Body bold={true} size={18}>
-              end
-            </Body>
-          )}
-          {endDate && (
-            <>
-              <Body size={18}>{formatDate(endDate)}</Body>
-              <Body size={18}>{formatTime(endDate)}</Body>
-            </>
-          )}
-        </Pressable>
-      </View>
+      <Pressable
+        style={styles.pickerContainer}
+        onPress={() => setEndVisibility(true)}
+      >
+        {!endDate && (
+          <Body bold={true} size={18}>
+            end
+          </Body>
+        )}
+        {endDate && (
+          <>
+            <Body size={18}>{formatDate(endDate)}</Body>
+            <Body size={18}>{formatTime(endDate)}</Body>
+          </>
+        )}
+      </Pressable>
 
       <DateTimePickerModal
         isVisible={isStartVisible}
@@ -105,7 +115,11 @@ const DatePicker: React.FC<Props> = ({
         onConfirm={handleConfirmEnd}
         onCancel={() => setEndVisibility(false)}
         date={endDate || new Date()}
-        minimumDate={startDate}
+        minimumDate={
+          startDate
+            ? new Date(startDate.setHours(startDate.getHours() + 1))
+            : new Date()
+        }
         is24Hour={true}
       />
     </View>
@@ -114,28 +128,19 @@ const DatePicker: React.FC<Props> = ({
 
 export default DatePicker;
 
-const diameter =
-  (Dimensions.get("window").width - 2 * HORIZONTAL_PADDING) / 2 - 20;
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: theme.BACKGROUND,
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row",
+    flex: 1,
     width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-around",
     paddingVertical: 20,
   },
   pickerContainer: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-  },
-  circle: {
-    height: diameter,
-    width: diameter,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 100,
+    height: 40,
+    width: 100,
   },
 });

@@ -247,10 +247,6 @@ export default function CreateEvent() {
               onChangeText={setEventName}
             />
 
-            <View style={{ paddingTop: 20 }}>
-              <Subtitle size={20}>event duration</Subtitle>
-            </View>
-
             <DatePicker
               selectedStartDate={setStartDate}
               selectedEndDate={setEndDate}

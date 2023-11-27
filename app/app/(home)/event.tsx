@@ -135,6 +135,10 @@ export default function Event() {
             >
               {selectedEvent.name}
             </Subtitle>
+
+            {/* TODO: Replace this with a timeline with length = event duration and split into 
+            mins if event < 1hr, hours if event < 1 day, otherwise days
+            have a line graph for umber of photos uploaded in each segment */}
             <View
               style={{
                 flexDirection: "row",
@@ -142,19 +146,11 @@ export default function Event() {
                 paddingVertical: 10,
               }}
             >
-              <View
-                style={{
-                  alignItems: "center",
-                  borderColor: "white",
-                  borderWidth: 2,
-                  borderRadius: 10,
-                  padding: 5,
-                }}
-              >
-                <Body size={18} bold={true}>
+              <View style={{ alignItems: "center" }}>
+                <Body size={18}>
                   {formatDate(new Date(selectedEvent.start_time))}
                 </Body>
-                <Body size={18} bold={true}>
+                <Body size={18}>
                   {formatTime(new Date(selectedEvent.start_time))}
                 </Body>
               </View>
@@ -170,19 +166,11 @@ export default function Event() {
                 />
               </View>
 
-              <View
-                style={{
-                  alignItems: "center",
-                  borderColor: "white",
-                  borderWidth: 2,
-                  borderRadius: 10,
-                  padding: 5,
-                }}
-              >
-                <Body size={18} bold={true}>
+              <View style={{ alignItems: "center" }}>
+                <Body size={18}>
                   {formatDate(new Date(selectedEvent.end_time))}
                 </Body>
-                <Body size={18} bold={true}>
+                <Body size={18}>
                   {formatTime(new Date(selectedEvent.end_time))}
                 </Body>
               </View>
