@@ -924,7 +924,7 @@ async def update_profile_picture(user_id: int, data: ProfilePictureUpdate):
         conn.close()
 
 
-@app.post("/create_event", response_class=Response)
+@app.post("/create_event", response_model=EventResponse)
 async def create_event(create_event_request: CreateEventRequest):
     conn = mysql_connection()
     if not conn:
@@ -967,7 +967,16 @@ async def create_event(create_event_request: CreateEventRequest):
             )
             conn.commit()
 
-            return Response(status_code=200)
+            return EventResponse(
+                event_id=event_id,
+                name=create_event_request.name,
+                start_time=create_event_request.start_time,
+                end_time=create_event_request.end_time,
+                thumbnail=create_event_request.thumbnail,
+                images=[],
+                attendees=create_event_request.attendees,
+                admins=[create_event_request.admin],
+            )
 
     except pymysql.MySQLError as e:
         print(f"Error executing query on the MySQL Database: {e}")

@@ -58,11 +58,15 @@ const DatePicker: React.FC<Props> = ({
           onPress={() => setStartVisibility(true)}
           style={styles.circle}
         >
-          {!startDate && <Body>start date</Body>}
+          {!startDate && (
+            <Body bold={true} size={18}>
+              start
+            </Body>
+          )}
           {startDate && (
             <>
-              <Body>{formatDate(startDate)}</Body>
-              <Body>{formatTime(startDate)}</Body>
+              <Body size={18}>{formatDate(startDate)}</Body>
+              <Body size={18}>{formatTime(startDate)}</Body>
             </>
           )}
         </Pressable>
@@ -70,11 +74,15 @@ const DatePicker: React.FC<Props> = ({
 
       <View style={styles.pickerContainer}>
         <Pressable onPress={() => setEndVisibility(true)} style={styles.circle}>
-          {!endDate && <Body>end date</Body>}
+          {!endDate && (
+            <Body bold={true} size={18}>
+              end
+            </Body>
+          )}
           {endDate && (
             <>
-              <Body>{formatDate(endDate)}</Body>
-              <Body>{formatTime(endDate)}</Body>
+              <Body size={18}>{formatDate(endDate)}</Body>
+              <Body size={18}>{formatTime(endDate)}</Body>
             </>
           )}
         </Pressable>
@@ -88,6 +96,7 @@ const DatePicker: React.FC<Props> = ({
         date={startDate || new Date()}
         minimumDate={new Date()}
         maximumDate={endDate}
+        is24Hour={true}
       />
 
       <DateTimePickerModal
@@ -97,6 +106,7 @@ const DatePicker: React.FC<Props> = ({
         onCancel={() => setEndVisibility(false)}
         date={endDate || new Date()}
         minimumDate={startDate}
+        is24Hour={true}
       />
     </View>
   );
@@ -124,8 +134,6 @@ const styles = StyleSheet.create({
   circle: {
     height: diameter,
     width: diameter,
-    borderWidth: 10,
-    borderColor: theme.PRIMARY,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 100,

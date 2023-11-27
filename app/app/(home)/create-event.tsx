@@ -59,32 +59,32 @@ export default function CreateEvent() {
     }, ANIMATION_DURATION);
   };
 
-  // const handleThumbnailChange = async () => {
-  //   try {
-  //     const pickerResult = await ImagePicker.launchImageLibraryAsync({
-  //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //       allowsEditing: true,
-  //       aspect: [3, 3],
-  //       quality: 1,
-  //     });
+  const handleThumbnailChange = async () => {
+    try {
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3, 3],
+        quality: 1,
+      });
 
-  //     if (pickerResult.canceled) {
-  //       console.log("User cancelled image picker");
-  //       return null;
-  //     }
+      if (pickerResult.canceled) {
+        console.log("User cancelled image picker");
+        return null;
+      }
 
-  //     if (!pickerResult.assets[0].uri) {
-  //       console.log("No URI found");
-  //       return null;
-  //     }
+      if (!pickerResult.assets[0].uri) {
+        console.log("No URI found");
+        return null;
+      }
 
-  //     console.log(pickerResult.assets[0].uri);
+      console.log(pickerResult.assets[0].uri);
 
-  //     setThumbnail(pickerResult.assets[0].uri);
-  //   } catch (error) {
-  //     console.error("An error occurred:", error.response.data.detail);
-  //   }
-  // };
+      setThumbnail(pickerResult.assets[0].uri);
+    } catch (error) {
+      console.error("An error occurred:", error.response.data.detail);
+    }
+  };
 
   const handleCreateEvent = async () => {
     if (isLoading) return;
@@ -108,23 +108,23 @@ export default function CreateEvent() {
         admin: userDetails,
       });
 
-      // if (thumbnail) {
-      //   try {
-      //     console.log(thumbnail);
-      //     const uploadUrl = await uploadImageAsync(
-      //       thumbnail,
-      //       `/events/${newEvent.event_id}`
-      //     );
-      //     console.log(uploadUrl);
-      //     const response = await updateEventThumbnail(
-      //       newEvent.event_id,
-      //       uploadUrl
-      //     );
-      //     console.log(response);
-      //   } catch (e) {
-      //     console.error("Error updating event thumbnail");
-      //   }
-      // }
+      if (thumbnail) {
+        try {
+          console.log(thumbnail);
+          const uploadUrl = await uploadImageAsync(
+            thumbnail,
+            `/events/${newEvent.event_id}`
+          );
+          console.log(uploadUrl);
+          const response = await updateEventThumbnail(
+            newEvent.event_id,
+            uploadUrl
+          );
+          console.log(response);
+        } catch (e) {
+          console.error("Error updating event thumbnail");
+        }
+      }
 
       setUserEvents(await getAllUserEvents(userDetails.user_id));
 
@@ -182,16 +182,8 @@ export default function CreateEvent() {
             <Subtitle size={25}>new event</Subtitle>
           </View>
 
-          {isLoading && (
-            <ActivityIndicator
-              style={styles.loading}
-              size={"large"}
-              color={theme.PRIMARY}
-            />
-          )}
-
           <ScrollView style={{ paddingBottom: 80 }}>
-            {/* <View style={styles.thumbnailContainer}>
+            <View style={styles.thumbnailContainer}>
               <View>
                 <View
                   style={{
@@ -247,7 +239,7 @@ export default function CreateEvent() {
                   />
                 </Pressable>
               </View>
-            </View> */}
+            </View>
 
             <SubtitleInput
               size={20}
@@ -316,6 +308,15 @@ export default function CreateEvent() {
                 create event
               </Button>
             </View>
+            <View style={{ height: 50 }}>
+              {isLoading && (
+                <ActivityIndicator
+                  style={styles.loading}
+                  size={"large"}
+                  color={theme.PRIMARY}
+                />
+              )}
+            </View>
           </ScrollView>
         </View>
       </AnimatedView>
@@ -345,6 +346,6 @@ const styles = StyleSheet.create({
   loading: {
     width: "100%",
     justifyContent: "center",
-    paddingVertical: 30,
+    paddingBottom: 50,
   },
 });
