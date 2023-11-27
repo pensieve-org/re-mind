@@ -37,6 +37,8 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
 
   const groupedEvents = groupEventsByYearAndMonth(events);
 
+  const numberOfYears = Object.keys(groupedEvents).length;
+
   const handleOnPress = (event) => {
     onPress(event);
   };
@@ -45,22 +47,24 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
     <View>
       {Object.entries(groupedEvents).map(([year, months]) => (
         <View key={year}>
-          <Subtitle
-            size={24}
-            style={{
-              color: theme.PRIMARY,
-              paddingVertical: 10,
-            }}
-          >
-            {year}
-          </Subtitle>
+          {numberOfYears > 1 && (
+            <Subtitle
+              size={24}
+              style={{
+                color: theme.PRIMARY,
+                paddingBottom: 10,
+              }}
+            >
+              {year}
+            </Subtitle>
+          )}
           {Object.entries(months).map(([month, events]) => (
             <View key={month}>
               <Subtitle
                 size={20}
                 style={{
                   color: theme.PRIMARY,
-                  paddingVertical: 10,
+                  paddingBottom: 10,
                 }}
               >
                 {month}
@@ -88,19 +92,29 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                         },
                       ]}
                     >
-                      {event.thumbnail ? (
-                        <Image
-                          source={{ uri: event.thumbnail }}
-                          style={styles.image}
-                        />
-                      ) : (
-                        <ImageIcon
-                          height={EVENT_ICON_DIAMETER - 80}
-                          width={EVENT_ICON_DIAMETER - 80}
-                          style={{ color: theme.PRIMARY }}
-                        />
+                      {event.thumbnail && (
+                        <>
+                          <Image
+                            source={{ uri: event.thumbnail }}
+                            style={styles.image}
+                          />
+                          <View style={styles.overlay} />
+                        </>
                       )}
+                      <View
+                        style={{
+                          position: "absolute",
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Body bold={true} size={30}>
+                          {moment(event.start_time).format("Do")}
+                        </Body>
+                      </View>
                     </View>
+
                     <Body
                       style={styles.text}
                       adjustsFontSizeToFit
@@ -141,12 +155,9 @@ const styles = StyleSheet.create({
     height: "100%",
     borderRadius: 100,
   },
-  monthYearHeader: {
-    // Add your styling for the header here
-    fontWeight: "bold",
-    fontSize: 18,
-    padding: 10,
-    textAlign: "center",
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.4)",
   },
 });
 
