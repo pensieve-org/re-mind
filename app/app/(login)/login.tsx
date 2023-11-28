@@ -20,9 +20,9 @@ import Subtitle from "../../components/Subtitle";
 
 import { AppContext } from "../_layout";
 
-import auth from "../../firebase.js";
-import getAllUserEvents from "../../services/get.allUserEvents";
-import getUser from "../../services/get.user";
+import { auth } from "../../firebase.js";
+import getUserEvents from "../../services/getUserEvents";
+import getUserDetails from "../../services/getUserDetails";
 
 import theme from "../../assets/theme";
 
@@ -74,19 +74,20 @@ export default function Login() {
         email,
         password
       );
-      const user = await getUser(userCredentials.user.uid);
+      const user = await getUserDetails(userCredentials.user.uid);
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserEvents(await getAllUserEvents(user.userId));
+
+      setUserEvents(await getUserEvents(user.userId));
       setIsLoading(false);
-      navigate("/home", true);
+      navigate("/", true);
     } catch (error) {
       if (error.code === "auth/invalid-email") {
         setErrorMsg("invalid email address");
       } else if (error.code === "auth/invalid-login-credentials") {
         setErrorMsg("invalid login credentials");
       } else {
-        setErrorMsg(error.response.data.detail);
+        setErrorMsg(error.message);
       }
       setError(true);
       setIsLoading(false);

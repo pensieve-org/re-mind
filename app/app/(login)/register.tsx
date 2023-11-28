@@ -17,11 +17,12 @@ import Subtitle from "../../components/Subtitle";
 import BackArrow from "../../assets/arrow-left.svg";
 import { AppContext } from "../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import getAllUserEvents from "../../services/get.allUserEvents";
+import geUserEvents from "../../services/getUserEvents";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../../firebase.js";
 import { View as AnimatedView } from "react-native-animatable";
+import createUser from "../../services/createUser";
 
 // TODO: Use React Hook Forms
 const Register = () => {
@@ -94,15 +95,15 @@ const Register = () => {
         lastName: lastName,
         profilePicture: null,
         friends: [],
-        friendsRequests: [],
+        friendRequests: [],
       };
 
-      addDoc(collection(db, "users"), user);
+      await createUser(user);
 
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
 
-      setUserEvents(await getAllUserEvents(user.userId));
+      setUserEvents(await geUserEvents(user.userId));
       setIsLoading(false);
       navigate("/home");
     } catch (error) {
@@ -115,7 +116,7 @@ const Register = () => {
       } else if (error.code === "auth/email-already-in-use") {
         setErrorMsg("email already in use");
       } else {
-        setErrorMsg(error.response.data.detail);
+        setErrorMsg(error.message);
       }
       setError(true);
       setIsLoading(false);

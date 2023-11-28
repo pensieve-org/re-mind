@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View, Image, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -16,17 +22,17 @@ import {
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
 } from "../../assets/constants";
-import auth from "../../firebase.js";
+import { auth } from "../../firebase.js";
 import Body from "../../components/Body";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
-import getFriendRequests from "../../services/get.friendRequests";
+import getFriendRequests from "../../services/getFriendRequests";
 import FriendsIcon from "../../assets/friends.svg";
 import ProfileIcon from "../../assets/profile.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
-import updateProfilePicture from "../../services/update.profilePicture";
+import updateProfilePicture from "../../services/updateProfilePicture";
 import { uploadImageAsync } from "../../utils";
 
 export default function Profile() {
@@ -35,6 +41,7 @@ export default function Profile() {
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [friendRequests, setFriendRequests] = useState([]);
   const insets = useSafeAreaInsets();
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
@@ -62,8 +69,8 @@ export default function Profile() {
       await signOut(auth);
       await AsyncStorage.clear();
       setUserDetails({});
-      setSelectedEvent({ images: {}, id: "" });
-      setUserEvents({ ongoing: {}, past: {} });
+      setSelectedEvent({});
+      setUserEvents({});
       navigate("/");
     } catch (error) {
       console.error("Error signing out: ", error);
@@ -91,31 +98,31 @@ export default function Profile() {
 
       console.log(pickerResult.assets[0].uri);
 
+      setIsLoading(true);
+
       const uploadUrl = await uploadImageAsync(
         pickerResult.assets[0].uri,
-        `/profile_pictures/${userDetails.user_id}`
+        `/profile_pictures/${userDetails.userId}`
       );
 
       console.log(uploadUrl);
 
-      const response = await updateProfilePicture(
-        userDetails.user_id,
-        uploadUrl
-      );
+      await updateProfilePicture(userDetails.userId, uploadUrl);
 
-      console.log(response);
+      setUserDetails({ ...userDetails, profilePicture: uploadUrl });
+      await AsyncStorage.setItem("@user", JSON.stringify(userDetails));
 
-      setUserDetails({ ...userDetails, profile_picture_url: uploadUrl });
+      setIsLoading(false);
     } catch (error) {
-      console.error("An error occurred:", error.response.data.detail);
+      console.error("An error occurred:", error.message);
     }
   };
 
   const fetchFriendRequests = async () => {
     try {
-      setFriendRequests(await getFriendRequests(userDetails.user_id));
+      setFriendRequests(await getFriendRequests(userDetails.userId));
     } catch (error) {
-      alert(error.response.data.detail);
+      alert(error.message);
     }
   };
 
@@ -185,16 +192,20 @@ export default function Profile() {
                   width: PROFILE_ICON_DIMENSION,
                   height: PROFILE_ICON_DIMENSION,
                   borderRadius: 100,
-                  backgroundColor: userDetails.profile_picture_url
-                    ? "transparent"
-                    : theme.PLACEHOLDER,
+                  backgroundColor: theme.PLACEHOLDER,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                {userDetails.profile_picture_url ? (
+                {isLoading ? (
+                  <ActivityIndicator
+                    style={styles.loading}
+                    size={"large"}
+                    color={theme.PRIMARY}
+                  />
+                ) : userDetails.profilePicture ? (
                   <Image
-                    source={{ uri: userDetails.profile_picture_url }}
+                    source={{ uri: userDetails.profilePicture }}
                     style={{
                       width: PROFILE_ICON_DIMENSION,
                       height: PROFILE_ICON_DIMENSION,
@@ -237,7 +248,7 @@ export default function Profile() {
 
             <View style={{ paddingTop: 10 }}>
               <Body style={{ textAlign: "center" }} size={16}>
-                {userDetails.first_name} {userDetails.last_name}
+                {userDetails.firstName} {userDetails.lastName}
               </Body>
               <Body
                 style={{ textAlign: "center", color: theme.PLACEHOLDER }}
@@ -278,5 +289,10 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
+  },
+  loading: {
+    width: "100%",
+    justifyContent: "center",
+    paddingTop: 30,
   },
 });

@@ -27,15 +27,13 @@ import Subtitle from "../../components/Subtitle";
 import SubtitleInput from "../../components/SubtitleInput";
 import DatePicker from "../../components/DatePicker";
 import AddFriendsList from "../../components/AddFriendsList";
-import getFriends from "../../services/get.friends";
+import getUserDetails from "../../services/getUserDetails";
 import { ScrollView } from "react-native-gesture-handler";
 import ImageIcon from "../../assets/image.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
-import { uploadImageAsync } from "../../utils";
-import createEvent from "../../services/create.event";
-import updateEventThumbnail from "../../services/update.eventThumbnail";
-import getAllUserEvents from "../../services/get.allUserEvents";
+import createEvent from "../../services/createEvent";
+import getUserEvents from "../../services/getUserEvents";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
 
@@ -47,7 +45,7 @@ export default function CreateEvent() {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [unselectedFriends, setUnselectedFriends] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
-  const [thumbnail, setThumbnail] = useState("");
+  const [thumbnail, setThumbnail] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -82,7 +80,7 @@ export default function CreateEvent() {
 
       setThumbnail(pickerResult.assets[0].uri);
     } catch (error) {
-      console.error("An error occurred:", error.response.data.detail);
+      console.error("An error occurred:", error.message);
     }
   };
 
@@ -100,33 +98,22 @@ export default function CreateEvent() {
     setIsLoading(true);
 
     try {
-      const newEvent = await createEvent({
+      await createEvent({
         start_time: startDate,
         end_time: endDate,
         name: eventName,
-        attendees: [...selectedFriends, userDetails],
-        admin: userDetails,
+        attendees: [
+          ...selectedFriends.map((friend) => friend.userId),
+          userDetails.userId,
+        ],
+        admins: [userDetails.userId],
+        is_live: true,
+        viewers: [],
+        images: [],
+        thumbnail: thumbnail,
       });
 
-      if (thumbnail) {
-        try {
-          console.log(thumbnail);
-          const uploadUrl = await uploadImageAsync(
-            thumbnail,
-            `/events/${newEvent.event_id}`
-          );
-          console.log(uploadUrl);
-          const response = await updateEventThumbnail(
-            newEvent.event_id,
-            uploadUrl
-          );
-          console.log(response);
-        } catch (e) {
-          console.error("Error updating event thumbnail");
-        }
-      }
-
-      setUserEvents(await getAllUserEvents(userDetails.user_id));
+      setUserEvents(await getUserEvents(userDetails.userId));
 
       setIsLoading(false);
 
@@ -138,15 +125,15 @@ export default function CreateEvent() {
     } catch (error) {
       setError(true);
       setIsLoading(false);
-      setErrorMsg(error.response?.data?.detail || "An error occurred");
+      setErrorMsg(error.message || "An error occurred");
     }
   };
 
   const fetchFriends = async () => {
     try {
-      setUnselectedFriends(await getFriends(userDetails.user_id));
+      setUnselectedFriends(await getUserDetails(userDetails.friends));
     } catch (error) {
-      alert(error.response.data.detail);
+      alert(error.message);
     }
   };
 

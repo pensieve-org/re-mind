@@ -30,7 +30,7 @@ import {
 } from "../../assets/constants";
 
 import { AppContext } from "../_layout";
-import getAllUserEvents from "../../services/get.allUserEvents";
+import geUserEvents from "../../services/getUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 import Calendar from "../../components/Calendar";
 
@@ -73,7 +73,7 @@ export default function Home() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setUserEvents(await getAllUserEvents(userDetails.userId));
+    setUserEvents(await geUserEvents(userDetails.userId));
     setRefreshing(false);
   }, []);
 

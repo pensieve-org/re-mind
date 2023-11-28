@@ -6,7 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 
 import { AppContext } from "../_layout";
-import getAllUserEvents from "../../services/get.allUserEvents";
+import geUserEvents from "../../services/getUserEvents";
 import theme from "../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../assets/constants";
 
@@ -20,7 +20,7 @@ export default function Page() {
       try {
         const userJSON = JSON.parse(user);
         setUserDetails(userJSON);
-        setUserEvents(await getAllUserEvents(userJSON.user_id));
+        setUserEvents(await geUserEvents(userJSON.userId));
         router.replace("/home");
       } catch (error) {
         console.log(error);

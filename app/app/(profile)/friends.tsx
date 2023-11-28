@@ -17,14 +17,14 @@ import FriendList from "../../components/FriendList";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
 import sendFriendRequest from "../../services/send.friendRequest";
-import getFriends from "../../services/get.friends";
+import getUserDetails from "../../services/getUserDetails";
 import removeFriend from "../../services/remove.friend";
 import AddFriend from "../../components/AddFriendInput";
 import FloatingActionBar from "../../components/FloatingActionBar";
 import FriendRequestList from "../../components/FriendRequestList";
 import rejectFriendRequest from "../../services/reject.friendRequest";
 import acceptFriendRequest from "../../services/accept.friendRequest";
-import getFriendRequests from "../../services/get.friendRequests";
+import getFriendRequests from "../../services/getFriendRequests";
 
 export default function MyFriends() {
   const { userDetails } = useContext(AppContext);
@@ -102,7 +102,7 @@ export default function MyFriends() {
 
   const fetchFriends = async () => {
     try {
-      setFriends(await getFriends(userDetails.user_id));
+      setFriends(await getUserDetails(userDetails.user_id));
     } catch (error) {
       alert(error.response.data.detail);
     }
