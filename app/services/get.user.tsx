@@ -1,16 +1,14 @@
-import axios from "axios";
-import { API_BASE_URL, API_GET_USER } from "../assets/constants";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase.js";
 
-const getUser = async (firebaseId) => {
-  try {
-    const response = await axios.get(
-      `${API_BASE_URL}${API_GET_USER}${firebaseId}`
-    );
-    const user = response.data;
-    return user;
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    throw error;
+const getUser = async (userId) => {
+  const userRef = doc(db, "users", userId);
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    return userSnap.data();
+  } else {
+    throw new Error(`No user found for ID: ${userId}`);
   }
 };
 

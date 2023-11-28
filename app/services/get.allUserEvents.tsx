@@ -16,10 +16,10 @@ const getAllUserEvents = async (userId) => {
     )
   );
 
-  const allEvents = [];
-  const liveEvents = [];
-  const futureEvents = [];
-  const pastEvents = [];
+  const all = [];
+  const live = [];
+  const future = [];
+  const past = [];
 
   for (const event of userEvents.docs) {
     const eventData = event.data();
@@ -40,17 +40,22 @@ const getAllUserEvents = async (userId) => {
     }
 
     if (isLive) {
-      liveEvents.push(eventData);
+      live.push(eventData);
     } else if (startTime > now) {
-      futureEvents.push(eventData);
+      future.push(eventData);
     } else if (endTime < now) {
-      pastEvents.push(eventData);
+      past.push(eventData);
     }
 
-    allEvents.push(eventData);
+    all.push(eventData);
   }
 
-  return { allEvents, liveEvents, futureEvents, pastEvents };
+  return {
+    all,
+    live,
+    future,
+    past,
+  };
 };
 
 export default getAllUserEvents;

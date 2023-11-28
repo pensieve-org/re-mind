@@ -77,7 +77,7 @@ export default function Login() {
       const user = await getUser(userCredentials.user.uid);
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserEvents(await getAllUserEvents(user.user_id));
+      setUserEvents(await getAllUserEvents(user.userId));
       setIsLoading(false);
       navigate("/home", true);
     } catch (error) {

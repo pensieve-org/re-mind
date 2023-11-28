@@ -73,7 +73,7 @@ export default function Home() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setUserEvents(await getAllUserEvents(userDetails.user_id));
+    setUserEvents(await getAllUserEvents(userDetails.userId));
     setRefreshing(false);
   }, []);
 
@@ -99,16 +99,16 @@ export default function Home() {
               width: HEADER_ICON_DIMENSION,
               height: HEADER_ICON_DIMENSION,
               borderRadius: 100,
-              backgroundColor: userDetails.profile_picture_url
+              backgroundColor: userDetails.profilePicture
                 ? "transparent"
                 : theme.PLACEHOLDER,
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {userDetails.profile_picture_url ? (
+            {userDetails.profilePicture ? (
               <Image
-                source={{ uri: userDetails.profile_picture_url }}
+                source={{ uri: userDetails.profilePicture }}
                 style={{
                   width: HEADER_ICON_DIMENSION,
                   height: HEADER_ICON_DIMENSION,
