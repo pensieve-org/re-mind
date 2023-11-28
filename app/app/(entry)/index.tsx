@@ -12,7 +12,7 @@ import { HORIZONTAL_PADDING } from "../../assets/constants";
 
 export default function Page() {
   const insets = useSafeAreaInsets();
-  const { setUserDetails, userDetails, setUserEvents } = useContext(AppContext);
+  const { setUserDetails, setUserEvents } = useContext(AppContext);
 
   const checkLogin = async () => {
     const user = await AsyncStorage.getItem("@user");

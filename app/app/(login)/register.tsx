@@ -19,7 +19,7 @@ import { AppContext } from "../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import geUserEvents from "../../services/getUserEvents";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../../firebase.js";
 import { View as AnimatedView } from "react-native-animatable";
 import createUser from "../../services/createUser";
@@ -36,7 +36,6 @@ const Register = () => {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const { setUserDetails, setUserEvents } = useContext(AppContext);
-
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
   const navigate = (route) => {
@@ -94,8 +93,6 @@ const Register = () => {
         firstName: firstName,
         lastName: lastName,
         profilePicture: null,
-        friends: [],
-        friendRequests: [],
       };
 
       await createUser(user);

@@ -3,14 +3,11 @@ import { db } from "../firebase.js";
 import { uploadImageAsync } from "../utils";
 
 interface CreateEventRequest {
-  start_time: Date;
-  end_time: Date;
+  startTime: Date;
+  endTime: Date;
   name: string;
   thumbnail?: string;
-  is_live: boolean;
-  attendees: string[];
-  admins: string[];
-  viewers: string[];
+  status: string;
   images: string[];
 }
 
@@ -32,6 +29,8 @@ const createEvent = async (eventDetails: CreateEventRequest) => {
         console.error("Error updating event thumbnail");
       }
     }
+
+    return docRef;
   } catch (error) {
     throw error;
   }

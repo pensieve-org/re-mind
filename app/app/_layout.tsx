@@ -6,9 +6,7 @@ import {
   Montserrat_400Regular_Italic,
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
-import theme from "../assets/theme";
 import React from "react";
-import { View } from "react-native";
 
 export const AppContext = createContext(null);
 
@@ -28,8 +26,8 @@ function FontLoader({ children }) {
 
 export default function HomeLayout() {
   const [userDetails, setUserDetails] = useState({});
-  const [userEvents, setUserEvents] = useState({ ongoing: {}, past: {} });
-  const [selectedEvent, setSelectedEvent] = useState({ images: {}, id: "" });
+  const [userEvents, setUserEvents] = useState({});
+  const [selectedEvent, setSelectedEvent] = useState({});
 
   return (
     <FontLoader>

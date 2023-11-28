@@ -6,7 +6,6 @@ import {
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
@@ -166,10 +165,10 @@ export default function Event() {
               >
                 <View style={{ alignItems: "center" }}>
                   <Body size={18}>
-                    {formatDate(new Date(selectedEvent.start_time))}
+                    {formatDate(new Date(selectedEvent.startTime))}
                   </Body>
                   <Body size={18}>
-                    {formatTime(new Date(selectedEvent.start_time))}
+                    {formatTime(new Date(selectedEvent.startTime))}
                   </Body>
                 </View>
 
@@ -188,16 +187,16 @@ export default function Event() {
 
                 <View style={{ alignItems: "center" }}>
                   <Body size={18}>
-                    {formatDate(new Date(selectedEvent.end_time))}
+                    {formatDate(new Date(selectedEvent.endTime))}
                   </Body>
                   <Body size={18}>
-                    {formatTime(new Date(selectedEvent.end_time))}
+                    {formatTime(new Date(selectedEvent.endTime))}
                   </Body>
                 </View>
               </View>
             ) : (
               local.event === "live" && (
-                <CountdownTimer endTime={selectedEvent.end_time} />
+                <CountdownTimer endTime={selectedEvent.endTime} />
               )
             )}
 

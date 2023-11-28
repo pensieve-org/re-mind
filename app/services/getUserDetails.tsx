@@ -1,30 +1,24 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
-const getUserDetails = async (userIds) => {
+type User = {
+  userId: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  profilePicture: string;
+};
+
+const getUserDetails = async (userId): Promise<User> => {
   try {
-    if (!Array.isArray(userIds)) {
-      const userRef = doc(db, "users", userIds);
-      const userDoc = await getDoc(userRef);
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
 
-      if (userDoc.exists()) {
-        return userDoc.data();
-      } else {
-        throw new Error("User does not exist");
-      }
+    if (userDoc.exists()) {
+      return userDoc.data() as User;
     } else {
-      const userDetails = [];
-
-      for (const userId of userIds) {
-        const userRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userRef);
-
-        if (userDoc.exists()) {
-          userDetails.push(userDoc.data());
-        }
-      }
-
-      return userDetails;
+      throw new Error("User does not exist");
     }
   } catch (error) {
     throw error;

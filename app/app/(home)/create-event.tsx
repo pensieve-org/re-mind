@@ -36,6 +36,8 @@ import createEvent from "../../services/createEvent";
 import getUserEvents from "../../services/getUserEvents";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
+import addUserToEvent from "../../services/addUserToEvent";
+import getFriendDetails from "../../services/getFriendDetails";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
@@ -98,19 +100,20 @@ export default function CreateEvent() {
     setIsLoading(true);
 
     try {
-      await createEvent({
-        start_time: startDate,
-        end_time: endDate,
+      const eventId = await createEvent({
+        startTime: startDate,
+        endTime: endDate,
         name: eventName,
-        attendees: [
-          ...selectedFriends.map((friend) => friend.userId),
-          userDetails.userId,
-        ],
-        admins: [userDetails.userId],
-        is_live: true,
-        viewers: [],
+        status: null,
         images: [],
         thumbnail: thumbnail,
+      });
+
+      await addUserToEvent({
+        eventId: eventId.id,
+        userId: userDetails.userId,
+        userType: "admin",
+        joinedAt: new Date(),
       });
 
       setUserEvents(await getUserEvents(userDetails.userId));
@@ -131,7 +134,7 @@ export default function CreateEvent() {
 
   const fetchFriends = async () => {
     try {
-      setUnselectedFriends(await getUserDetails(userDetails.friends));
+      setUnselectedFriends(await getFriendDetails(userDetails.userId));
     } catch (error) {
       alert(error.message);
     }

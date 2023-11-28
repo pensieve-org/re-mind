@@ -198,11 +198,7 @@ export default function Profile() {
                 }}
               >
                 {isLoading ? (
-                  <ActivityIndicator
-                    style={styles.loading}
-                    size={"large"}
-                    color={theme.PRIMARY}
-                  />
+                  <ActivityIndicator size={"large"} color={theme.PRIMARY} />
                 ) : userDetails.profilePicture ? (
                   <Image
                     source={{ uri: userDetails.profilePicture }}
@@ -289,10 +285,5 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: "center",
     justifyContent: "center",
-  },
-  loading: {
-    width: "100%",
-    justifyContent: "center",
-    paddingTop: 30,
   },
 });

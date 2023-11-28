@@ -8,8 +8,6 @@ interface CreateUserRequest {
   firstName: string;
   lastName: string;
   profilePicture: string;
-  friends: string[];
-  friendRequests: any[];
 }
 
 const createEvent = async (userDetails: CreateUserRequest) => {
