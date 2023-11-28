@@ -8,7 +8,6 @@ import {
   ROW_ICONS,
 } from "../assets/constants";
 import theme from "../assets/theme";
-import ImageIcon from "../assets/image.svg";
 import moment from "moment";
 import Subtitle from "./Subtitle";
 
@@ -21,8 +20,8 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
   const groupEventsByYearAndMonth = (events) => {
     const groups = {};
     events.forEach((event) => {
-      const year = moment(event.start_time).format("YYYY");
-      const month = moment(event.start_time).format("MMM");
+      const year = moment(event.startTime).format("YYYY");
+      const month = moment(event.startTime).format("MMM");
 
       if (!groups[year]) {
         groups[year] = {};
@@ -110,7 +109,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                         }}
                       >
                         <Body bold={true} size={30}>
-                          {moment(event.start_time).format("Do")}
+                          {moment(event.startTime).format("Do")}
                         </Body>
                       </View>
                     </View>

@@ -18,6 +18,8 @@ const createEvent = async (eventDetails: CreateEventRequest) => {
       thumbnail: null,
     });
 
+    await updateDoc(docRef, { eventId: docRef.id });
+
     if (eventDetails.thumbnail) {
       try {
         const uploadUrl = await uploadImageAsync(
