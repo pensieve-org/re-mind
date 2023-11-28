@@ -1,20 +1,56 @@
-import axios from "axios";
-import { API_BASE_URL, API_GET_ALL_USER_EVENTS } from "../assets/constants";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "../firebase.js";
 
 const getAllUserEvents = async (userId) => {
-  try {
-    const response = await axios.get(
-      `${API_BASE_URL}${API_GET_ALL_USER_EVENTS}${userId}`
-    );
-    if (response.status !== 200) {
-      throw new Error("Network response was not ok");
+  const userEvents = await getDocs(
+    query(
+      collection(db, "events"),
+      where("attendees", "array-contains", userId)
+    )
+  );
+
+  const allEvents = [];
+  const liveEvents = [];
+  const futureEvents = [];
+  const pastEvents = [];
+
+  for (const event of userEvents.docs) {
+    const eventData = event.data();
+    const eventRef = doc(db, "events", event.id);
+
+    const now = new Date();
+    const startTime = new Date(eventData.start_time);
+    const endTime = new Date(eventData.end_time);
+
+    let isLive = false;
+    if (endTime >= now && startTime <= now) {
+      isLive = true;
     }
-    const events = response.data;
-    return events;
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    throw error;
+
+    if (eventData.isLive !== isLive) {
+      eventData.isLive = isLive;
+      await updateDoc(eventRef, { isLive });
+    }
+
+    if (isLive) {
+      liveEvents.push(eventData);
+    } else if (startTime > now) {
+      futureEvents.push(eventData);
+    } else if (endTime < now) {
+      pastEvents.push(eventData);
+    }
+
+    allEvents.push(eventData);
   }
+
+  return { allEvents, liveEvents, futureEvents, pastEvents };
 };
 
 export default getAllUserEvents;

@@ -11,7 +11,7 @@ import Header from "../../components/Header";
 import Input from "../../components/Input";
 import Subtitle from "../../components/Subtitle";
 
-import auth from "../../firebase.js";
+import { auth } from "../../firebase.js";
 import theme from "../../assets/theme";
 
 import {

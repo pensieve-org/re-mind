@@ -18,11 +18,10 @@ import BackArrow from "../../assets/arrow-left.svg";
 import { AppContext } from "../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import getAllUserEvents from "../../services/get.allUserEvents";
-import createUser from "../../services/create.user";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import auth from "../../firebase.js";
+import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "../../firebase.js";
 import { View as AnimatedView } from "react-native-animatable";
-import checkUser from "../../services/check.user";
 
 // TODO: Use React Hook Forms
 const Register = () => {
@@ -70,7 +69,16 @@ const Register = () => {
     try {
       setIsLoading(true);
 
-      await checkUser(email, username);
+      const existingUsername = await getDocs(
+        query(collection(db, "users"), where("username", "==", username))
+      );
+
+      if (!existingUsername.empty) {
+        setErrorMsg("username already exists");
+        setError(true);
+        setIsLoading(false);
+        return;
+      }
 
       const userCredentials = await createUserWithEmailAndPassword(
         auth,
@@ -78,17 +86,23 @@ const Register = () => {
         password
       );
 
-      const user = await createUser({
-        email: email,
+      const user = {
+        userId: userCredentials.user.uid,
+        email: userCredentials.user.email,
         username: username,
-        first_name: firstName,
-        last_name: lastName,
-        firebase_id: userCredentials.user.uid,
-      });
+        firstName: firstName,
+        lastName: lastName,
+        profilePicture: null,
+        friends: [],
+        friendsRequests: [],
+      };
+
+      addDoc(collection(db, "users"), user);
 
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserEvents(await getAllUserEvents(user.user_id));
+
+      setUserEvents(await getAllUserEvents(user.userId));
       setIsLoading(false);
       navigate("/home");
     } catch (error) {
