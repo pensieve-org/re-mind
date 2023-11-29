@@ -1,4 +1,4 @@
-declare type User = {
+declare type UserDetails = {
     userId: string,
     email: string,
     firstName: string,
@@ -7,7 +7,7 @@ declare type User = {
     profilePicture: string,
 }
 
-declare type Event = {
+declare type EventDetails = {
     eventId: string,
     eventName: string,
     startTime: Date,
@@ -15,3 +15,9 @@ declare type Event = {
     thumbnail: string,
     status: "past" | "live" | "future"
 }
+
+declare type UserType = "guest" | "admin";
+
+declare type FriendStatus = "requested" | "accepted";
+
+declare type EventStatus = "past" | "live" | "future";

@@ -7,13 +7,11 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase.js";
+import getUserDetails from "./getUserDetails";
 
-// TODO: split this out into 2 functions
-
-const getFriendDetails = async (userId: string) => {
+const getFriendDetails = async (userId: string): Promise<UserDetails[]> => {
   try {
     const friends = [];
-    const requests = [];
 
     // Query where user1Id equals userId
     let q = query(collection(db, "friends"), where("user1Id", "==", userId));
@@ -36,32 +34,16 @@ const getFriendDetails = async (userId: string) => {
 
       if (status === "accepted") {
         friends.push(friendId);
-      } else if (status === "requested") {
-        requests.push(friendId);
       }
     });
 
     // For each friendId in friends, query the users collection and add the full user details to friends
-    for (let i = 0; i < friends.length; i++) {
-      const userRef = doc(db, "users", friends[i]);
-      const userDoc = await getDoc(userRef);
+    const userDetailsPromises = friends.map((friendId) =>
+      getUserDetails(friendId)
+    );
+    const userDetails = await Promise.all(userDetailsPromises);
 
-      if (userDoc.exists() && userDoc.data()) {
-        friends[i] = userDoc.data();
-      }
-    }
-
-    // For each friendId in requests, query the users collection and add the full user details to requests
-    for (let i = 0; i < requests.length; i++) {
-      const userRef = doc(db, "users", requests[i]);
-      const userDoc = await getDoc(userRef);
-
-      if (userDoc.exists() && userDoc.data()) {
-        requests[i] = userDoc.data();
-      }
-    }
-
-    return { friends, requests };
+    return userDetails;
   } catch (error) {
     console.error("Error getting friend details: ", error);
     throw error;

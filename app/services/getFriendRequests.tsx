@@ -7,8 +7,9 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase.js";
+import getUserDetails from "./getUserDetails";
 
-const getFriendRequests = async (userId: string) => {
+const getFriendRequests = async (userId: string): Promise<UserDetails[]> => {
   try {
     const requests = [];
 
@@ -25,16 +26,12 @@ const getFriendRequests = async (userId: string) => {
     });
 
     // For each friendId in requests, query the users collection and add the full user details to requests
-    for (let i = 0; i < requests.length; i++) {
-      const userRef = doc(db, "users", requests[i]);
-      const userDoc = await getDoc(userRef);
+    const userDetailsPromises = requests.map((friendId) =>
+      getUserDetails(friendId)
+    );
+    const userDetails = await Promise.all(userDetailsPromises);
 
-      if (userDoc.exists() && userDoc.data()) {
-        requests[i] = userDoc.data();
-      }
-    }
-
-    return requests;
+    return userDetails;
   } catch (error) {
     console.error("Error getting friend details: ", error);
     throw error;

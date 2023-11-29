@@ -36,6 +36,9 @@ import {
 import getEventDetails from "../../services/getEventDetails";
 import getFriendDetails from "../../services/getFriendDetails";
 import getFriendRequests from "../../services/getFriendRequests";
+import addUserToEvent from "../../services/addUserToEvent";
+import getEventAttendees from "../../services/getEventAttendees";
+import getEventAdmins from "../../services/getEventAdmins";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -83,12 +86,20 @@ export default function Login() {
 
       const event = await getEventDetails("clHDfKOb2UP4wG7QSSVa");
 
+      // await addUserToEvent(user.userId, event.eventId, "guest");
+
+      const eventAttendees = await getEventAttendees(event.eventId);
+
+      const eventAdmins = await getEventAdmins(event.eventId);
+
       const friends = await getFriendDetails(user.userId);
 
       const requests = await getFriendRequests(user.userId);
 
       alert(JSON.stringify(user));
       alert(JSON.stringify(event));
+      alert(JSON.stringify(eventAttendees));
+      alert(JSON.stringify(eventAdmins));
       alert(JSON.stringify(friends));
       alert(JSON.stringify(requests));
 

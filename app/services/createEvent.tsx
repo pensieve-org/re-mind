@@ -3,19 +3,7 @@ import { db } from "../firebase.js";
 import { uploadImageAsync } from "../utils";
 import addUserToEvent from "./addUserToEvent";
 
-interface CreateEventRequest {
-  startTime: Date;
-  endTime: Date;
-  name: string;
-  thumbnail?: string;
-  status: string;
-  images: string[];
-  attendees: any[];
-  admins: any[];
-  viewers: any[];
-}
-
-const createEvent = async (eventDetails: CreateEventRequest) => {
+const createEvent = async (eventDetails: EventDetails) => {
   try {
     const docRef = await addDoc(collection(db, "events"), {
       ...eventDetails,

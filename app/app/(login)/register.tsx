@@ -86,7 +86,7 @@ const Register = () => {
         password
       );
 
-      const user: User = {
+      const user: UserDetails = {
         userId: userCredentials.user.uid,
         email: userCredentials.user.email,
         username: username,
