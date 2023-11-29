@@ -43,6 +43,7 @@ import sendFriendRequest from "../../services/sendFriendRequest";
 import acceptFriendRequest from "../../services/acceptFriendRequest";
 import removeFriend from "../../services/removeFriend";
 import updateProfilePicture from "../../services/updateProfilePicture";
+import getEventImages from "../../services/getEventImages";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -87,6 +88,12 @@ export default function Login() {
       const user = await getUserDetails(userCredentials.user.uid);
       // setUserDetails(user);
       // await AsyncStorage.setItem("@user", JSON.stringify(user));
+
+      await createEvent;
+
+      // const event = await getEventDetails();
+
+      alert(JSON.stringify(event));
 
       // setUserEvents(await getUserEvents(user.userId));
       // setIsLoading(false);

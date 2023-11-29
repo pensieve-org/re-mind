@@ -16,6 +16,15 @@ declare type EventDetails = {
     status: "past" | "live" | "future"
 }
 
+declare type ImageDetails = {
+    imageId: string,
+    imageUrl: string,
+    queued: boolean,
+    tagged: string[],
+    uploadTime: Date,
+    uploadedBy: string
+}
+
 declare type UserType = "guest" | "admin";
 
 declare type FriendStatus = "requested" | "accepted";
