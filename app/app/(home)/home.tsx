@@ -77,6 +77,7 @@ export default function Home() {
     setRefreshing(false);
   }, []);
 
+  // TODO: remove these and use the event.status property instead
   const handleLiveEventPress = async (event) => {
     setSelectedEvent(event);
     navigateEvents("live");

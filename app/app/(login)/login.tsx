@@ -1,11 +1,7 @@
 import React, { useContext, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  OAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithCredential,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { router } from "expo-router";
 import "react-native-get-random-values";
 import { View as AnimatedView } from "react-native-animatable";
@@ -33,19 +29,6 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
-import getEventDetails from "../../services/getEventDetails";
-import getFriendDetails from "../../services/getFriendDetails";
-import getFriendRequests from "../../services/getFriendRequests";
-import addUserToEvent from "../../services/addUserToEvent";
-import getEventAttendees from "../../services/getEventAttendees";
-import getEventAdmins from "../../services/getEventAdmins";
-import sendFriendRequest from "../../services/sendFriendRequest";
-import acceptFriendRequest from "../../services/acceptFriendRequest";
-import removeFriend from "../../services/removeFriend";
-import updateProfilePicture from "../../services/updateProfilePicture";
-import getEventImages from "../../services/getEventImages";
-import createEvent from "../../services/createEvent";
-import deleteEvent from "../../services/deleteEvent";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -88,18 +71,12 @@ export default function Login() {
         password
       );
       const user = await getUserDetails(userCredentials.user.uid);
-      // setUserDetails(user);
-      // await AsyncStorage.setItem("@user", JSON.stringify(user));
+      setUserDetails(user);
+      await AsyncStorage.setItem("@user", JSON.stringify(user));
 
-      await deleteEvent("1EgNVNDFKxWGRf0x8uFN");
-
-      const event = await getEventDetails("1EgNVNDFKxWGRf0x8uFN");
-
-      alert(JSON.stringify(event));
-
-      // setUserEvents(await getUserEvents(user.userId));
-      // setIsLoading(false);
-      // navigate("/", true);
+      setUserEvents(await getUserEvents(user.userId));
+      setIsLoading(false);
+      navigate("/home", true);
     } catch (error) {
       if (error.code === "auth/invalid-email") {
         setErrorMsg("invalid email address");

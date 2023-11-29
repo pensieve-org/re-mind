@@ -100,12 +100,9 @@ const Register = () => {
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
 
-      alert(JSON.stringify(user));
-
-      // setUserEvents(await getUserEvents(user.userId));
-
-      // setIsLoading(false);
-      // navigate("/home");
+      setUserEvents(await getUserEvents(user.userId));
+      setIsLoading(false);
+      navigate("/home");
     } catch (error) {
       if (error.code === "auth/weak-password") {
         setErrorMsg("password must be at least 6 characters");

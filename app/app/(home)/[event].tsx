@@ -34,6 +34,9 @@ import ShowAttendees from "../../components/ShowAttendees";
 import CountdownTimer from "../../components/CountdownTimer";
 import Swiper from "react-native-swiper";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
+import getEventAdmins from "../../services/getEventAdmins";
+import getEventAttendees from "../../services/getEventAttendees";
+import getEventImages from "../../services/getEventImages";
 
 export default function Event() {
   const local = useLocalSearchParams();
@@ -44,10 +47,21 @@ export default function Event() {
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [attendees, setAttendees] = useState([]);
+  const [images, setImages] = useState([]);
 
-  const isAdmin = selectedEvent.admins.some(
-    (admin) => admin.userId === userDetails.userId
-  );
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      const admins = await getEventAdmins(selectedEvent.eventId);
+      const adminStatus = admins.some(
+        (admin) => admin.userId === userDetails.userId
+      );
+      setIsAdmin(adminStatus);
+    };
+
+    checkAdminStatus();
+  }, [selectedEvent, userDetails]);
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -94,6 +108,22 @@ export default function Event() {
       setModalVisible(false);
     }
   };
+
+  useEffect(() => {
+    const fetchEventAttendees = async () => {
+      const eventAttendees = await getEventAttendees(selectedEvent.eventId);
+      setAttendees(eventAttendees);
+    };
+
+    const fetchEventImages = async () => {
+      const eventImages = await getEventImages(selectedEvent.eventId);
+      setImages(eventImages);
+    };
+
+    fetchEventImages();
+
+    fetchEventAttendees();
+  }, []);
 
   return (
     <View style={styles.page}>
@@ -149,7 +179,7 @@ export default function Event() {
                 paddingVertical: 10,
               }}
             >
-              {selectedEvent.name}
+              {selectedEvent.eventName}
             </Subtitle>
 
             {/* TODO: Replace this with a timeline with length = event duration and split into 
@@ -209,12 +239,12 @@ export default function Event() {
             >
               shared with
             </Subtitle>
-            <ShowAttendees attendees={selectedEvent.attendees} />
+            <ShowAttendees attendees={attendees} />
           </View>
 
           <View style={styles.imageContainer}>
-            {selectedEvent.images.length > 0 ? (
-              selectedEvent.images.map((image, index) => (
+            {images.length > 0 ? (
+              images.map((image, index) => (
                 <TouchableOpacity
                   key={index}
                   onPress={() => {
@@ -223,7 +253,7 @@ export default function Event() {
                   }}
                 >
                   <Image
-                    source={{ uri: image.url }}
+                    source={{ uri: image.imageUrl }}
                     style={[
                       styles.image,
                       {
@@ -283,10 +313,10 @@ export default function Event() {
                     />
                   }
                 >
-                  {selectedEvent.images.map((image, index) => (
+                  {images.map((image, index) => (
                     <Image
                       key={index}
-                      source={{ uri: image.url }}
+                      source={{ uri: image.imageUrl }}
                       style={{ width: "100%", height: "100%" }}
                       resizeMode="contain"
                     />
