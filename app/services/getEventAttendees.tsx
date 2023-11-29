@@ -9,7 +9,10 @@ import {
 import { db } from "../firebase.js";
 import getUserDetails from "./getUserDetails";
 
-const getEventAttendees = async (eventId: string): Promise<UserDetails[]> => {
+const getEventAttendees = async (
+  eventId: string,
+  currentUserId: string
+): Promise<UserDetails[]> => {
   try {
     const attendees = [];
 
@@ -23,7 +26,10 @@ const getEventAttendees = async (eventId: string): Promise<UserDetails[]> => {
       const userId = doc.data().userId;
       const userType = doc.data().userType;
 
-      if (userType === "admin" || userType === "guest") {
+      if (
+        (userType === "admin" || userType === "guest") &&
+        userId !== currentUserId
+      ) {
         attendees.push(userId);
       }
     });

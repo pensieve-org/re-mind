@@ -111,7 +111,10 @@ export default function Event() {
 
   useEffect(() => {
     const fetchEventAttendees = async () => {
-      const eventAttendees = await getEventAttendees(selectedEvent.eventId);
+      const eventAttendees = await getEventAttendees(
+        selectedEvent.eventId,
+        userDetails.userId
+      );
       setAttendees(eventAttendees);
     };
 
