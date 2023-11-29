@@ -16,14 +16,13 @@ import Body from "../../components/Body";
 import FriendList from "../../components/FriendList";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
-import sendFriendRequest from "../../services/send.friendRequest";
+import sendFriendRequest from "../../services/sendFriendRequest";
 import getUserDetails from "../../services/getUserDetails";
-import removeFriend from "../../services/remove.friend";
+import removeFriend from "../../services/removeFriend";
 import AddFriend from "../../components/AddFriendInput";
 import FloatingActionBar from "../../components/FloatingActionBar";
 import FriendRequestList from "../../components/FriendRequestList";
-import rejectFriendRequest from "../../services/reject.friendRequest";
-import acceptFriendRequest from "../../services/accept.friendRequest";
+import acceptFriendRequest from "../../services/acceptFriendRequest";
 import getFriendRequests from "../../services/getFriendRequests";
 
 export default function MyFriends() {

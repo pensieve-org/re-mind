@@ -39,6 +39,10 @@ import getFriendRequests from "../../services/getFriendRequests";
 import addUserToEvent from "../../services/addUserToEvent";
 import getEventAttendees from "../../services/getEventAttendees";
 import getEventAdmins from "../../services/getEventAdmins";
+import sendFriendRequest from "../../services/sendFriendRequest";
+import acceptFriendRequest from "../../services/acceptFriendRequest";
+import removeFriend from "../../services/removeFriend";
+import updateProfilePicture from "../../services/updateProfilePicture";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -83,30 +87,6 @@ export default function Login() {
       const user = await getUserDetails(userCredentials.user.uid);
       // setUserDetails(user);
       // await AsyncStorage.setItem("@user", JSON.stringify(user));
-
-      const event = await getEventDetails("clHDfKOb2UP4wG7QSSVa");
-
-      // await addUserToEvent(user.userId, event.eventId, "guest");
-
-      const eventAttendees = await getEventAttendees(event.eventId);
-
-      const eventAdmins = await getEventAdmins(event.eventId);
-
-      const friends = await getFriendDetails(user.userId);
-
-      const requests = await getFriendRequests(user.userId);
-
-      alert(JSON.stringify(user));
-      alert(JSON.stringify(event));
-      alert(JSON.stringify(eventAttendees));
-      alert(JSON.stringify(eventAdmins));
-      alert(JSON.stringify(friends));
-      alert(JSON.stringify(requests));
-
-      console.log(JSON.stringify(user));
-      console.log(JSON.stringify(event));
-      console.log(JSON.stringify(friends));
-      console.log(JSON.stringify(requests));
 
       // setUserEvents(await getUserEvents(user.userId));
       // setIsLoading(false);
