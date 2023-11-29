@@ -20,8 +20,9 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
   const groupEventsByYearAndMonth = (events) => {
     const groups = {};
     events.forEach((event) => {
-      const year = moment(event.startTime).format("YYYY");
-      const month = moment(event.startTime).format("MMM");
+      const date = event.startTime.toDate(); // Convert Timestamp to Date
+      const year = moment(date).format("YYYY");
+      const month = moment(date).format("MMM");
 
       if (!groups[year]) {
         groups[year] = {};
@@ -109,7 +110,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                         }}
                       >
                         <Body bold={true} size={30}>
-                          {moment(event.startTime).format("Do")}
+                          {moment(event.startTime.toDate()).format("Do")}
                         </Body>
                       </View>
                     </View>

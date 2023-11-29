@@ -24,6 +24,7 @@ import FloatingActionBar from "../../components/FloatingActionBar";
 import FriendRequestList from "../../components/FriendRequestList";
 import acceptFriendRequest from "../../services/acceptFriendRequest";
 import getFriendRequests from "../../services/getFriendRequests";
+import getFriendDetails from "../../services/getFriendDetails";
 
 export default function MyFriends() {
   const { userDetails } = useContext(AppContext);
@@ -44,10 +45,10 @@ export default function MyFriends() {
   const handleSendFriendRequest = async () => {
     if (!friendUsername) return;
     try {
-      await sendFriendRequest(userDetails.user_id, friendUsername);
+      await sendFriendRequest(userDetails.userId, friendUsername);
       alert("Friend request sent!");
     } catch (error) {
-      alert(error.response.data.detail);
+      alert(error.message);
     }
   };
 
@@ -61,7 +62,7 @@ export default function MyFriends() {
           {
             text: "Yes",
             onPress: async () => {
-              await removeFriend(userDetails.user_id, friend.user_id);
+              await removeFriend(userDetails.userId, friend.userId);
               await fetchFriends();
             },
           },
@@ -73,37 +74,37 @@ export default function MyFriends() {
   };
   const handleAcceptFriend = async (friend) => {
     try {
-      await acceptFriendRequest(userDetails.user_id, friend.user_id);
+      await acceptFriendRequest(userDetails.userId, friend.userId);
       await fetchFriendRequests();
       await fetchFriends();
     } catch (error) {
-      alert(error.response.data.detail);
+      alert(error.message);
     }
   };
 
   const handleRejectFriend = async (friend) => {
     try {
-      await rejectFriendRequest(userDetails.user_id, friend.user_id);
+      await removeFriend(userDetails.userId, friend.userId);
       await fetchFriendRequests();
       await fetchFriends();
     } catch (error) {
-      alert(error.response.data.detail);
+      alert(error.message);
     }
   };
 
   const fetchFriendRequests = async () => {
     try {
-      setFriendRequests(await getFriendRequests(userDetails.user_id));
+      setFriendRequests(await getFriendRequests(userDetails.userId));
     } catch (error) {
-      alert(error.response.data.detail);
+      alert(error.message);
     }
   };
 
   const fetchFriends = async () => {
     try {
-      setFriends(await getUserDetails(userDetails.user_id));
+      setFriends(await getFriendDetails(userDetails.userId));
     } catch (error) {
-      alert(error.response.data.detail);
+      alert(error.message);
     }
   };
 

@@ -24,7 +24,7 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
             style={[
               styles.imageContainer,
               {
-                backgroundColor: item.profile_picture_url
+                backgroundColor: item.profilePicture
                   ? "transparent"
                   : theme.PLACEHOLDER,
                 width: PROFILE_ICON_DIAMETER,
@@ -32,9 +32,9 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
               },
             ]}
           >
-            {item.profile_picture_url ? (
+            {item.profilePicture ? (
               <Image
-                source={{ uri: item.profile_picture_url }}
+                source={{ uri: item.profilePicture }}
                 style={styles.image}
               />
             ) : (
@@ -48,7 +48,7 @@ const FriendList: React.FC<Props> = ({ friends, onPress }) => {
 
           <View style={{ marginLeft: 20 }}>
             <Body adjustsFontSizeToFit>
-              {item.first_name} {item.last_name}
+              {item.firstName} {item.lastName}
             </Body>
             <Body style={styles.usernameText} adjustsFontSizeToFit>
               {item.username}

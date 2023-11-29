@@ -120,7 +120,7 @@ export default function Profile() {
 
   const fetchFriendRequests = async () => {
     try {
-      // setFriendRequests(await getFriendRequests(userDetails.userId));
+      setFriendRequests(await getFriendRequests(userDetails.userId));
     } catch (error) {
       alert(error.message);
     }
