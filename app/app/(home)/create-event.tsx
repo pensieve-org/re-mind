@@ -64,7 +64,7 @@ export default function CreateEvent() {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [3, 3],
-        quality: 1,
+        quality: 0,
       });
 
       if (pickerResult.canceled) {
