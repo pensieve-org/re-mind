@@ -99,20 +99,17 @@ export default function CreateEvent() {
     setIsLoading(true);
 
     try {
-      await createEvent({
-        startTime: startDate,
-        endTime: endDate,
-        name: eventName,
-        status: null,
-        images: [],
-        thumbnail: thumbnail,
-        attendees: [
-          ...selectedFriends.map((friend) => friend.userId),
-          userDetails.userId,
-        ],
-        admins: [userDetails.userId],
-        viewers: [],
-      });
+      await createEvent(
+        {
+          startTime: startDate,
+          endTime: endDate,
+          eventName: eventName,
+          status: null,
+          thumbnail: thumbnail,
+        },
+        selectedFriends,
+        userDetails
+      );
 
       setUserEvents(await getUserEvents(userDetails.userId));
 

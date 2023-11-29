@@ -41,7 +41,7 @@ export default function Event() {
   const handleDeleteEvent = async () => {
     Alert.alert(
       "Confirmation",
-      `Are you sure you want to delete '${selectedEvent.name}'?`,
+      `Are you sure you want to delete '${selectedEvent.eventName}'?`,
       [
         { text: "No" },
         {
@@ -49,16 +49,16 @@ export default function Event() {
           onPress: async () => {
             setIsLoading(true);
             try {
-              await deleteEvent(selectedEvent.event_id);
+              await deleteEvent(selectedEvent.eventId);
               setUserEvents({
                 live: userEvents.live.filter(
-                  (event) => event.event_id !== selectedEvent.event_id
+                  (event) => event.eventId !== selectedEvent.eventId
                 ),
                 past: userEvents.past.filter(
-                  (event) => event.event_id !== selectedEvent.event_id
+                  (event) => event.eventId !== selectedEvent.eventId
                 ),
                 future: userEvents.future.filter(
-                  (event) => event.event_id !== selectedEvent.event_id
+                  (event) => event.eventId !== selectedEvent.eventId
                 ),
               });
               setIsLoading(false);
