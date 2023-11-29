@@ -27,7 +27,7 @@ import {
 import theme from "../../assets/theme";
 import Body from "../../components/Body";
 import Header from "../../components/Header";
-import getEvent from "../../services/get.event";
+import getEventDetails from "../../services/getEventDetails";
 import { AppContext } from "../_layout";
 import Subtitle from "../../components/Subtitle";
 import ShowAttendees from "../../components/ShowAttendees";
@@ -46,7 +46,7 @@ export default function Event() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const isAdmin = selectedEvent.admins.some(
-    (admin) => admin.user_id === userDetails.user_id
+    (admin) => admin.userId === userDetails.userId
   );
 
   const navigateBack = () => {
@@ -65,7 +65,7 @@ export default function Event() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setSelectedEvent(await getEvent(selectedEvent.event_id));
+    setSelectedEvent(await getEventDetails(selectedEvent.eventId));
     setRefreshing(false);
   }, []);
 

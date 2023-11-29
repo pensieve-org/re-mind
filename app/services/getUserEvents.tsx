@@ -1,21 +1,12 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
 const getUserEvents = async (userId) => {
   try {
-    const eventUsersRef = collection(db, "eventUsers");
-    const userEventQuery = query(eventUsersRef, where("userId", "==", userId));
-    const userEventsSnapshot = await getDocs(userEventQuery);
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
 
-    let eventIds = userEventsSnapshot.docs.map((doc) => doc.data().eventId);
+    let eventIds = userDoc.data().events;
     let events = [];
 
     for (const eventId of eventIds) {

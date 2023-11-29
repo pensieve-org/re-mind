@@ -93,6 +93,9 @@ const Register = () => {
         firstName: firstName,
         lastName: lastName,
         profilePicture: null,
+        events: [],
+        friends: [],
+        friendRequests: [],
       };
 
       await createUser(user);

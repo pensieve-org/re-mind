@@ -8,6 +8,9 @@ interface CreateUserRequest {
   firstName: string;
   lastName: string;
   profilePicture: string;
+  events: any[]; // TODO: define event type
+  friends: string[]; // TODO: define friend type
+  friendRequests: string[]; // TODO: define friend request type
 }
 
 const createEvent = async (userDetails: CreateUserRequest) => {

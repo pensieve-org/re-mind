@@ -8,7 +8,9 @@ type Event = {
   thumbnail: string;
   images: string[];
   status: "live" | "past" | "future";
-  attendees: string[];
+  attendees: any[];
+  admins: any[];
+  viewers: any[];
 };
 
 const getEventDetails = async (eventId): Promise<Event> => {

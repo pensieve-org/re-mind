@@ -1,17 +1,19 @@
-import { addDoc, collection } from "firebase/firestore";
+import { doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
-type AddUserToEventRequest = {
-  eventId: string;
-  userId: string;
-  userType: "admin" | "attendee" | "viewer";
-  joinedAt: Date;
-};
-
-const addUserToEvent = async (request: AddUserToEventRequest) => {
+const addUserToEvent = async (userId, eventId) => {
   try {
-    const docRef = await addDoc(collection(db, "eventUsers"), request);
-    console.log("Document written with ID: ", docRef.id);
+    const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
+
+    if (!userDoc.exists()) {
+      console.error("User not found");
+      return;
+    }
+
+    await updateDoc(userRef, {
+      events: arrayUnion(eventId),
+    });
   } catch (error) {
     console.error("Error adding document: ", error);
     throw error;

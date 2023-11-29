@@ -27,7 +27,6 @@ import Subtitle from "../../components/Subtitle";
 import SubtitleInput from "../../components/SubtitleInput";
 import DatePicker from "../../components/DatePicker";
 import AddFriendsList from "../../components/AddFriendsList";
-import getUserDetails from "../../services/getUserDetails";
 import { ScrollView } from "react-native-gesture-handler";
 import ImageIcon from "../../assets/image.svg";
 import CameraIcon from "../../assets/camera.svg";
@@ -100,20 +99,19 @@ export default function CreateEvent() {
     setIsLoading(true);
 
     try {
-      const eventId = await createEvent({
+      await createEvent({
         startTime: startDate,
         endTime: endDate,
         name: eventName,
         status: null,
         images: [],
         thumbnail: thumbnail,
-      });
-
-      await addUserToEvent({
-        eventId: eventId.id,
-        userId: userDetails.userId,
-        userType: "admin",
-        joinedAt: new Date(),
+        attendees: [
+          ...selectedFriends.map((friend) => friend.userId),
+          userDetails.userId,
+        ],
+        admins: [userDetails.userId],
+        viewers: [],
       });
 
       setUserEvents(await getUserEvents(userDetails.userId));

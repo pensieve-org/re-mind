@@ -1,6 +1,7 @@
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 import { uploadImageAsync } from "../utils";
+import addUserToEvent from "./addUserToEvent";
 
 interface CreateEventRequest {
   startTime: Date;
@@ -9,6 +10,9 @@ interface CreateEventRequest {
   thumbnail?: string;
   status: string;
   images: string[];
+  attendees: any[];
+  admins: any[];
+  viewers: any[];
 }
 
 const createEvent = async (eventDetails: CreateEventRequest) => {
@@ -32,7 +36,9 @@ const createEvent = async (eventDetails: CreateEventRequest) => {
       }
     }
 
-    return docRef;
+    for (let id in eventDetails.attendees) {
+      await addUserToEvent(id, docRef.id);
+    }
   } catch (error) {
     throw error;
   }
