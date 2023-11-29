@@ -16,7 +16,7 @@ import Header from "../../components/Header";
 import { AppContext } from "../_layout";
 import Subtitle from "../../components/Subtitle";
 import Button from "../../components/Button";
-import deleteEvent from "../../services/delete.event";
+import deleteEvent from "../../services/deleteEvent";
 
 export default function Event() {
   const { userDetails, selectedEvent, setUserEvents, userEvents } =

@@ -1,9 +1,8 @@
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 import { uploadImageAsync } from "../utils";
-import addUserToEvent from "./addUserToEvent";
 
-const createEvent = async (eventDetails: EventDetails) => {
+const createEvent = async (eventDetails: Omit<EventDetails, "eventId">) => {
   try {
     const docRef = await addDoc(collection(db, "events"), {
       ...eventDetails,
@@ -22,10 +21,6 @@ const createEvent = async (eventDetails: EventDetails) => {
       } catch (e) {
         console.error("Error updating event thumbnail");
       }
-    }
-
-    for (let id in eventDetails.attendees) {
-      await addUserToEvent(id, docRef.id);
     }
   } catch (error) {
     throw error;
