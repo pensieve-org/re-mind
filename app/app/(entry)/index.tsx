@@ -18,6 +18,7 @@ export default function Page() {
     const user = await AsyncStorage.getItem("@user");
     if (user) {
       try {
+        // TODO: also read friends, events, requests...
         const userJSON = JSON.parse(user);
         setUserDetails(userJSON);
         setUserEvents(await geUserEvents(userJSON.userId));

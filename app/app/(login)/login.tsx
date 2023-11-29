@@ -33,6 +33,9 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
+import getEventDetails from "../../services/getEventDetails";
+import getFriendDetails from "../../services/getFriendDetails";
+import getFriendRequests from "../../services/getFriendRequests";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -75,12 +78,28 @@ export default function Login() {
         password
       );
       const user = await getUserDetails(userCredentials.user.uid);
-      setUserDetails(user);
-      await AsyncStorage.setItem("@user", JSON.stringify(user));
+      // setUserDetails(user);
+      // await AsyncStorage.setItem("@user", JSON.stringify(user));
 
-      setUserEvents(await getUserEvents(user.userId));
-      setIsLoading(false);
-      navigate("/", true);
+      const event = await getEventDetails("clHDfKOb2UP4wG7QSSVa");
+
+      const friends = await getFriendDetails(user.userId);
+
+      const requests = await getFriendRequests(user.userId);
+
+      alert(JSON.stringify(user));
+      alert(JSON.stringify(event));
+      alert(JSON.stringify(friends));
+      alert(JSON.stringify(requests));
+
+      console.log(JSON.stringify(user));
+      console.log(JSON.stringify(event));
+      console.log(JSON.stringify(friends));
+      console.log(JSON.stringify(requests));
+
+      // setUserEvents(await getUserEvents(user.userId));
+      // setIsLoading(false);
+      // navigate("/", true);
     } catch (error) {
       if (error.code === "auth/invalid-email") {
         setErrorMsg("invalid email address");

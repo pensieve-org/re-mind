@@ -1,27 +1,15 @@
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
-type Event = {
-  startTime: Date;
-  endTime: Date;
-  name: string;
-  thumbnail: string;
-  images: string[];
-  status: "live" | "past" | "future";
-  attendees: any[];
-  admins: any[];
-  viewers: any[];
-};
-
 const getEventDetails = async (eventId): Promise<Event> => {
   try {
     const eventRef = doc(db, "events", eventId);
     const eventDoc = await getDoc(eventRef);
 
-    if (eventDoc.exists()) {
+    if (eventDoc.exists() && eventDoc.data()) {
       return eventDoc.data() as Event;
     } else {
-      throw new Error("User does not exist");
+      throw new Error("Event does not exist or has no data");
     }
   } catch (error) {
     throw error;

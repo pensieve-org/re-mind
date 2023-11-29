@@ -17,7 +17,7 @@ import Subtitle from "../../components/Subtitle";
 import BackArrow from "../../assets/arrow-left.svg";
 import { AppContext } from "../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import geUserEvents from "../../services/getUserEvents";
+import getUserEvents from "../../services/getUserEvents";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../../firebase.js";
@@ -86,16 +86,13 @@ const Register = () => {
         password
       );
 
-      const user = {
+      const user: User = {
         userId: userCredentials.user.uid,
         email: userCredentials.user.email,
         username: username,
         firstName: firstName,
         lastName: lastName,
         profilePicture: null,
-        events: [],
-        friends: [],
-        friendRequests: [],
       };
 
       await createUser(user);
@@ -103,9 +100,12 @@ const Register = () => {
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
 
-      setUserEvents(await geUserEvents(user.userId));
-      setIsLoading(false);
-      navigate("/home");
+      alert(JSON.stringify(user));
+
+      // setUserEvents(await getUserEvents(user.userId));
+
+      // setIsLoading(false);
+      // navigate("/home");
     } catch (error) {
       if (error.code === "auth/weak-password") {
         setErrorMsg("password must be at least 6 characters");
