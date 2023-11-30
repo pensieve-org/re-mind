@@ -98,13 +98,24 @@ export default function CreateEvent() {
 
     setIsLoading(true);
 
+    const now = new Date();
+
+    let status;
+    if (now < startDate) {
+      status = "future";
+    } else if (now > endDate) {
+      status = "past";
+    } else {
+      status = "live";
+    }
+
     try {
       await createEvent(
         {
           startTime: startDate,
           endTime: endDate,
           eventName: eventName,
-          status: null,
+          status: status,
           thumbnail: thumbnail,
         },
         selectedFriends,

@@ -1,24 +1,11 @@
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-export async function uploadImageAsync(uri, filepath = null) {
-  const blob = await new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-      resolve(xhr.response);
-    };
-    xhr.onerror = function (e) {
-      console.log(e);
-      reject(new TypeError("Network request failed"));
-    };
-    xhr.responseType = "blob";
-    xhr.open("GET", uri, true);
-    xhr.send(null);
-  });
+export const uploadImageAsync = async (uri, filepath = null) => {
+  const response = await fetch(uri);
+  const blob = await response.blob();
 
-  const fileRef = ref(getStorage(), `${filepath}`);
-  const result = await uploadBytes(fileRef, blob);
+  const storageRef = ref(getStorage(), filepath);
+  await uploadBytes(storageRef, blob);
 
-  blob.close();
-
-  return await getDownloadURL(fileRef);
-}
+  return await getDownloadURL(storageRef);
+};

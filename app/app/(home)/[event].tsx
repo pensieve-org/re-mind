@@ -198,10 +198,10 @@ export default function Event() {
               >
                 <View style={{ alignItems: "center" }}>
                   <Body size={18}>
-                    {formatDate(new Date(selectedEvent.startTime))}
+                    {formatDate(selectedEvent.startTime.toDate())}
                   </Body>
                   <Body size={18}>
-                    {formatTime(new Date(selectedEvent.startTime))}
+                    {formatTime(selectedEvent.startTime.toDate())}
                   </Body>
                 </View>
 
@@ -220,10 +220,10 @@ export default function Event() {
 
                 <View style={{ alignItems: "center" }}>
                   <Body size={18}>
-                    {formatDate(new Date(selectedEvent.endTime))}
+                    {formatDate(new Date(selectedEvent.endTime.toDate()))}
                   </Body>
                   <Body size={18}>
-                    {formatTime(new Date(selectedEvent.endTime))}
+                    {formatTime(new Date(selectedEvent.endTime.toDate()))}
                   </Body>
                 </View>
               </View>
