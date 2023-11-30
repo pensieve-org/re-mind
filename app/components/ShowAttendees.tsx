@@ -14,7 +14,7 @@ interface Props {
   attendees: any[];
 }
 
-const AddFriendsList: React.FC<Props> = ({ attendees }) => {
+const ShowAttendees: React.FC<Props> = ({ attendees }) => {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <View style={styles.container}>
@@ -32,15 +32,15 @@ const AddFriendsList: React.FC<Props> = ({ attendees }) => {
               style={[
                 styles.imageContainer,
                 {
-                  backgroundColor: attendee.profile_picture_url
+                  backgroundColor: attendee.profilePicture
                     ? "transparent"
                     : theme.PLACEHOLDER,
                 },
               ]}
             >
-              {attendee.profile_picture_url ? (
+              {attendee.profilePicture ? (
                 <Image
-                  source={{ uri: attendee.profile_picture_url }}
+                  source={{ uri: attendee.profilePicture }}
                   style={styles.image}
                 />
               ) : (
@@ -52,7 +52,7 @@ const AddFriendsList: React.FC<Props> = ({ attendees }) => {
               )}
             </View>
             <Body size={12} style={styles.text} numberOfLines={2}>
-              {attendee.first_name} {attendee.last_name}
+              {attendee.firstName} {attendee.lastName}
             </Body>
           </View>
         ))}
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddFriendsList;
+export default ShowAttendees;

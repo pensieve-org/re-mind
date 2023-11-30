@@ -1,11 +1,7 @@
 import React, { useContext, useState } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  OAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithCredential,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { router } from "expo-router";
 import "react-native-get-random-values";
 import { View as AnimatedView } from "react-native-animatable";
@@ -20,9 +16,9 @@ import Subtitle from "../../components/Subtitle";
 
 import { AppContext } from "../_layout";
 
-import auth from "../../firebase.js";
-import getAllUserEvents from "../../services/get.allUserEvents";
-import getUser from "../../services/get.user";
+import { auth } from "../../firebase.js";
+import getUserEvents from "../../services/getUserEvents";
+import getUserDetails from "../../services/getUserDetails";
 
 import theme from "../../assets/theme";
 
@@ -74,10 +70,11 @@ export default function Login() {
         email,
         password
       );
-      const user = await getUser(userCredentials.user.uid);
+      const user = await getUserDetails(userCredentials.user.uid);
       setUserDetails(user);
       await AsyncStorage.setItem("@user", JSON.stringify(user));
-      setUserEvents(await getAllUserEvents(user.user_id));
+
+      setUserEvents(await getUserEvents(user.userId));
       setIsLoading(false);
       navigate("/home", true);
     } catch (error) {
@@ -86,7 +83,7 @@ export default function Login() {
       } else if (error.code === "auth/invalid-login-credentials") {
         setErrorMsg("invalid login credentials");
       } else {
-        setErrorMsg(error.response.data.detail);
+        setErrorMsg(error.message);
       }
       setError(true);
       setIsLoading(false);

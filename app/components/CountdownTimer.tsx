@@ -25,7 +25,7 @@ function CountdownTimer({ endTime }) {
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
-      const end = new Date(endTime);
+      const end = new Date(endTime.toDate());
       const diff = end.getTime() - now.getTime();
 
       if (diff > 0) {

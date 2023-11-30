@@ -30,7 +30,7 @@ import {
 } from "../../assets/constants";
 
 import { AppContext } from "../_layout";
-import getAllUserEvents from "../../services/get.allUserEvents";
+import getUserEvents from "../../services/getUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 import Calendar from "../../components/Calendar";
 
@@ -73,10 +73,11 @@ export default function Home() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setUserEvents(await getAllUserEvents(userDetails.user_id));
+    setUserEvents(await getUserEvents(userDetails.userId));
     setRefreshing(false);
   }, []);
 
+  // TODO: remove these and use the event.status property instead
   const handleLiveEventPress = async (event) => {
     setSelectedEvent(event);
     navigateEvents("live");
@@ -99,16 +100,16 @@ export default function Home() {
               width: HEADER_ICON_DIMENSION,
               height: HEADER_ICON_DIMENSION,
               borderRadius: 100,
-              backgroundColor: userDetails.profile_picture_url
+              backgroundColor: userDetails.profilePicture
                 ? "transparent"
                 : theme.PLACEHOLDER,
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            {userDetails.profile_picture_url ? (
+            {userDetails.profilePicture ? (
               <Image
-                source={{ uri: userDetails.profile_picture_url }}
+                source={{ uri: userDetails.profilePicture }}
                 style={{
                   width: HEADER_ICON_DIMENSION,
                   height: HEADER_ICON_DIMENSION,

@@ -55,7 +55,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
             )}
           </View>
           <Body style={styles.text} adjustsFontSizeToFit numberOfLines={1}>
-            {event.name}
+            {event.eventName}
           </Body>
         </TouchableOpacity>
       ))}

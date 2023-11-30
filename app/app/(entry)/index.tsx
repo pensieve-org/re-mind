@@ -6,21 +6,22 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 
 import { AppContext } from "../_layout";
-import getAllUserEvents from "../../services/get.allUserEvents";
+import geUserEvents from "../../services/getUserEvents";
 import theme from "../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../assets/constants";
 
 export default function Page() {
   const insets = useSafeAreaInsets();
-  const { setUserDetails, userDetails, setUserEvents } = useContext(AppContext);
+  const { setUserDetails, setUserEvents } = useContext(AppContext);
 
   const checkLogin = async () => {
     const user = await AsyncStorage.getItem("@user");
     if (user) {
       try {
+        // TODO: also read friends, events, requests...
         const userJSON = JSON.parse(user);
         setUserDetails(userJSON);
-        setUserEvents(await getAllUserEvents(userJSON.user_id));
+        setUserEvents(await geUserEvents(userJSON.userId));
         router.replace("/home");
       } catch (error) {
         console.log(error);

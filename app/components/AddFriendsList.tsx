@@ -45,15 +45,15 @@ const AddFriendsList: React.FC<Props> = ({
             style={[
               styles.imageContainer,
               {
-                backgroundColor: friend.profile_picture_url
+                backgroundColor: friend.profilePicture
                   ? "transparent"
                   : theme.PLACEHOLDER,
               },
             ]}
           >
-            {friend.profile_picture_url ? (
+            {friend.profilePicture ? (
               <Image
-                source={{ uri: friend.profile_picture_url }}
+                source={{ uri: friend.profilePicture }}
                 style={styles.image}
               />
             ) : (
@@ -65,7 +65,7 @@ const AddFriendsList: React.FC<Props> = ({
             )}
           </View>
           <Body size={12} style={styles.text} numberOfLines={2}>
-            {friend.first_name} {friend.last_name}
+            {friend.firstName} {friend.lastName}
           </Body>
         </TouchableOpacity>
       ))}
