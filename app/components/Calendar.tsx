@@ -18,9 +18,11 @@ interface Props {
 
 const Calendar: React.FC<Props> = ({ events, onPress }) => {
   const groupEventsByYearAndMonth = (events) => {
+    events.sort((a, b) => a.startTime.toDate() - b.startTime.toDate());
+
     const groups = {};
     events.forEach((event) => {
-      const date = event.startTime.toDate(); // Convert Timestamp to Date
+      const date = event.startTime.toDate();
       const year = moment(date).format("YYYY");
       const month = moment(date).format("MMM");
 

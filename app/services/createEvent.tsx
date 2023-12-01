@@ -20,7 +20,7 @@ const createEvent = async (
       try {
         const uploadUrl = await uploadImageAsync(
           eventDetails.thumbnail,
-          `/events/${docRef.id}`
+          `/events/${docRef.id}/thumbnail`
         );
         await updateDoc(docRef, { thumbnail: uploadUrl });
       } catch (e) {

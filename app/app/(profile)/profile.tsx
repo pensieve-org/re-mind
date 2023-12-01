@@ -5,6 +5,7 @@ import {
   Image,
   Pressable,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -34,6 +35,7 @@ import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
 import updateProfilePicture from "../../services/updateProfilePicture";
 import { uploadImageAsync } from "../../utils";
+import deleteUser from "../../services/deleteUser";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
@@ -77,6 +79,31 @@ export default function Profile() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      Alert.alert(
+        "Confirmation",
+        `Are you sure you want to delete your account?`,
+        [
+          { text: "No" },
+          {
+            text: "Yes",
+            onPress: async () => {
+              await deleteUser(userDetails.userId);
+              await AsyncStorage.clear();
+              setUserDetails({});
+              setSelectedEvent({});
+              setUserEvents({});
+              navigate("/");
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      console.error("Error deleting user: ", error);
+    }
+  };
+
   const handleProfilePictureChange = async () => {
     try {
       const pickerResult = await ImagePicker.launchImageLibraryAsync({
@@ -102,7 +129,7 @@ export default function Profile() {
 
       const uploadUrl = await uploadImageAsync(
         pickerResult.assets[0].uri,
-        `/profile_pictures/${userDetails.userId}`
+        `/users/${userDetails.userId}/profile_picture`
       );
 
       console.log(uploadUrl);
@@ -257,12 +284,22 @@ export default function Profile() {
 
           <View style={{ flex: 1 }} />
 
+          <View style={{ paddingVertical: 20 }}>
+            <Button
+              fill={theme.TEXT}
+              textColor={theme.BACKGROUND}
+              onPress={handleLogout}
+            >
+              logout
+            </Button>
+          </View>
+
           <Button
             fill={theme.TEXT}
             textColor={theme.BACKGROUND}
-            onPress={handleLogout}
+            onPress={handleDeleteUser}
           >
-            logout
+            delete user
           </Button>
         </View>
       </AnimatedView>
