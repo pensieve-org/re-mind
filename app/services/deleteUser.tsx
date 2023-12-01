@@ -9,7 +9,6 @@ import {
 } from "firebase/firestore";
 import { db, storage, auth } from "../firebase.js";
 import { deleteObject, ref } from "firebase/storage";
-import { deleteUser as deleteUserAuth } from "firebase/auth";
 
 const deleteUser = async (userId) => {
   try {

@@ -11,6 +11,8 @@
 - [x] Save SQL branch
 - [x] Merge migration to main (delete api code)
 - [x] Make sure the calendar events are sorted by date, first appear first etc
+- [x] Deleting an event should delete the thumbnail and all images from storage
+- [x] Deleting a user should delete the profile picture
 
 ### Essential
 - [ ] Cloud function - make a cloud function to update all future and live event statuses
@@ -18,9 +20,7 @@
 - [ ] Optimise code (use batch queries?)
 - [ ] Image upload to live events
 - [ ] Look at how to auto reload when something changes in firebase (we should be able to auto trigger the background image upload for a user if an event status they are part of is set to live by the cloud function)
-- [ ] Deleting an event should delete the thumbnail and all images from storage
-- [ ] Deleting a user should delete the profile picture
-- [ ] Event invitations? should go on profile?
+- [ ] Event invitations? should go on profile? When added, remeber to delete when event is deleted
 
 
 ### Features?
