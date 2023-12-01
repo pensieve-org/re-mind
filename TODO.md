@@ -10,9 +10,9 @@
 - [x] look at react-native-animatable for animations, maybe wrap layout in a animated view? (https://youtu.be/a8VWnpwn5Pk)
 - [x] Save SQL branch
 - [x] Merge migration to main (delete api code)
+- [x] Make sure the calendar events are sorted by date, first appear first etc
 
 ### Essential
-- [ ] Make sure the calendar events are sorted by date, first appear first etc
 - [ ] Cloud function - make a cloud function to update all future and live event statuses
 - [ ] Caching - minimise the number of firebase calls
 - [ ] Optimise code (use batch queries?)
