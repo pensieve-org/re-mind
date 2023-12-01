@@ -20,6 +20,7 @@
 - [ ] Look at how to auto reload when something changes in firebase (we should be able to auto trigger the background image upload for a user if an event status they are part of is set to live by the cloud function)
 - [ ] Deleting an event should delete the thumbnail and all images from storage
 - [ ] Deleting a user should delete the profile picture
+- [ ] Event invitations? should go on profile?
 
 
 ## Features?
