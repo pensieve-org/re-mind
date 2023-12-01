@@ -1,6 +1,6 @@
 # TODO List
 
-## Completed
+### Completed
 - [x] remove the scale from friends list component, make a new component for friend requests. FIX THE SCROLL
 - [x] make create event screen
 - [x] hook up screen to APIs
@@ -11,7 +11,7 @@
 - [x] Save SQL branch
 - [x] Merge migration to main (delete api code)
 
-## Essential
+### Essential
 - [ ] Make sure the calendar events are sorted by date, first appear first etc
 - [ ] Cloud function - make a cloud function to update all future and live event statuses
 - [ ] Caching - minimise the number of firebase calls
@@ -23,7 +23,7 @@
 - [ ] Event invitations? should go on profile?
 
 
-## Features?
+### Features?
 - [ ] Allow admins to make other admins, add/remove users, add event thumbnail, from edit event screen
 - [ ] Allow users to pin events to their profile? (or figure out what else should go on a profile? and About section?)
 - [ ] Allow users to click into other users profiles?
