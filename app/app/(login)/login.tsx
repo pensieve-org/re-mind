@@ -29,9 +29,10 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
+import getUserEmail from "../../services/getUserEmail";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -57,14 +58,15 @@ export default function Login() {
     setError(false);
     setIsLoading(true);
 
-    if (!email || !password) {
-      setErrorMsg("Please enter an email and password");
+    if (!identifier || !password) {
+      setErrorMsg("Please enter an email/username and password");
       setError(true);
       setIsLoading(false);
       return;
     }
 
     try {
+      const email = (await getUserEmail(identifier)) || identifier;
       const userCredentials = await signInWithEmailAndPassword(
         auth,
         email,
@@ -117,10 +119,10 @@ export default function Login() {
           </View>
 
           <Input
-            placeholder="enter email"
-            label="email"
-            value={email}
-            onChangeText={setEmail}
+            placeholder="enter email/username"
+            label="email/username"
+            value={identifier}
+            onChangeText={setIdentifier}
           />
           <Input
             placeholder="enter password"
