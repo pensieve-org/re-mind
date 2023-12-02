@@ -25,7 +25,7 @@ declare type ImageDetails = {
     uploadedBy: string
 }
 
-declare type UserType = "guest" | "admin";
+declare type UserType = "guest" | "admin" | "invited";
 
 declare type FriendStatus = "requested" | "accepted";
 
