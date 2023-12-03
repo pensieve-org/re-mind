@@ -42,6 +42,10 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 alignItems: "center",
                 justifyContent: "center",
               },
+              event.isInvited && {
+                borderWidth: 3,
+                borderColor: theme.RED,
+              },
             ]}
           >
             {event.thumbnail ? (

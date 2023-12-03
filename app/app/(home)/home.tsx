@@ -174,6 +174,29 @@ export default function Home() {
               >
                 calendar
               </Subtitle>
+              {userEvents.numInvited > 0 && (
+                <View
+                  style={{
+                    position: "absolute",
+                    right: -20,
+                    top: -5,
+                    backgroundColor: theme.RED,
+                    borderRadius: 100,
+                    height: 20,
+                    width: 20,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Body
+                    adjustsFontSizeToFit={true}
+                    bold={true}
+                    style={{ color: theme.PRIMARY }}
+                  >
+                    {userEvents.numInvited}
+                  </Body>
+                </View>
+              )}
             </Pressable>
           </View>
 

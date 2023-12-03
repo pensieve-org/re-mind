@@ -11,20 +11,22 @@ import { db } from "../firebase.js";
 
 const getUserEvents = async (userId) => {
   try {
-    const eventIds = [];
+    const eventDetails = [];
+    let numInvited = 0;
 
     // Query where eventId equals eventId
     const q = query(collection(db, "attendees"), where("userId", "==", userId));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
       const eventId = doc.data().eventId;
-      eventIds.push(eventId);
+      const userType = doc.data().userType;
+      eventDetails.push({ eventId, userType });
     });
 
     const events = [];
 
-    for (const eventId of eventIds) {
-      const eventRef = doc(db, "events", eventId);
+    for (const eventDetail of eventDetails) {
+      const eventRef = doc(db, "events", eventDetail.eventId);
       const eventSnapshot = await getDoc(eventRef);
 
       if (eventSnapshot.exists()) {
@@ -48,7 +50,13 @@ const getUserEvents = async (userId) => {
           event.status = newStatus; // Update local event object's status
         }
 
-        events.push(event);
+        if (eventDetail.userType === "invited" && event.status === "future")
+          numInvited++;
+
+        events.push({
+          ...event,
+          isInvited: eventDetail.userType == "invited" ? true : false,
+        });
       }
     }
 
@@ -76,6 +84,7 @@ const getUserEvents = async (userId) => {
       live,
       future,
       past,
+      numInvited,
     };
   } catch (error) {
     console.error("Error getting user events: ", error);

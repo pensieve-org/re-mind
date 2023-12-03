@@ -92,6 +92,11 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                           alignItems: "center",
                           justifyContent: "center",
                         },
+                        event.isInvited && {
+                          borderWidth: 3,
+                          borderColor: theme.RED,
+                          zIndex: 1,
+                        },
                       ]}
                     >
                       {event.thumbnail && (
@@ -106,7 +111,6 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                       <View
                         style={{
                           position: "absolute",
-                          flex: 1,
                           justifyContent: "center",
                           alignItems: "center",
                         }}
@@ -160,6 +164,7 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.4)",
+    borderRadius: 100,
   },
 });
 
