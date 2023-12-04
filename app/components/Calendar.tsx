@@ -95,7 +95,6 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                         event.isInvited && {
                           borderWidth: 3,
                           borderColor: theme.RED,
-                          zIndex: 1,
                         },
                       ]}
                     >
@@ -118,6 +117,22 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                         <Body bold={true} size={30}>
                           {moment(event.startTime.toDate()).format("Do")}
                         </Body>
+                        {event.isInvited && (
+                          <View
+                            style={{
+                              backgroundColor: `${theme.PLACEHOLDER}95`,
+                              borderRadius: 10,
+                              marginTop: 5,
+                              justifyContent: "center",
+                              alignItems: "center",
+                              zIndex: 10,
+                            }}
+                          >
+                            <Body size={16} style={{ padding: 5 }}>
+                              Invited
+                            </Body>
+                          </View>
+                        )}
                       </View>
                     </View>
 

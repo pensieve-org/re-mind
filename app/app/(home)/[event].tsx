@@ -43,13 +43,8 @@ import respondEventInvitation from "../../services/respondEventInvitation";
 export default function Event() {
   const local = useLocalSearchParams();
 
-  const {
-    userDetails,
-    selectedEvent,
-    setSelectedEvent,
-    userEvents,
-    setUserEvents,
-  } = useContext(AppContext);
+  const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
+    useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [modalVisible, setModalVisible] = useState(false);
@@ -57,7 +52,6 @@ export default function Event() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [attendees, setAttendees] = useState([]);
   const [images, setImages] = useState([]);
-  const [isInvited, setIsInvited] = useState(false);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -87,7 +81,11 @@ export default function Event() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setSelectedEvent(await getEventDetails(selectedEvent.eventId));
+    const eventDetails = await getEventDetails(selectedEvent.eventId);
+    setSelectedEvent((prevEvent) => ({
+      ...eventDetails,
+      isInvited: prevEvent.isInvited,
+    }));
     setRefreshing(false);
   }, []);
 
@@ -126,6 +124,7 @@ export default function Event() {
       setAttendees(eventAttendees);
     };
 
+    // move this into cache from previous screen
     const fetchEventImages = async () => {
       const eventImages = await getEventImages(selectedEvent.eventId);
       setImages(eventImages);
@@ -134,8 +133,6 @@ export default function Event() {
     fetchEventImages();
 
     fetchEventAttendees();
-
-    setIsInvited(selectedEvent.isInvited);
   }, []);
 
   const handleEventInvitation = async (response) => {
@@ -146,42 +143,33 @@ export default function Event() {
     );
 
     if (response) {
-      setUserEvents({
-        live: userEvents.live.map((event) =>
-          event.eventId === selectedEvent.eventId
-            ? { ...event, isInvited: false }
-            : event
+      // if accept, change isInvited to false in both selected and user events
+      setUserEvents((prevUserEvents) => ({
+        ...prevUserEvents,
+        numInvited:
+          prevUserEvents.numInvited > 0 ? prevUserEvents.numInvited - 1 : 0,
+        [selectedEvent.status]: prevUserEvents[selectedEvent.status].map(
+          (event) =>
+            event.eventId === selectedEvent.eventId
+              ? { ...event, isInvited: false }
+              : event
         ),
-        past: userEvents.past.map((event) =>
-          event.eventId === selectedEvent.eventId
-            ? { ...event, isInvited: false }
-            : event
-        ),
-        future: userEvents.future.map((event) =>
-          event.eventId === selectedEvent.eventId
-            ? { ...event, isInvited: false }
-            : event
-        ),
-      });
+      }));
 
-      //change isInvited to false in userEvents
       setSelectedEvent({
         ...selectedEvent,
         isInvited: false,
       });
-      setIsInvited(false);
     } else {
-      setUserEvents({
-        live: userEvents.live.filter(
+      // otherwise, delete the event from the list of user events
+      setUserEvents((prevUserEvents) => ({
+        ...prevUserEvents,
+        numInvited:
+          prevUserEvents.numInvited > 0 ? prevUserEvents.numInvited - 1 : 0,
+        [selectedEvent.status]: prevUserEvents[selectedEvent.status].filter(
           (event) => event.eventId !== selectedEvent.eventId
         ),
-        past: userEvents.past.filter(
-          (event) => event.eventId !== selectedEvent.eventId
-        ),
-        future: userEvents.future.filter(
-          (event) => event.eventId !== selectedEvent.eventId
-        ),
-      });
+      }));
 
       navigateBack();
     }
@@ -245,7 +233,9 @@ export default function Event() {
               {selectedEvent.eventName}
             </Subtitle>
 
-            {isInvited && <EventInvitation onPress={handleEventInvitation} />}
+            {selectedEvent.isInvited && (
+              <EventInvitation onPress={handleEventInvitation} />
+            )}
 
             {/* TODO: Replace this with a timeline with length = event duration and split into 
             mins if event < 1hr, hours if event < 1 day, otherwise days
