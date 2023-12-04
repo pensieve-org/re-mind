@@ -50,17 +50,12 @@ export default function Event() {
             setIsLoading(true);
             try {
               await deleteEvent(selectedEvent.eventId);
-              setUserEvents({
-                live: userEvents.live.filter(
-                  (event) => event.eventId !== selectedEvent.eventId
-                ),
-                past: userEvents.past.filter(
-                  (event) => event.eventId !== selectedEvent.eventId
-                ),
-                future: userEvents.future.filter(
-                  (event) => event.eventId !== selectedEvent.eventId
-                ),
-              });
+              setUserEvents((prevUserEvents) => ({
+                ...prevUserEvents,
+                [selectedEvent.status]: prevUserEvents[
+                  selectedEvent.status
+                ].filter((event) => event.eventId !== selectedEvent.eventId),
+              }));
               setIsLoading(false);
               navigateHome();
             } catch (error) {
