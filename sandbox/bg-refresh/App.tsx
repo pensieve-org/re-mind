@@ -7,7 +7,7 @@ export default function App() {
   const [isListening, setIsListening] = useState(false);
   const [subscription, setSubscription] =
     useState<MediaLibrary.Subscription | null>(null);
-  const [lastAsset, setLastAsset] = useState<MediaLibrary.Asset | null>(null);
+  const [start, setStart] = useState<number>(Date.now());
 
   const updatePhotos = async () => {
     const { assets } = await MediaLibrary.getAssetsAsync({
@@ -16,24 +16,19 @@ export default function App() {
     });
 
     // Filter new assets and update the lastAsset
-    const newAssets = assets.filter(
-      (asset) => !lastAsset || asset.creationTime > lastAsset.creationTime
-    );
+    const newAssets = assets.filter((asset) => asset.creationTime > start);
 
     if (newAssets.length > 0) {
-      setPhotoUris((prevUris) => [
-        ...prevUris,
-        ...newAssets.reverse().map((asset) => asset.uri),
-      ]);
-      setLastAsset(newAssets[0]); // Update lastAsset to the most recent asset
+      setPhotoUris(() => [...newAssets.reverse().map((asset) => asset.uri)]);
     }
   };
 
-  const toggleListener = () => {
+  const toggleListener = async () => {
     if (isListening) {
       subscription?.remove();
       setSubscription(null);
     } else {
+      setStart(Date.now());
       const newSubscription = MediaLibrary.addListener(updatePhotos);
       setSubscription(newSubscription);
     }
@@ -47,14 +42,6 @@ export default function App() {
       if (status !== "granted") {
         console.log("User needs to grant permission to photos.");
         return;
-      }
-
-      const { assets } = await MediaLibrary.getAssetsAsync({
-        mediaType: "photo",
-      });
-
-      if (assets.length > 0) {
-        setLastAsset(assets[0]); // Initialize lastAsset with the most recent asset
       }
     })();
   }, []);
