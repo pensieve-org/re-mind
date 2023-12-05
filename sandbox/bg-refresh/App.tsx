@@ -1,8 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Button, Image } from "react-native";
 import * as MediaLibrary from "expo-media-library";
+
 export default function App() {
   const [photoUris, setPhotoUris] = useState<string[]>([]);
+  const [isListening, setIsListening] = useState(false);
+  const [subscription, setSubscription] =
+    useState<MediaLibrary.Subscription | null>(null);
+  const [lastAsset, setLastAsset] = useState<MediaLibrary.Asset | null>(null);
+
+  const toggleListener = () => {
+    if (isListening) {
+      subscription?.remove();
+      setSubscription(null);
+    } else {
+      const newSubscription = MediaLibrary.addListener(async () => {
+        const { assets } = await MediaLibrary.getAssetsAsync({
+          mediaType: "photo",
+          sortBy: ["creationTime"],
+        });
+
+        const newAssets = assets.reverse();
+
+        const newUris = newAssets
+          .filter(
+            (asset) => !lastAsset || asset.creationTime > lastAsset.creationTime
+          )
+          .map((asset) => asset.uri);
+
+        setPhotoUris((prevUris) => [...prevUris, ...newUris]);
+        if (newAssets.length > 0) {
+          setLastAsset(newAssets[-1]);
+        }
+      });
+
+      setSubscription(newSubscription);
+    }
+
+    setIsListening(!isListening);
+  };
 
   useEffect(() => {
     (async () => {
@@ -12,31 +48,23 @@ export default function App() {
         return;
       }
 
-      const subscription = MediaLibrary.addListener(async () => {
-        const { assets: newAssets } = await MediaLibrary.getAssetsAsync({
-          mediaType: "photo",
-          first: 3,
-        });
-
-        setPhotoUris((prevUris) => {
-          // Filter out any duplicates
-          const newUris = newAssets.map((asset) => asset.uri);
-          const uniqueNewUris = newUris.filter(
-            (newUri) => !prevUris.includes(newUri)
-          );
-          return [...prevUris, ...uniqueNewUris];
-        });
+      const { assets } = await MediaLibrary.getAssetsAsync({
+        mediaType: "photo",
       });
 
-      return () => {
-        subscription.remove();
-      };
+      if (assets.length > 0) {
+        setLastAsset(assets[0]);
+      }
     })();
   }, []);
 
   return (
     <View style={styles.screen}>
       <Text style={styles.title}>Photos</Text>
+      <Button
+        title={isListening ? "Stop Listening" : "Start Listening"}
+        onPress={toggleListener}
+      />
       <View
         style={{
           flexDirection: "row",
