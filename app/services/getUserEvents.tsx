@@ -23,62 +23,38 @@ const getUserEvents = async (userId) => {
       eventDetails.push({ eventId, userType });
     });
 
-    const events = [];
+    const live = [];
+    const future = [];
+    const past = [];
 
     for (const eventDetail of eventDetails) {
       const eventRef = doc(db, "events", eventDetail.eventId);
       const eventSnapshot = await getDoc(eventRef);
 
       if (eventSnapshot.exists()) {
-        const event = eventSnapshot.data();
-        const currentTime = new Date();
-        const startTime = new Date(event.startTime.toDate()); // Ensure event.startTime is a Firestore Timestamp
-        const endTime = new Date(event.endTime.toDate()); // Ensure event.endTime is a Firestore Timestamp
-
-        let newStatus = "";
-
-        if (currentTime < startTime) {
-          newStatus = "future";
-        } else if (currentTime >= startTime && currentTime <= endTime) {
-          newStatus = "live";
-        } else if (currentTime > endTime) {
-          newStatus = "past";
-        }
-
-        if (newStatus && newStatus !== event.status) {
-          await updateDoc(eventRef, { status: newStatus });
-          event.status = newStatus; // Update local event object's status
-        }
+        const event = {
+          ...(eventSnapshot.data() as Event),
+          isInvited: eventDetail.userType == "invited" ? true : false,
+        };
 
         if (eventDetail.userType === "invited" && event.status === "future")
           numInvited++;
 
-        events.push({
-          ...event,
-          isInvited: eventDetail.userType == "invited" ? true : false,
-        });
+        switch (event.status) {
+          case "past":
+            past.push(event);
+            break;
+          case "future":
+            future.push(event);
+            break;
+          case "live":
+            live.push(event);
+            break;
+          default:
+            break;
+        }
       }
     }
-
-    const live = [];
-    const future = [];
-    const past = [];
-
-    events.forEach((event) => {
-      switch (event.status) {
-        case "past":
-          past.push(event);
-          break;
-        case "future":
-          future.push(event);
-          break;
-        case "live":
-          live.push(event);
-          break;
-        default:
-          break;
-      }
-    });
 
     return {
       live,
