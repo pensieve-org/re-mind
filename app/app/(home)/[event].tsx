@@ -37,11 +37,13 @@ import { PanGestureHandler, State } from "react-native-gesture-handler";
 import getEventAdmins from "../../services/getEventAdmins";
 import getEventAttendees from "../../services/getEventAttendees";
 import getEventImages from "../../services/getEventImages";
+import EventInvitation from "../../components/EventInvitation";
+import respondEventInvitation from "../../services/respondEventInvitation";
 
 export default function Event() {
   const local = useLocalSearchParams();
 
-  const { userDetails, selectedEvent, setSelectedEvent } =
+  const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
@@ -79,7 +81,11 @@ export default function Event() {
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    setSelectedEvent(await getEventDetails(selectedEvent.eventId));
+    const eventDetails = await getEventDetails(selectedEvent.eventId);
+    setSelectedEvent((prevEvent) => ({
+      ...eventDetails,
+      isInvited: prevEvent.isInvited,
+    }));
     setRefreshing(false);
   }, []);
 
@@ -118,6 +124,7 @@ export default function Event() {
       setAttendees(eventAttendees);
     };
 
+    // move this into cache from previous screen
     const fetchEventImages = async () => {
       const eventImages = await getEventImages(selectedEvent.eventId);
       setImages(eventImages);
@@ -127,6 +134,46 @@ export default function Event() {
 
     fetchEventAttendees();
   }, []);
+
+  const handleEventInvitation = async (response) => {
+    await respondEventInvitation(
+      response,
+      selectedEvent.eventId,
+      userDetails.userId
+    );
+
+    if (response) {
+      // if accept, change isInvited to false in both selected and user events
+      setUserEvents((prevUserEvents) => ({
+        ...prevUserEvents,
+        numInvited:
+          prevUserEvents.numInvited > 0 ? prevUserEvents.numInvited - 1 : 0,
+        [selectedEvent.status]: prevUserEvents[selectedEvent.status].map(
+          (event) =>
+            event.eventId === selectedEvent.eventId
+              ? { ...event, isInvited: false }
+              : event
+        ),
+      }));
+
+      setSelectedEvent({
+        ...selectedEvent,
+        isInvited: false,
+      });
+    } else {
+      // otherwise, delete the event from the list of user events
+      setUserEvents((prevUserEvents) => ({
+        ...prevUserEvents,
+        numInvited:
+          prevUserEvents.numInvited > 0 ? prevUserEvents.numInvited - 1 : 0,
+        [selectedEvent.status]: prevUserEvents[selectedEvent.status].filter(
+          (event) => event.eventId !== selectedEvent.eventId
+        ),
+      }));
+
+      navigateBack();
+    }
+  };
 
   return (
     <View style={styles.page}>
@@ -166,6 +213,7 @@ export default function Event() {
             color={theme.PRIMARY}
           />
         )}
+
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 80 }}
@@ -184,6 +232,10 @@ export default function Event() {
             >
               {selectedEvent.eventName}
             </Subtitle>
+
+            {selectedEvent.isInvited && (
+              <EventInvitation onPress={handleEventInvitation} />
+            )}
 
             {/* TODO: Replace this with a timeline with length = event duration and split into 
             mins if event < 1hr, hours if event < 1 day, otherwise days

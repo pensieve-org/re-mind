@@ -31,7 +31,7 @@ const createEvent = async (
     await addUserToEvent(admin.userId, docRef.id, "admin");
 
     for (const attendee of attendees) {
-      await addUserToEvent(attendee.userId, docRef.id, "guest");
+      await addUserToEvent(attendee.userId, docRef.id, "invited");
     }
   } catch (error) {
     throw error;

@@ -92,6 +92,10 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                           alignItems: "center",
                           justifyContent: "center",
                         },
+                        event.isInvited && {
+                          borderWidth: 3,
+                          borderColor: theme.RED,
+                        },
                       ]}
                     >
                       {event.thumbnail && (
@@ -106,7 +110,6 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                       <View
                         style={{
                           position: "absolute",
-                          flex: 1,
                           justifyContent: "center",
                           alignItems: "center",
                         }}
@@ -114,6 +117,22 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                         <Body bold={true} size={30}>
                           {moment(event.startTime.toDate()).format("Do")}
                         </Body>
+                        {event.isInvited && (
+                          <View
+                            style={{
+                              backgroundColor: `${theme.PLACEHOLDER}95`,
+                              borderRadius: 10,
+                              marginTop: 5,
+                              justifyContent: "center",
+                              alignItems: "center",
+                              zIndex: 10,
+                            }}
+                          >
+                            <Body size={16} style={{ padding: 5 }}>
+                              Invited
+                            </Body>
+                          </View>
+                        )}
                       </View>
                     </View>
 
@@ -122,7 +141,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                       adjustsFontSizeToFit
                       numberOfLines={1}
                     >
-                      {event.name}
+                      {event.eventName}
                     </Body>
                   </TouchableOpacity>
                 ))}
@@ -160,6 +179,7 @@ const styles = StyleSheet.create({
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0, 0, 0, 0.4)",
+    borderRadius: 100,
   },
 });
 

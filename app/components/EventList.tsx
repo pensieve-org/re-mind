@@ -42,6 +42,10 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 alignItems: "center",
                 justifyContent: "center",
               },
+              event.isInvited && {
+                borderWidth: 3,
+                borderColor: theme.RED,
+              },
             ]}
           >
             {event.thumbnail ? (
@@ -52,6 +56,25 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 width={EVENT_ICON_DIAMETER - 80}
                 style={{ color: theme.PRIMARY }}
               />
+            )}
+            {event.isInvited && (
+              <>
+                <View
+                  style={{
+                    position: "absolute",
+                    backgroundColor: `${theme.PLACEHOLDER}95`,
+                    borderRadius: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 10,
+                  }}
+                >
+                  <Body size={16} style={{ padding: 5 }}>
+                    Invited
+                  </Body>
+                </View>
+                <View style={styles.overlay} />
+              </>
             )}
           </View>
           <Body style={styles.text} adjustsFontSizeToFit numberOfLines={1}>
@@ -83,6 +106,11 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
+    borderRadius: 100,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.4)",
     borderRadius: 100,
   },
 });
