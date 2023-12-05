@@ -24,9 +24,7 @@ export default function App() {
   };
 
   const toggleListener = async () => {
-    setIsListening(!isListening);
-
-    if (!isListening) {
+    if (isListening) {
       subscription?.remove();
       setSubscription(null);
     } else {
@@ -34,6 +32,8 @@ export default function App() {
       const newSubscription = MediaLibrary.addListener(updatePhotos);
       setSubscription(newSubscription);
     }
+
+    setIsListening(!isListening);
   };
 
   useEffect(() => {
