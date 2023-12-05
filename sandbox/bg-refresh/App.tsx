@@ -9,31 +9,32 @@ export default function App() {
     useState<MediaLibrary.Subscription | null>(null);
   const [lastAsset, setLastAsset] = useState<MediaLibrary.Asset | null>(null);
 
+  const updatePhotos = async () => {
+    const { assets } = await MediaLibrary.getAssetsAsync({
+      mediaType: "photo",
+      sortBy: ["creationTime"],
+    });
+
+    // Filter new assets and update the lastAsset
+    const newAssets = assets.filter(
+      (asset) => !lastAsset || asset.creationTime > lastAsset.creationTime
+    );
+
+    if (newAssets.length > 0) {
+      setPhotoUris((prevUris) => [
+        ...prevUris,
+        ...newAssets.reverse().map((asset) => asset.uri),
+      ]);
+      setLastAsset(newAssets[0]); // Update lastAsset to the most recent asset
+    }
+  };
+
   const toggleListener = () => {
     if (isListening) {
       subscription?.remove();
       setSubscription(null);
     } else {
-      const newSubscription = MediaLibrary.addListener(async () => {
-        const { assets } = await MediaLibrary.getAssetsAsync({
-          mediaType: "photo",
-          sortBy: ["creationTime"],
-        });
-
-        const newAssets = assets.reverse();
-
-        const newUris = newAssets
-          .filter(
-            (asset) => !lastAsset || asset.creationTime > lastAsset.creationTime
-          )
-          .map((asset) => asset.uri);
-
-        setPhotoUris((prevUris) => [...prevUris, ...newUris]);
-        if (newAssets.length > 0) {
-          setLastAsset(newAssets[-1]);
-        }
-      });
-
+      const newSubscription = MediaLibrary.addListener(updatePhotos);
       setSubscription(newSubscription);
     }
 
@@ -44,7 +45,7 @@ export default function App() {
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
-        console.log("user needs to grant permission to photos.");
+        console.log("User needs to grant permission to photos.");
         return;
       }
 
@@ -53,7 +54,7 @@ export default function App() {
       });
 
       if (assets.length > 0) {
-        setLastAsset(assets[0]);
+        setLastAsset(assets[0]); // Initialize lastAsset with the most recent asset
       }
     })();
   }, []);
