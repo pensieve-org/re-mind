@@ -49,21 +49,8 @@ export default function Event() {
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [attendees, setAttendees] = useState([]);
   const [images, setImages] = useState([]);
-
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      const admins = await getEventAdmins(selectedEvent.eventId);
-      const adminStatus = admins.some(
-        (admin) => admin.userId === userDetails.userId
-      );
-      setIsAdmin(adminStatus);
-    };
-
-    checkAdminStatus();
-  }, [selectedEvent, userDetails]);
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -187,18 +174,14 @@ export default function Event() {
         }
         onPressLeft={navigateBack}
         imageRight={
-          isAdmin && (
-            <ThreeDots
-              height={HEADER_ICON_DIMENSION}
-              width={HEADER_ICON_DIMENSION}
-              style={{ color: theme.PRIMARY }}
-            />
-          )
+          <ThreeDots
+            height={HEADER_ICON_DIMENSION}
+            width={HEADER_ICON_DIMENSION}
+            style={{ color: theme.PRIMARY }}
+          />
         }
         onPressRight={() => {
-          if (isAdmin) {
-            navigate("/edit-event");
-          }
+          navigate("/event-settings");
         }}
       />
       <AnimatedView
