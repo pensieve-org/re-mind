@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
     marginVertical: 20, // Vertical margin
   },
   image: {
-    width: 50, // Fixed width
-    height: 50, // Fixed height
+    width: 80, // Fixed width
+    height: 80, // Fixed height
     margin: 5, // Margin around each image
   },
 });
