@@ -141,7 +141,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                       adjustsFontSizeToFit
                       numberOfLines={1}
                     >
-                      {event.name}
+                      {event.eventName}
                     </Body>
                   </TouchableOpacity>
                 ))}

@@ -110,6 +110,7 @@ export default function CreateEvent() {
     }
 
     try {
+      // TODO: Add description and location
       await createEvent(
         {
           startTime: startDate,
