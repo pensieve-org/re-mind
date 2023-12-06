@@ -9,6 +9,7 @@ const BACKGROUND_FETCH_TASK = "background-fetch";
 
 TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   console.log(`Got background fetch call at date: ${new Date().toISOString()}`);
+  await updatePhotos(Date.now(), () => {});
   await checkImageUploadQueue();
 
   // return BackgroundFetch.BackgroundFetchResult.Failed;
@@ -20,11 +21,33 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
 
 const checkImageUploadQueue = async () => {
   console.log("Checking image upload queue...");
-  // get photoUris
-  // get uploaded uris
-  // upload NOT INTERSECTION of the two arrays
-  // add the uploaded uris to the uploaded uris array
-  // save to async storage
+  const uploadPhotos = async () => {
+    // Get photoUris
+    const photoUrisJson = await AsyncStorage.getItem("photoUris");
+    const photoUris = photoUrisJson ? JSON.parse(photoUrisJson) : [];
+
+    // Get uploadedUris
+    const uploadedUrisJson = await AsyncStorage.getItem("uploadedUris");
+    const uploadedUris = uploadedUrisJson ? JSON.parse(uploadedUrisJson) : [];
+
+    // Find the URIs of the photos that haven't been uploaded yet
+    const urisToUpload = photoUris.filter(
+      (uri: string) => !uploadedUris.includes(uri)
+    );
+
+    // Upload the photos and add the URIs to the uploadedUris array
+    for (const uri of urisToUpload) {
+      // Instead of uploading each image, just console log
+      console.log(`Image uploaded: ${uri}`);
+      uploadedUris.push(uri);
+    }
+
+    // Save the uploadedUris to AsyncStorage
+    await AsyncStorage.setItem("uploadedUris", JSON.stringify(uploadedUris));
+  };
+
+  // Call the function
+  uploadPhotos();
 };
 
 const updatePhotos = async (
@@ -50,6 +73,7 @@ const updatePhotos = async (
 
     // Save the combined URIs to AsyncStorage
     await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
+    console.log("Saved new photos to AsyncStorage");
     setStorageChange((prevState) => prevState + 1); // Use setStorageChange here
   }
 };
