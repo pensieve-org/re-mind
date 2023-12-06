@@ -23,14 +23,26 @@ export default function App() {
     }
   };
 
-  const toggleListener = async () => {
+  useEffect(() => {
+    let newSubscription: MediaLibrary.Subscription | null = null;
+
+    if (isListening) {
+      newSubscription = MediaLibrary.addListener(updatePhotos);
+      setSubscription(newSubscription);
+    }
+
+    return () => {
+      newSubscription?.remove();
+    };
+  }, [isListening, start]);
+
+  const toggleListener = () => {
     if (isListening) {
       subscription?.remove();
       setSubscription(null);
     } else {
       setStart(Date.now());
-      const newSubscription = MediaLibrary.addListener(updatePhotos);
-      setSubscription(newSubscription);
+      setPhotoUris([]);
     }
 
     setIsListening(!isListening);
