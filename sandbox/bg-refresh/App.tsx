@@ -22,36 +22,59 @@ const checkImageUploadQueue = async () => {
   console.log("Checking image upload queue...");
 };
 
+const updatePhotos = async (
+  start: number,
+  setStorageChange: React.Dispatch<React.SetStateAction<number>>
+) => {
+  const { assets } = await MediaLibrary.getAssetsAsync({
+    mediaType: "photo",
+    sortBy: ["creationTime"],
+  });
+
+  const newAssets = assets.filter((asset) => asset.creationTime > start);
+
+  if (newAssets.length > 0) {
+    const newUris = newAssets.reverse().map((asset) => asset.uri);
+
+    // Get the existing URIs from AsyncStorage
+    const existingUrisJson = await AsyncStorage.getItem("photoUris");
+    const existingUris = existingUrisJson ? JSON.parse(existingUrisJson) : [];
+
+    // Combine the existing URIs and new URIs, and remove duplicates
+    const combinedUris = Array.from(new Set([...existingUris, ...newUris]));
+
+    // Save the combined URIs to AsyncStorage
+    await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
+    setStorageChange((prevState) => prevState + 1); // Use setStorageChange here
+  }
+};
+
 export default function App() {
   const [photoUris, setPhotoUris] = useState<string[]>([]);
   const [isListening, setIsListening] = useState(false);
   const [subscription, setSubscription] =
     useState<MediaLibrary.Subscription | null>(null);
   const [start, setStart] = useState<number>(Date.now());
+  const [storageChange, setStorageChange] = useState(0); // Move this inside the component
 
-  const updatePhotos = async () => {
-    // TODO: move this outside the function, save images to async storage and then pull out
-    // so that the bg task can also us this function
-    // then change this function to read from async storage
-    const { assets } = await MediaLibrary.getAssetsAsync({
-      mediaType: "photo",
-      sortBy: ["creationTime"],
-    });
+  useEffect(() => {
+    const getPhotoUris = async () => {
+      const photoUrisJson = await AsyncStorage.getItem("photoUris");
+      const photoUris = photoUrisJson ? JSON.parse(photoUrisJson) : [];
+      setPhotoUris(photoUris);
+    };
 
-    // Filter new assets and update the lastAsset
-    const newAssets = assets.filter((asset) => asset.creationTime > start);
-
-    if (newAssets.length > 0) {
-      setPhotoUris(() => [...newAssets.reverse().map((asset) => asset.uri)]);
-    }
-  };
+    getPhotoUris();
+  }, [storageChange]);
 
   useEffect(() => {
     let newSubscription: MediaLibrary.Subscription | null = null;
     let intervalId: NodeJS.Timeout;
 
     if (isListening) {
-      newSubscription = MediaLibrary.addListener(updatePhotos);
+      newSubscription = MediaLibrary.addListener(() =>
+        updatePhotos(start, setStorageChange)
+      );
       setSubscription(newSubscription);
       intervalId = setInterval(checkImageUploadQueue, 5000);
     }
