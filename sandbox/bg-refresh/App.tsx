@@ -42,7 +42,6 @@ export default function App() {
       setSubscription(null);
     } else {
       setStart(Date.now());
-      setPhotoUris([]);
     }
 
     setIsListening(!isListening);
