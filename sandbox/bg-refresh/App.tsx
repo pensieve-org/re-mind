@@ -9,18 +9,24 @@ const BACKGROUND_FETCH_TASK = "background-fetch";
 
 TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   console.log(`Got background fetch call at date: ${new Date().toISOString()}`);
+  try {
+    const startJson = await AsyncStorage.getItem("start");
+    const start = startJson ? JSON.parse(startJson) : Date.now();
 
-  const startJson = await AsyncStorage.getItem("start");
-  const start = startJson ? JSON.parse(startJson) : Date.now();
+    const updated = await updatePhotos(start, () => {});
+    await checkImageUploadQueue();
 
-  await updatePhotos(start, () => {});
-  await checkImageUploadQueue();
-
-  // return BackgroundFetch.BackgroundFetchResult.Failed;
-
-  // return BackgroundFetch.BackgroundFetchResult.NewData;
-
-  // return BackgroundFetch.BackgroundFetchResult.NoData;
+    if (updated) {
+      console.log(`Updated photos at date: ${new Date().toISOString()}`);
+      return BackgroundFetch.BackgroundFetchResult.NewData;
+    } else {
+      console.log(`No new Images: ${new Date().toISOString()}`);
+      return BackgroundFetch.BackgroundFetchResult.NoData;
+    }
+  } catch (error) {
+    console.log(error);
+    return BackgroundFetch.BackgroundFetchResult.Failed;
+  }
 });
 
 const checkImageUploadQueue = async () => {
@@ -79,7 +85,9 @@ const updatePhotos = async (
     await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
     console.log("Saved new photos to AsyncStorage");
     setStorageChange((prevState) => prevState + 1); // Use setStorageChange here
+    return true;
   }
+  return false;
 };
 
 export default function App() {
