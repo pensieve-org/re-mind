@@ -20,6 +20,11 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
 
 const checkImageUploadQueue = async () => {
   console.log("Checking image upload queue...");
+  // get photoUris
+  // get uploaded uris
+  // upload NOT INTERSECTION of the two arrays
+  // add the uploaded uris to the uploaded uris array
+  // save to async storage
 };
 
 const updatePhotos = async (
