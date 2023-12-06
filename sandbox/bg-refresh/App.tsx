@@ -9,7 +9,11 @@ const BACKGROUND_FETCH_TASK = "background-fetch";
 
 TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   console.log(`Got background fetch call at date: ${new Date().toISOString()}`);
-  await updatePhotos(Date.now(), () => {});
+
+  const startJson = await AsyncStorage.getItem("start");
+  const start = startJson ? JSON.parse(startJson) : Date.now();
+
+  await updatePhotos(start, () => {});
   await checkImageUploadQueue();
 
   // return BackgroundFetch.BackgroundFetchResult.Failed;
@@ -47,7 +51,7 @@ const checkImageUploadQueue = async () => {
   };
 
   // Call the function
-  uploadPhotos();
+  await uploadPhotos();
 };
 
 const updatePhotos = async (
@@ -128,6 +132,7 @@ export default function App() {
       }
     } else {
       setStart(Date.now());
+      AsyncStorage.setItem("start", JSON.stringify(Date.now()));
       try {
         BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
           minimumInterval: 60,
