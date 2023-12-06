@@ -34,7 +34,6 @@ import ShowAttendees from "../../components/ShowAttendees";
 import CountdownTimer from "../../components/CountdownTimer";
 import Swiper from "react-native-swiper";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
-import getEventAdmins from "../../services/getEventAdmins";
 import getEventAttendees from "../../services/getEventAttendees";
 import getEventImages from "../../services/getEventImages";
 import EventInvitation from "../../components/EventInvitation";
@@ -73,6 +72,7 @@ export default function Event() {
       ...eventDetails,
       isInvited: prevEvent.isInvited,
     }));
+    fetchEventImages();
     setRefreshing(false);
   }, []);
 
@@ -102,6 +102,12 @@ export default function Event() {
     }
   };
 
+  // move this into cache from previous screen
+  const fetchEventImages = async () => {
+    const eventImages = await getEventImages(selectedEvent.eventId);
+    setImages(eventImages);
+  };
+
   useEffect(() => {
     const fetchEventAttendees = async () => {
       const eventAttendees = await getEventAttendees(
@@ -109,12 +115,6 @@ export default function Event() {
         userDetails.userId
       );
       setAttendees(eventAttendees);
-    };
-
-    // move this into cache from previous screen
-    const fetchEventImages = async () => {
-      const eventImages = await getEventImages(selectedEvent.eventId);
-      setImages(eventImages);
     };
 
     fetchEventImages();
