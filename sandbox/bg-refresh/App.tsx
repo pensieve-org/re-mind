@@ -1,6 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, Image } from "react-native";
 import * as MediaLibrary from "expo-media-library";
+import * as BackgroundFetch from "expo-background-fetch";
+import * as TaskManager from "expo-task-manager";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const BACKGROUND_FETCH_TASK = "background-fetch";
+
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  console.log(`Got background fetch call at date: ${new Date().toISOString()}`);
+  await checkImageUploadQueue();
+
+  // return BackgroundFetch.BackgroundFetchResult.Failed;
+
+  // return BackgroundFetch.BackgroundFetchResult.NewData;
+
+  // return BackgroundFetch.BackgroundFetchResult.NoData;
+});
+
+const checkImageUploadQueue = async () => {
+  console.log("Checking image upload queue...");
+};
 
 export default function App() {
   const [photoUris, setPhotoUris] = useState<string[]>([]);
@@ -10,6 +30,9 @@ export default function App() {
   const [start, setStart] = useState<number>(Date.now());
 
   const updatePhotos = async () => {
+    // TODO: move this outside the function, save images to async storage and then pull out
+    // so that the bg task can also us this function
+    // then change this function to read from async storage
     const { assets } = await MediaLibrary.getAssetsAsync({
       mediaType: "photo",
       sortBy: ["creationTime"],
@@ -25,23 +48,44 @@ export default function App() {
 
   useEffect(() => {
     let newSubscription: MediaLibrary.Subscription | null = null;
+    let intervalId: NodeJS.Timeout;
 
     if (isListening) {
       newSubscription = MediaLibrary.addListener(updatePhotos);
       setSubscription(newSubscription);
+      intervalId = setInterval(checkImageUploadQueue, 5000);
     }
 
     return () => {
       newSubscription?.remove();
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
     };
-  }, [isListening, start]);
+  }, [isListening]);
 
   const toggleListener = () => {
     if (isListening) {
       subscription?.remove();
       setSubscription(null);
+      try {
+        BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+        console.log("Background fetch unregistered");
+      } catch (err) {
+        console.log("Background fetch failed to unregister");
+      }
     } else {
       setStart(Date.now());
+      try {
+        BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+          minimumInterval: 60,
+          stopOnTerminate: false,
+          startOnBoot: true,
+        });
+        console.log("Background fetch registered");
+      } catch (err) {
+        console.log("Background fetch failed to register");
+      }
     }
 
     setIsListening(!isListening);
