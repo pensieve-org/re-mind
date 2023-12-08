@@ -61,33 +61,22 @@ const checkImageUploadQueue = async () => {
 };
 
 const updatePhotos = async (
-  start: number,
+  insertedImages: MediaLibrary.Asset[],
   setStorageChange: React.Dispatch<React.SetStateAction<number>>
 ) => {
-  const { assets } = await MediaLibrary.getAssetsAsync({
-    mediaType: "photo",
-    sortBy: ["creationTime"],
-  });
+  const newUris = insertedImages.map((asset) => asset.uri);
 
-  const newAssets = assets.filter((asset) => asset.creationTime > start);
+  // Get the existing URIs from AsyncStorage
+  const existingUrisJson = await AsyncStorage.getItem("photoUris");
+  const existingUris = existingUrisJson ? JSON.parse(existingUrisJson) : [];
 
-  if (newAssets.length > 0) {
-    const newUris = newAssets.reverse().map((asset) => asset.uri);
+  // Combine the existing URIs and new URIs, and remove duplicates
+  const combinedUris = Array.from(new Set([...existingUris, ...newUris]));
 
-    // Get the existing URIs from AsyncStorage
-    const existingUrisJson = await AsyncStorage.getItem("photoUris");
-    const existingUris = existingUrisJson ? JSON.parse(existingUrisJson) : [];
-
-    // Combine the existing URIs and new URIs, and remove duplicates
-    const combinedUris = Array.from(new Set([...existingUris, ...newUris]));
-
-    // Save the combined URIs to AsyncStorage
-    await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
-    console.log("Saved new photos to AsyncStorage");
-    setStorageChange((prevState) => prevState + 1); // Use setStorageChange here
-    return true;
-  }
-  return false;
+  // Save the combined URIs to AsyncStorage
+  await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
+  console.log("Saved new photos to AsyncStorage");
+  setStorageChange((prevState) => prevState + 1); // Use setStorageChange here
 };
 
 export default function App() {
@@ -113,8 +102,8 @@ export default function App() {
     let intervalId: NodeJS.Timeout;
 
     if (isListening) {
-      newSubscription = MediaLibrary.addListener(() =>
-        updatePhotos(start, setStorageChange)
+      newSubscription = MediaLibrary.addListener((event) =>
+        updatePhotos(event.insertedAssets, setStorageChange)
       );
       setSubscription(newSubscription);
       intervalId = setInterval(checkImageUploadQueue, 5000);
