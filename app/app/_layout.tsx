@@ -133,8 +133,6 @@ export default function HomeLayout() {
     let newSubscription: MediaLibrary.Subscription | null = null;
     let intervalId: NodeJS.Timeout;
 
-    alert(`isLive: ${isLive}, liveEventIds: ${liveEventIds}`);
-
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
@@ -148,7 +146,6 @@ export default function HomeLayout() {
 
         newSubscription = MediaLibrary.addListener(() => {
           updatePhotos(start);
-          checkImageUploadQueue(liveEventIds);
         });
         setSubscription(newSubscription);
         intervalId = setInterval(

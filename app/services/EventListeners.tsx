@@ -19,19 +19,14 @@ const EventListeners = ({ events, setIsLive, setLiveEventIds }) => {
   }, [events]);
 
   const listenToEvents = (eventIds) => {
+    const liveEventIds = [];
     const unsubscribeFns = eventIds.map((eventId) =>
       onSnapshot(
         doc(collection(db, "events"), eventId),
         (doc) => {
           if (doc.exists() && doc.data().status === "live") {
             setIsLive(true);
-            setLiveEventIds((prevIds) => {
-              if (!prevIds.includes(doc.id)) {
-                return [...prevIds, doc.id]; // Return the new array
-              } else {
-                return prevIds; // Return the previous state if the id is already included
-              }
-            });
+            liveEventIds.push(eventId);
           }
         },
         (err) => {
@@ -39,6 +34,8 @@ const EventListeners = ({ events, setIsLive, setLiveEventIds }) => {
         }
       )
     );
+
+    setLiveEventIds(liveEventIds);
 
     return () => {
       unsubscribeFns.forEach((unsubscribe) => unsubscribe());
