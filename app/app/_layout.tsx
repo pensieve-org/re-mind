@@ -144,13 +144,14 @@ export default function HomeLayout() {
         setStart(Date.now()); // TODO: change to event start time (what if multiple?)
         AsyncStorage.setItem("start", JSON.stringify(Date.now())); // TODO: set async to eventId/start
 
-        newSubscription = MediaLibrary.addListener(() => {
-          updatePhotos(start);
+        newSubscription = MediaLibrary.addListener(async () => {
+          await updatePhotos(start);
+          await checkImageUploadQueue(liveEventIds);
         });
         setSubscription(newSubscription);
         intervalId = setInterval(
           () => checkImageUploadQueue(liveEventIds),
-          5000
+          10000
         );
 
         try {
