@@ -120,7 +120,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                         {event.isInvited && (
                           <View
                             style={{
-                              backgroundColor: `${theme.PLACEHOLDER}95`,
+                              backgroundColor: `${theme.DARK}95`,
                               borderRadius: 10,
                               marginTop: 5,
                               justifyContent: "center",
