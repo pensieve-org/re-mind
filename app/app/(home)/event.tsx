@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { View as AnimatedView } from "react-native-animatable";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 
 import BackArrow from "../../assets/arrow-left.svg";
 import ThreeDots from "../../assets/three-dots.svg";
@@ -40,7 +40,6 @@ import EventInvitation from "../../components/EventInvitation";
 import respondEventInvitation from "../../services/respondEventInvitation";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase.js";
-import { isEqual } from "lodash";
 
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =

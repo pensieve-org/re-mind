@@ -100,7 +100,6 @@ export default function HomeLayout() {
         newSubscription = MediaLibrary.addListener(
           async (event: MediaLibrary.MediaLibraryAssetsChangeEvent) => {
             await updatePhotos(event.insertedAssets);
-            await checkImageUploadQueue(liveEventIds);
           }
         );
         setSubscription(newSubscription);
@@ -115,10 +114,11 @@ export default function HomeLayout() {
     })();
 
     return () => {
-      newSubscription?.remove();
       if (intervalId) {
         clearInterval(intervalId);
       }
+
+      newSubscription?.remove();
     };
   }, [isLive]);
 
