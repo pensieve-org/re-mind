@@ -117,6 +117,8 @@ export default function HomeLayout() {
       if (intervalId) {
         clearInterval(intervalId);
       }
+      AsyncStorage.removeItem("photoUris");
+      AsyncStorage.removeItem("uploadedUris");
     };
   }, [isLive]);
 
