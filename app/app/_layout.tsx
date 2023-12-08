@@ -61,30 +61,19 @@ const checkImageUploadQueue = async (liveEventIds) => {
   await uploadPhotos();
 };
 
-const updatePhotos = async (start: number) => {
-  const { assets } = await MediaLibrary.getAssetsAsync({
-    mediaType: "photo",
-    sortBy: ["creationTime"],
-  });
+const updatePhotos = async (insertedAssets: MediaLibrary.Asset[]) => {
+  const newUris = insertedAssets.map((asset) => asset.uri);
 
-  const newAssets = assets.filter((asset) => asset.creationTime > start);
+  // Get the existing URIs from AsyncStorage
+  const existingUrisJson = await AsyncStorage.getItem("photoUris");
+  const existingUris = existingUrisJson ? JSON.parse(existingUrisJson) : [];
 
-  if (newAssets.length > 0) {
-    const newUris = newAssets.reverse().map((asset) => asset.uri);
+  // Combine the existing URIs and new URIs, and remove duplicates
+  const combinedUris = Array.from(new Set([...existingUris, ...newUris]));
 
-    // Get the existing URIs from AsyncStorage
-    const existingUrisJson = await AsyncStorage.getItem("photoUris");
-    const existingUris = existingUrisJson ? JSON.parse(existingUrisJson) : [];
-
-    // Combine the existing URIs and new URIs, and remove duplicates
-    const combinedUris = Array.from(new Set([...existingUris, ...newUris]));
-
-    // Save the combined URIs to AsyncStorage
-    await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
-    console.log("Saved new photos to AsyncStorage");
-    return true;
-  }
-  return false;
+  // Save the combined URIs to AsyncStorage
+  await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
+  console.log("Saved new photos to AsyncStorage");
 };
 
 export default function HomeLayout() {
@@ -93,7 +82,6 @@ export default function HomeLayout() {
   const [selectedEvent, setSelectedEvent] = useState({});
   const [subscription, setSubscription] =
     useState<MediaLibrary.Subscription | null>(null);
-  const [start, setStart] = useState<number>(Date.now());
   const [isLive, setIsLive] = useState(false);
   const [liveEventIds, setLiveEventIds] = useState([]);
 
@@ -108,14 +96,12 @@ export default function HomeLayout() {
           console.log("User needs to grant permission to photos.");
           return;
         }
-
-        setStart(Date.now()); // TODO: change to event start time (what if multiple?)
-        AsyncStorage.setItem("start", JSON.stringify(Date.now())); // TODO: set async to eventId/start
-
-        newSubscription = MediaLibrary.addListener(async () => {
-          await updatePhotos(start);
-          await checkImageUploadQueue(liveEventIds);
-        });
+        newSubscription = MediaLibrary.addListener(
+          async (event: MediaLibrary.MediaLibraryAssetsChangeEvent) => {
+            await updatePhotos(event.insertedAssets);
+            await checkImageUploadQueue(liveEventIds);
+          }
+        );
         setSubscription(newSubscription);
         intervalId = setInterval(
           () => checkImageUploadQueue(liveEventIds),
