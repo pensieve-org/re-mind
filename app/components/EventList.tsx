@@ -62,7 +62,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 <View
                   style={{
                     position: "absolute",
-                    backgroundColor: `${theme.PLACEHOLDER}95`,
+                    backgroundColor: `${theme.DARK}95`,
                     borderRadius: 10,
                     justifyContent: "center",
                     alignItems: "center",
