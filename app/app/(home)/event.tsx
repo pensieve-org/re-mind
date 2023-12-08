@@ -38,10 +38,11 @@ import getEventAttendees from "../../services/getEventAttendees";
 import getEventImages from "../../services/getEventImages";
 import EventInvitation from "../../components/EventInvitation";
 import respondEventInvitation from "../../services/respondEventInvitation";
+import { collection, doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../firebase.js";
+import { isEqual } from "lodash";
 
 export default function Event() {
-  const local = useLocalSearchParams();
-
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
@@ -50,6 +51,69 @@ export default function Event() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [attendees, setAttendees] = useState([]);
   const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    const eventRef = doc(collection(db, "events"), selectedEvent.eventId);
+
+    // Listener for changes in the images subcollection
+    const imagesUnsubscribe = onSnapshot(
+      collection(eventRef, "images"),
+      (snapshot) => {
+        snapshot.docChanges().forEach((change) => {
+          if (change.type === "added") {
+            console.log("New image: ", change.doc.data());
+            setImages((prevImages) => [...prevImages, change.doc.data()]);
+          }
+          if (change.type === "modified") {
+            console.log("Modified image: ", change.doc.data());
+            setImages((prevImages) =>
+              prevImages.map((image) =>
+                image.id === change.doc.id ? change.doc.data() : image
+              )
+            );
+          }
+          if (change.type === "removed") {
+            console.log("Removed image: ", change.doc.data());
+            setImages((prevImages) =>
+              prevImages.filter((image) => image.id !== change.doc.id)
+            );
+          }
+        });
+      }
+    );
+
+    // Listener for changes in events
+    const eventUnsubscribe = onSnapshot(eventRef, (doc) => {
+      if (doc.exists()) {
+        const newDetails = doc.data() as EventDetails;
+        if (
+          newDetails.status !== selectedEvent.status ||
+          newDetails.eventName !== selectedEvent.eventName ||
+          newDetails.eventId !== selectedEvent.eventId ||
+          newDetails.thumbnail !== selectedEvent.thumbnail
+        ) {
+          setUserEvents((prevUserEvents) => ({
+            ...prevUserEvents,
+            [selectedEvent.status]: prevUserEvents[selectedEvent.status].filter(
+              (event) => event.eventId !== selectedEvent.eventId
+            ),
+            [newDetails.status]: [
+              ...prevUserEvents[newDetails.status],
+              newDetails,
+            ],
+          }));
+
+          setSelectedEvent(newDetails);
+        }
+      }
+    });
+
+    // Cleanup function to unsubscribe from the listeners when the component is unmounted
+    return () => {
+      imagesUnsubscribe();
+      eventUnsubscribe();
+    };
+  }, []);
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -223,7 +287,7 @@ export default function Event() {
             {/* TODO: Replace this with a timeline with length = event duration and split into 
             mins if event < 1hr, hours if event < 1 day, otherwise days
             have a line graph for umber of photos uploaded in each segment */}
-            {local.event === "past" ? (
+            {selectedEvent.status !== "live" ? (
               <View
                 style={{
                   flexDirection: "row",
@@ -263,7 +327,7 @@ export default function Event() {
                 </View>
               </View>
             ) : (
-              local.event === "live" && (
+              selectedEvent.status === "live" && (
                 <CountdownTimer endTime={selectedEvent.endTime} />
               )
             )}

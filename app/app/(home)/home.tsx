@@ -66,11 +66,9 @@ export default function Home() {
     }, ANIMATION_DURATION);
   };
 
-  const navigateEvents = (route: EventRoutes) => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.push(`/${route}`);
-    }, ANIMATION_DURATION);
+  const handleEventPress = (event) => {
+    setSelectedEvent(event);
+    navigate("/event");
   };
 
   const onRefresh = React.useCallback(async () => {
@@ -78,20 +76,6 @@ export default function Home() {
     setUserEvents(await getUserEvents(userDetails.userId));
     setRefreshing(false);
   }, []);
-
-  // TODO: remove these and use the event.status property instead
-  const handleLiveEventPress = async (event) => {
-    setSelectedEvent(event);
-    navigateEvents("live");
-  };
-  const handlePastEventPress = async (event) => {
-    setSelectedEvent(event);
-    navigateEvents("past");
-  };
-  const handleFutureEventPress = async (event) => {
-    setSelectedEvent(event);
-    navigateEvents("future");
-  };
 
   return (
     <View style={styles.page}>
@@ -241,7 +225,7 @@ export default function Home() {
                 {userEvents.live.length > 0 ? (
                   <EventList
                     events={userEvents.live}
-                    onPress={handleLiveEventPress}
+                    onPress={handleEventPress}
                   />
                 ) : (
                   <Body style={{ textAlign: "center", paddingVertical: 10 }}>
@@ -262,7 +246,7 @@ export default function Home() {
                 {userEvents.past.length > 0 ? (
                   <EventList
                     events={userEvents.past}
-                    onPress={handlePastEventPress}
+                    onPress={handleEventPress}
                   />
                 ) : (
                   <Body style={{ textAlign: "center", paddingVertical: 10 }}>
@@ -275,7 +259,7 @@ export default function Home() {
                 {userEvents.future.length > 0 ? (
                   <Calendar
                     events={userEvents.future}
-                    onPress={handleFutureEventPress}
+                    onPress={handleEventPress}
                   />
                 ) : (
                   <Body style={{ textAlign: "center", paddingVertical: 10 }}>
