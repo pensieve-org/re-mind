@@ -81,8 +81,6 @@ export default function HomeLayout() {
   const [userEvents, setUserEvents] = useState<UserEvents>({} as UserEvents);
   const [selectedEvent, setSelectedEvent] = useState({});
   const [homeTabState, setHomeTabState] = useState<HomeTabState>("memories");
-  const [subscription, setSubscription] =
-    useState<MediaLibrary.Subscription | null>(null);
   const [isLive, setIsLive] = useState(false);
   const [liveEventIds, setLiveEventIds] = useState([]);
 
@@ -102,14 +100,12 @@ export default function HomeLayout() {
             await updatePhotos(event.insertedAssets);
           }
         );
-        setSubscription(newSubscription);
         intervalId = setInterval(
           () => checkImageUploadQueue(liveEventIds),
           10000
         );
       } else {
         newSubscription?.remove();
-        setSubscription(null);
         if (intervalId) {
           clearInterval(intervalId);
         }
@@ -118,7 +114,6 @@ export default function HomeLayout() {
 
     return () => {
       newSubscription?.remove();
-      setSubscription(null);
       if (intervalId) {
         clearInterval(intervalId);
       }
