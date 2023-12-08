@@ -19,11 +19,9 @@ function FontLoader({ children }) {
     MontserratItalic: Montserrat_400Regular_Italic,
     MontserratSemiBold: Montserrat_600SemiBold,
   });
-
   if (!loadedFonts) {
     return null;
   }
-
   return children;
 }
 
