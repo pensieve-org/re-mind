@@ -37,7 +37,11 @@ const deleteEvent = async (eventId) => {
     // delete images from storage
     for (const imageId of imageIds) {
       const imageRef = ref(storage, `images/${imageId}`);
-      await deleteObject(imageRef);
+      try {
+        await deleteObject(imageRef);
+      } catch (err) {
+        console.log(err);
+      }
     }
 
     // delete thumbnail from storage

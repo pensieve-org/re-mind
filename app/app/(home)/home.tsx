@@ -33,6 +33,7 @@ import { AppContext } from "../_layout";
 import getUserEvents from "../../services/getUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 import Calendar from "../../components/Calendar";
+import GradientScrollView from "../../components/GradientScrollView";
 
 const blinkAnimation = {
   0: { opacity: 1 },
@@ -129,7 +130,7 @@ export default function Home() {
         <View style={styles.container}>
           <View
             style={{
-              paddingVertical: 20,
+              paddingTop: 10,
               flexDirection: "row",
               justifyContent: "space-between",
             }}
@@ -186,8 +187,8 @@ export default function Home() {
             </Pressable>
           </View>
 
-          <ScrollView
-            style={{ flex: 1, paddingBottom: 50 }}
+          <GradientScrollView
+            style={{ flex: 1 }}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -268,7 +269,7 @@ export default function Home() {
                 )}
               </>
             )}
-          </ScrollView>
+          </GradientScrollView>
         </View>
       </AnimatedView>
     </View>
