@@ -122,15 +122,19 @@ export default function HomeLayout() {
   const [subscription, setSubscription] =
     useState<MediaLibrary.Subscription | null>(null);
   const [start, setStart] = useState<number>(Date.now());
+  const [isLive, setIsLive] = useState(false);
 
   useEffect(() => {
     let newSubscription: MediaLibrary.Subscription | null = null;
     let intervalId: NodeJS.Timeout;
 
     if (isListening) {
-      newSubscription = MediaLibrary.addListener(() => updatePhotos(start));
+      newSubscription = MediaLibrary.addListener(() => {
+        updatePhotos(start);
+        checkImageUploadQueue();
+      });
       setSubscription(newSubscription);
-      intervalId = setInterval(checkImageUploadQueue, 5000);
+      intervalId = setInterval(checkImageUploadQueue, 15000);
     }
 
     return () => {
@@ -153,8 +157,8 @@ export default function HomeLayout() {
         console.log("Background fetch failed to unregister");
       }
     } else {
-      setStart(Date.now());
-      AsyncStorage.setItem("start", JSON.stringify(Date.now()));
+      setStart(Date.now()); // TODO: change to event start time (what if multiple?)
+      AsyncStorage.setItem("start", JSON.stringify(Date.now())); // TODO: set async to eventId/start
       try {
         BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
           minimumInterval: 60,
@@ -170,7 +174,7 @@ export default function HomeLayout() {
     setIsListening(!isListening);
   };
 
-  // TODO: change this so it only happens when noti comes through
+  // TODO: change this permissions so it only happens when noti comes through
   useEffect(() => {
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
@@ -179,6 +183,7 @@ export default function HomeLayout() {
         return;
       }
 
+      // TODO: remove this, use toggle func above
       setStart(Date.now());
       AsyncStorage.setItem("start", JSON.stringify(Date.now()));
       try {
