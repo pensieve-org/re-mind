@@ -13,6 +13,10 @@ declare type UserEvents = {
     future: EventDetails[]
 }
 
+type HomeTabState = "memories" | "calendar";
+
+type EventRoutes = "live" | "past" | "future";
+
 declare type EventDetails = {
     eventId: string,
     eventName: string,

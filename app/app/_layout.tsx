@@ -75,9 +75,12 @@ const updatePhotos = async (insertedAssets: MediaLibrary.Asset[]) => {
 };
 
 export default function HomeLayout() {
-  const [userDetails, setUserDetails] = useState({} as UserDetails);
-  const [userEvents, setUserEvents] = useState({} as UserEvents);
+  const [userDetails, setUserDetails] = useState<UserDetails>(
+    {} as UserDetails
+  );
+  const [userEvents, setUserEvents] = useState<UserEvents>({} as UserEvents);
   const [selectedEvent, setSelectedEvent] = useState({});
+  const [homeTabState, setHomeTabState] = useState<HomeTabState>("memories");
   const [subscription, setSubscription] =
     useState<MediaLibrary.Subscription | null>(null);
   const [isLive, setIsLive] = useState(false);
@@ -129,6 +132,8 @@ export default function HomeLayout() {
           setUserEvents,
           selectedEvent,
           setSelectedEvent,
+          homeTabState,
+          setHomeTabState,
         }}
       >
         <EventListeners

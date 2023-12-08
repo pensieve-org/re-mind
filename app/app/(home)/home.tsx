@@ -34,9 +34,6 @@ import getUserEvents from "../../services/getUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 import Calendar from "../../components/Calendar";
 
-type Tab = "memories" | "calendar";
-type EventRoutes = "live" | "past" | "future";
-
 const blinkAnimation = {
   0: { opacity: 1 },
   0.8: { opacity: 1 },
@@ -51,11 +48,16 @@ initializeRegistryWithDefinitions({
 });
 
 export default function Home() {
-  const { userDetails, userEvents, setUserEvents, setSelectedEvent } =
-    useContext(AppContext);
+  const {
+    userDetails,
+    userEvents,
+    setUserEvents,
+    setSelectedEvent,
+    homeTabState,
+    setHomeTabState,
+  } = useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
-  const [selectedTab, setSelectedTab] = useState<Tab>("memories");
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
@@ -148,12 +150,12 @@ export default function Home() {
               justifyContent: "space-between",
             }}
           >
-            <Pressable onPress={() => setSelectedTab("memories")}>
+            <Pressable onPress={() => setHomeTabState("memories")}>
               <Subtitle
                 size={25}
                 style={{
                   color:
-                    selectedTab === "memories"
+                    homeTabState === "memories"
                       ? theme.PRIMARY
                       : theme.PLACEHOLDER,
                 }}
@@ -162,12 +164,12 @@ export default function Home() {
               </Subtitle>
             </Pressable>
 
-            <Pressable onPress={() => setSelectedTab("calendar")}>
+            <Pressable onPress={() => setHomeTabState("calendar")}>
               <Subtitle
                 size={25}
                 style={{
                   color:
-                    selectedTab === "calendar"
+                    homeTabState === "calendar"
                       ? theme.PRIMARY
                       : theme.PLACEHOLDER,
                 }}
@@ -207,7 +209,7 @@ export default function Home() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
-            {selectedTab === "memories" ? (
+            {homeTabState === "memories" ? (
               <>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                   <Subtitle
