@@ -108,17 +108,20 @@ export default function HomeLayout() {
           10000
         );
       } else {
-        subscription?.remove();
+        newSubscription?.remove();
         setSubscription(null);
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
       }
     })();
 
     return () => {
+      newSubscription?.remove();
+      setSubscription(null);
       if (intervalId) {
         clearInterval(intervalId);
       }
-
-      newSubscription?.remove();
     };
   }, [isLive]);
 
