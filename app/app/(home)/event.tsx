@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
 
@@ -40,11 +39,12 @@ import EventInvitation from "../../components/EventInvitation";
 import respondEventInvitation from "../../services/respondEventInvitation";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../firebase.js";
+import GradientScrollView from "../../components/GradientScrollView";
 
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
-  const [refreshing, setRefreshing] = useState(false);
+  // const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -128,16 +128,16 @@ export default function Event() {
     }, ANIMATION_DURATION);
   };
 
-  const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
-    const eventDetails = await getEventDetails(selectedEvent.eventId);
-    setSelectedEvent((prevEvent) => ({
-      ...eventDetails,
-      isInvited: prevEvent.isInvited,
-    }));
-    fetchEventImages();
-    setRefreshing(false);
-  }, []);
+  // const onRefresh = React.useCallback(async () => {
+  //   setRefreshing(true);
+  //   const eventDetails = await getEventDetails(selectedEvent.eventId);
+  //   setSelectedEvent((prevEvent) => ({
+  //     ...eventDetails,
+  //     isInvited: prevEvent.isInvited,
+  //   }));
+  //   fetchEventImages();
+  //   setRefreshing(false);
+  // }, []);
 
   const formatDate = (date: Date | null) => {
     return date
@@ -252,21 +252,21 @@ export default function Event() {
         duration={ANIMATION_DURATION}
         style={styles.page}
       >
-        {refreshing && (
+        {/* {refreshing && (
           <ActivityIndicator
             style={{ padding: 10 }}
             size={"large"}
             color={theme.PRIMARY}
           />
-        )}
+        )} */}
 
-        <ScrollView
+        <GradientScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 80 }}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          // refreshControl={
+          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // }
         >
           <View style={styles.container}>
             <Subtitle
@@ -426,7 +426,7 @@ export default function Event() {
               </View>
             </PanGestureHandler>
           </Modal>
-        </ScrollView>
+        </GradientScrollView>
       </AnimatedView>
     </View>
   );

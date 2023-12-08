@@ -6,7 +6,6 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { router } from "expo-router";
 import {
   View as AnimatedView,

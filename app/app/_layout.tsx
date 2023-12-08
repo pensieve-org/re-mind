@@ -26,40 +26,41 @@ function FontLoader({ children }) {
 }
 
 const checkImageUploadQueue = async (liveEventIds) => {
-  console.log("Checking image upload queue...");
-  const photoUrisJson = await AsyncStorage.getItem("photoUris");
-  const photoUris = photoUrisJson ? JSON.parse(photoUrisJson) : [];
-
-  if (photoUris.length === 0) {
-    return;
-  }
   try {
+    console.log("Checking image upload queue...");
+    const photoUrisJson = await AsyncStorage.getItem("photoUris");
+    const photoUris = photoUrisJson ? JSON.parse(photoUrisJson) : [];
+
+    if (photoUris.length === 0) {
+      return;
+    }
+
     // TODO: add a time to photo object. if after that time, upload
     await uploadImagesToEvents(photoUris, liveEventIds);
 
     console.log(`Images uploaded`);
 
-    AsyncStorage.removeItem("photoUris");
+    await AsyncStorage.removeItem("photoUris");
   } catch (err) {
     console.log(err);
   }
 };
 
 const updatePhotos = async (insertedAssets: MediaLibrary.Asset[]) => {
-  const newUris = insertedAssets.map((asset) => asset.uri);
+  try {
+    const newUris = insertedAssets.map((asset) => asset.uri);
 
-  // Get the existing URIs from AsyncStorage
-  const existingUrisJson = await AsyncStorage.getItem("photoUris");
-  const existingUris = existingUrisJson ? JSON.parse(existingUrisJson) : [];
+    const existingUrisJson = await AsyncStorage.getItem("photoUris");
+    const existingUris = existingUrisJson ? JSON.parse(existingUrisJson) : [];
 
-  // TODO: add a Date.now()+15mins field with url for queueing
+    const combinedUris = [...existingUris, ...newUris];
 
-  // Combine the existing URIs and new URIs, and remove duplicates
-  const combinedUris = [...existingUris, ...newUris];
-
-  // Save the combined URIs to AsyncStorage
-  await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
-  console.log("Saved new photos to AsyncStorage");
+    // TODO: add a Date.now()+15mins field with url for queueing
+    await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
+    console.log("Saved new photos to AsyncStorage");
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export default function HomeLayout() {
@@ -77,26 +78,30 @@ export default function HomeLayout() {
     let intervalId: NodeJS.Timeout;
 
     (async () => {
-      if (isLive) {
-        const { status } = await MediaLibrary.requestPermissionsAsync();
-        if (status !== "granted") {
-          console.log("User needs to grant permission to photos.");
-          return;
-        }
-        newSubscription = MediaLibrary.addListener(
-          async (event: MediaLibrary.MediaLibraryAssetsChangeEvent) => {
-            await updatePhotos(event.insertedAssets);
+      try {
+        if (isLive) {
+          const { status } = await MediaLibrary.requestPermissionsAsync();
+          if (status !== "granted") {
+            console.log("User needs to grant permission to photos.");
+            return;
           }
-        );
-        intervalId = setInterval(
-          () => checkImageUploadQueue(liveEventIds),
-          10000
-        );
-      } else {
-        newSubscription?.remove();
-        if (intervalId) {
-          clearInterval(intervalId);
+          newSubscription = MediaLibrary.addListener(
+            async (event: MediaLibrary.MediaLibraryAssetsChangeEvent) => {
+              await updatePhotos(event.insertedAssets);
+            }
+          );
+          intervalId = setInterval(
+            () => checkImageUploadQueue(liveEventIds),
+            10000
+          );
+        } else {
+          newSubscription?.remove();
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
         }
+      } catch (err) {
+        console.log(err);
       }
     })();
 
@@ -105,7 +110,6 @@ export default function HomeLayout() {
       if (intervalId) {
         clearInterval(intervalId);
       }
-      // TODO: on close, upload all remaining images in async queue
       AsyncStorage.removeItem("photoUris");
     };
   }, [isLive]);

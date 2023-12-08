@@ -27,7 +27,6 @@ import Subtitle from "../../components/Subtitle";
 import SubtitleInput from "../../components/SubtitleInput";
 import DatePicker from "../../components/DatePicker";
 import AddFriendsList from "../../components/AddFriendsList";
-import { ScrollView } from "react-native-gesture-handler";
 import ImageIcon from "../../assets/image.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
@@ -37,6 +36,7 @@ import Alert from "../../components/Alert";
 import Button from "../../components/Button";
 import addUserToEvent from "../../services/addUserToEvent";
 import getFriendDetails from "../../services/getFriendDetails";
+import GradientScrollView from "../../components/GradientScrollView";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
@@ -179,7 +179,7 @@ export default function CreateEvent() {
             <Subtitle size={25}>new event</Subtitle>
           </View>
 
-          <ScrollView
+          <GradientScrollView
             contentContainerStyle={{ paddingBottom: 80 }}
             showsVerticalScrollIndicator={false}
           >
@@ -311,7 +311,7 @@ export default function CreateEvent() {
                 color={theme.PRIMARY}
               />
             )}
-          </ScrollView>
+          </GradientScrollView>
         </View>
       </AnimatedView>
     </View>

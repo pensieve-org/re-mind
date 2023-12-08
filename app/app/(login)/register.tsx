@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, View, ScrollView, ActivityIndicator } from "react-native";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import Header from "../../components/Header";
 import Input from "../../components/Input";
@@ -23,6 +23,7 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../../firebase.js";
 import { View as AnimatedView } from "react-native-animatable";
 import createUser from "../../services/createUser";
+import GradientScrollView from "../../components/GradientScrollView";
 
 // TODO: Use React Hook Forms / formik
 const Register = () => {
@@ -143,7 +144,7 @@ const Register = () => {
           </View>
         )}
 
-        <ScrollView style={styles.container}>
+        <GradientScrollView style={styles.container}>
           <View style={{ paddingVertical: 50, paddingTop: 30 }}>
             <Subtitle>register</Subtitle>
           </View>
@@ -195,7 +196,7 @@ const Register = () => {
               color={theme.PRIMARY}
             />
           )}
-        </ScrollView>
+        </GradientScrollView>
       </AnimatedView>
     </View>
   );
