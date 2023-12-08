@@ -27,36 +27,22 @@ function FontLoader({ children }) {
 
 const checkImageUploadQueue = async (liveEventIds) => {
   console.log("Checking image upload queue...");
-  const uploadPhotos = async () => {
-    // Get photoUris
-    const photoUrisJson = await AsyncStorage.getItem("photoUris");
-    const photoUris = photoUrisJson ? JSON.parse(photoUrisJson) : [];
+  const photoUrisJson = await AsyncStorage.getItem("photoUris");
+  const photoUris = photoUrisJson ? JSON.parse(photoUrisJson) : [];
 
-    // Get uploadedUris
-    const uploadedUrisJson = await AsyncStorage.getItem("uploadedUris");
-    let uploadedUris = uploadedUrisJson ? JSON.parse(uploadedUrisJson) : [];
-
-    // Find the URIs of the photos that haven't been uploaded yet
-    const urisToUpload = photoUris.filter(
-      (uri: string) => !uploadedUris.includes(uri)
-    );
-
-    if (urisToUpload.length === 0) {
-      return;
-    }
-
-    // Upload the photos and add the URIs to the uploadedUris array
-    await uploadImagesToEvents(urisToUpload, liveEventIds);
+  if (photoUris.length === 0) {
+    return;
+  }
+  try {
+    // TODO: add a time to photo object. if after that time, upload
+    await uploadImagesToEvents(photoUris, liveEventIds);
 
     console.log(`Images uploaded`);
-    uploadedUris = [...uploadedUris, ...urisToUpload];
 
-    // Save the uploadedUris to AsyncStorage
-    await AsyncStorage.setItem("uploadedUris", JSON.stringify(uploadedUris));
-  };
-
-  // Call the function
-  await uploadPhotos();
+    AsyncStorage.removeItem("photoUris");
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const updatePhotos = async (insertedAssets: MediaLibrary.Asset[]) => {
@@ -66,8 +52,10 @@ const updatePhotos = async (insertedAssets: MediaLibrary.Asset[]) => {
   const existingUrisJson = await AsyncStorage.getItem("photoUris");
   const existingUris = existingUrisJson ? JSON.parse(existingUrisJson) : [];
 
+  // TODO: add a Date.now()+15mins field with url for queueing
+
   // Combine the existing URIs and new URIs, and remove duplicates
-  const combinedUris = Array.from(new Set([...existingUris, ...newUris]));
+  const combinedUris = [...existingUris, ...newUris];
 
   // Save the combined URIs to AsyncStorage
   await AsyncStorage.setItem("photoUris", JSON.stringify(combinedUris));
@@ -117,8 +105,8 @@ export default function HomeLayout() {
       if (intervalId) {
         clearInterval(intervalId);
       }
+      // TODO: on close, upload all remaining images in async queue
       AsyncStorage.removeItem("photoUris");
-      AsyncStorage.removeItem("uploadedUris");
     };
   }, [isLive]);
 
