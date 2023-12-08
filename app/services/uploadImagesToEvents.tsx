@@ -3,7 +3,6 @@ import { db } from "../firebase.js";
 import { uploadImageAsync } from "../utils";
 
 const uploadImagesToEvents = async (
-  userId: string,
   imageUrls: string[],
   liveEventIds: string[]
 ) => {
@@ -26,7 +25,6 @@ const uploadImagesToEvents = async (
             queued: false,
             tagged: "",
             uploadTime: Date.now(),
-            uploadedBy: userId,
           });
         }
       }

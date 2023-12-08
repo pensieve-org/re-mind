@@ -11,6 +11,9 @@ import * as BackgroundFetch from "expo-background-fetch";
 import * as TaskManager from "expo-task-manager";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uploadImagesToEvents from "../services/uploadImagesToEvents";
+import { collection, doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase.js";
+import EventListeners from "../services/EventListeners";
 
 export const AppContext = createContext(null);
 
@@ -52,7 +55,7 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   }
 });
 
-const checkImageUploadQueue = async () => {
+const checkImageUploadQueue = async (liveEventIds) => {
   console.log("Checking image upload queue...");
   const uploadPhotos = async () => {
     // Get photoUris
@@ -73,9 +76,7 @@ const checkImageUploadQueue = async () => {
     }
 
     // Upload the photos and add the URIs to the uploadedUris array
-    await uploadImagesToEvents("userId", urisToUpload, [
-      "fSz4WrzECr25VzBmWNvW",
-    ]);
+    await uploadImagesToEvents(urisToUpload, liveEventIds);
 
     console.log(`Images uploaded`);
     uploadedUris = [...uploadedUris, ...urisToUpload];
@@ -115,67 +116,25 @@ const updatePhotos = async (start: number) => {
 };
 
 export default function HomeLayout() {
-  const [userDetails, setUserDetails] = useState({});
-  const [userEvents, setUserEvents] = useState({});
+  const [userDetails, setUserDetails] = useState({} as UserDetails);
+  const [userEvents, setUserEvents] = useState({
+    live: [],
+    past: [],
+    future: [],
+  });
   const [selectedEvent, setSelectedEvent] = useState({});
-  const [isListening, setIsListening] = useState(false);
   const [subscription, setSubscription] =
     useState<MediaLibrary.Subscription | null>(null);
   const [start, setStart] = useState<number>(Date.now());
   const [isLive, setIsLive] = useState(false);
+  const [liveEventIds, setLiveEventIds] = useState([]);
 
   useEffect(() => {
     let newSubscription: MediaLibrary.Subscription | null = null;
     let intervalId: NodeJS.Timeout;
 
-    if (isListening) {
-      newSubscription = MediaLibrary.addListener(() => {
-        updatePhotos(start);
-        checkImageUploadQueue();
-      });
-      setSubscription(newSubscription);
-      intervalId = setInterval(checkImageUploadQueue, 15000);
-    }
+    alert(`isLive: ${isLive}, liveEventIds: ${liveEventIds}`);
 
-    return () => {
-      newSubscription?.remove();
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [isListening]);
-
-  // TODO: this should be toggled based on firebase push notifications
-  const toggleListener = () => {
-    if (isListening) {
-      subscription?.remove();
-      setSubscription(null);
-      try {
-        BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
-        console.log("Background fetch unregistered");
-      } catch (err) {
-        console.log("Background fetch failed to unregister");
-      }
-    } else {
-      setStart(Date.now()); // TODO: change to event start time (what if multiple?)
-      AsyncStorage.setItem("start", JSON.stringify(Date.now())); // TODO: set async to eventId/start
-      try {
-        BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-          minimumInterval: 60,
-          stopOnTerminate: false,
-          startOnBoot: true,
-        });
-        console.log("Background fetch registered");
-      } catch (err) {
-        console.log("Background fetch failed to register");
-      }
-    }
-
-    setIsListening(!isListening);
-  };
-
-  // TODO: change this permissions so it only happens when noti comes through
-  useEffect(() => {
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
@@ -183,23 +142,49 @@ export default function HomeLayout() {
         return;
       }
 
-      // TODO: remove this, use toggle func above
-      setStart(Date.now());
-      AsyncStorage.setItem("start", JSON.stringify(Date.now()));
-      try {
-        BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-          minimumInterval: 60,
-          stopOnTerminate: false,
-          startOnBoot: true,
-        });
-        console.log("Background fetch registered");
-      } catch (err) {
-        console.log("Background fetch failed to register");
-      }
+      if (isLive) {
+        setStart(Date.now()); // TODO: change to event start time (what if multiple?)
+        AsyncStorage.setItem("start", JSON.stringify(Date.now())); // TODO: set async to eventId/start
 
-      setIsListening(true);
+        newSubscription = MediaLibrary.addListener(() => {
+          updatePhotos(start);
+          checkImageUploadQueue(liveEventIds);
+        });
+        setSubscription(newSubscription);
+        intervalId = setInterval(
+          () => checkImageUploadQueue(liveEventIds),
+          5000
+        );
+
+        try {
+          BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+            minimumInterval: 60,
+            stopOnTerminate: false,
+            startOnBoot: true,
+          });
+          console.log("Background fetch registered");
+        } catch (err) {
+          console.log("Background fetch failed to register");
+        }
+      } else {
+        subscription?.remove();
+        setSubscription(null);
+        try {
+          BackgroundFetch.unregisterTaskAsync(BACKGROUND_FETCH_TASK);
+          console.log("Background fetch unregistered");
+        } catch (err) {
+          console.log("Background fetch failed to unregister");
+        }
+      }
     })();
-  }, []);
+
+    return () => {
+      newSubscription?.remove();
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isLive]);
 
   return (
     <FontLoader>
@@ -213,6 +198,11 @@ export default function HomeLayout() {
           setSelectedEvent,
         }}
       >
+        <EventListeners
+          events={userEvents}
+          setIsLive={setIsLive}
+          setLiveEventIds={setLiveEventIds}
+        />
         <Slot />
       </AppContext.Provider>
     </FontLoader>
