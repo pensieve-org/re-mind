@@ -34,23 +34,20 @@ export default function HomeLayout() {
   const [homeTabState, setHomeTabState] = useState<HomeTabState>("memories");
   const [isLive, setIsLive] = useState(false);
   const [liveEventIds, setLiveEventIds] = useState([]);
-  const uploadQueue = useRef([]);
   const [imagesToUpload, setImagesToUpload] = useState(false);
+  const uploadQueue = useRef([]);
 
   useEffect(() => {
-    setImagesToUpload(uploadQueue.current.length > 0);
-  }, [imagesToUpload]);
-
-  useEffect(() => {
-    if (!imagesToUpload || liveEventIds.length === 0) {
-      return;
-    }
-
     const uploadImages = async () => {
-      const photoUris = uploadQueue.current.shift();
-      try {
-        await uploadImageToEvents(photoUris, liveEventIds);
+      if (uploadQueue.current.length === 0) {
         setImagesToUpload(false);
+        return;
+      }
+
+      const photoUri = uploadQueue.current.shift();
+      try {
+        await uploadImageToEvents(photoUri, liveEventIds);
+        uploadImages();
       } catch (err) {
         console.log(err);
       }
