@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useState, useEffect } from "react";
+import { AppState } from "react-native";
 import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
 import {
@@ -9,7 +10,6 @@ import {
 import * as MediaLibrary from "expo-media-library";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uploadImageToEvents from "../services/uploadImageToEvents";
-import EventListeners from "../services/EventListeners";
 
 export const AppContext = createContext(null);
 
@@ -25,76 +25,32 @@ function FontLoader({ children }) {
   return children;
 }
 
-export default function HomeLayout() {
+export default function Layout() {
   const [userDetails, setUserDetails] = useState<UserDetails>(
     {} as UserDetails
   );
   const [userEvents, setUserEvents] = useState<UserEvents>({} as UserEvents);
   const [selectedEvent, setSelectedEvent] = useState({});
   const [homeTabState, setHomeTabState] = useState<HomeTabState>("memories");
-  const [isLive, setIsLive] = useState(false);
-  const [liveEventIds, setLiveEventIds] = useState([]);
-  const [imagesToUpload, setImagesToUpload] = useState(false);
-  const uploadQueue = useRef([]);
 
   useEffect(() => {
-    const uploadImages = async () => {
-      if (uploadQueue.current.length === 0) {
-        setImagesToUpload(false);
-        return;
-      }
-
-      const photoUri = uploadQueue.current.shift();
-      try {
-        await uploadImageToEvents(photoUri, liveEventIds);
-        uploadImages();
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    uploadImages();
-  }, [imagesToUpload]);
-
-  const updatePhotos = async (insertedAssets: MediaLibrary.Asset[]) => {
-    try {
-      const newUris = insertedAssets.map((asset) => asset.uri);
-      uploadQueue.current.push(newUris);
-
-      setImagesToUpload(true);
-    } catch (err) {
-      alert(err);
-    }
-  };
-
-  useEffect(() => {
-    let newSubscription: MediaLibrary.Subscription | null = null;
-
-    (async () => {
-      try {
-        if (isLive) {
-          const { status } = await MediaLibrary.requestPermissionsAsync();
-          if (status !== "granted") {
-            alert("User needs to grant permission to photos.");
-            return;
-          }
-          newSubscription = MediaLibrary.addListener(
-            async (event: MediaLibrary.MediaLibraryAssetsChangeEvent) => {
-              await updatePhotos(event.insertedAssets);
-            }
-          );
-        } else {
-          newSubscription?.remove();
-        }
-      } catch (err) {
-        alert(err);
-      }
-    })();
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
 
     return () => {
-      newSubscription?.remove();
+      subscription.remove();
     };
-  }, [isLive]);
+  }, []);
+
+  const handleAppStateChange = () => {
+    if (AppState.currentState == "active") {
+      alert(
+        "App has moved from the background or inactive state to active state"
+      );
+    }
+  };
 
   return (
     <FontLoader>
@@ -110,11 +66,6 @@ export default function HomeLayout() {
           setHomeTabState,
         }}
       >
-        <EventListeners
-          events={userEvents}
-          setIsLive={setIsLive}
-          setLiveEventIds={setLiveEventIds}
-        />
         <Slot />
       </AppContext.Provider>
     </FontLoader>

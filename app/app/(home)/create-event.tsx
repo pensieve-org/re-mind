@@ -34,7 +34,6 @@ import createEvent from "../../services/createEvent";
 import getUserEvents from "../../services/getUserEvents";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
-import addUserToEvent from "../../services/addUserToEvent";
 import getFriendDetails from "../../services/getFriendDetails";
 import GradientScrollView from "../../components/GradientScrollView";
 
@@ -100,13 +99,15 @@ export default function CreateEvent() {
 
     const now = new Date();
 
-    let status;
+    let status, uploadFlag;
+    uploadFlag = false;
     if (now < startDate) {
       status = "future";
     } else if (now > endDate) {
       status = "past";
     } else {
       status = "live";
+      uploadFlag = true;
     }
 
     try {
@@ -118,6 +119,7 @@ export default function CreateEvent() {
           eventName: eventName,
           status: status,
           thumbnail: thumbnail,
+          uploadFlag: uploadFlag,
         },
         selectedFriends,
         userDetails

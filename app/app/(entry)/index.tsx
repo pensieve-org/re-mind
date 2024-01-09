@@ -38,6 +38,10 @@ export default function Page() {
     })();
   }, []);
 
+  useEffect(() => {
+    // TODO: async run the upload image code here
+  }, []);
+
   return (
     <View style={styles.page}>
       <StatusBar style="light" />

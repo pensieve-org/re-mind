@@ -23,7 +23,8 @@ declare type EventDetails = {
     startTime: Date,
     endTime: Date,
     thumbnail: string,
-    status: "past" | "live" | "future"
+    status: "past" | "live" | "future",
+    uploadFlag: boolean
 }
 
 declare type ImageDetails = {
