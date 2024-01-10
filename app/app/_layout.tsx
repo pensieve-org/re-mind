@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
 import { AppState } from "react-native";
 import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
@@ -34,22 +34,9 @@ export default function Layout() {
   const [selectedEvent, setSelectedEvent] = useState({});
   const [homeTabState, setHomeTabState] = useState<HomeTabState>("memories");
 
-  useEffect(() => {
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
-
   const handleAppStateChange = async () => {
     if (AppState.currentState == "active") {
-      const eventsToUpload = await getUserEventsToUpload(
-        "8rZW0NmCtkh00S5WuQlSuQo32pj1"
-      );
+      const eventsToUpload = await getUserEventsToUpload(userDetails.userId);
       alert(JSON.stringify(eventsToUpload));
 
       // run a function to get all user events with upload true, also return the list of ios image ids already uploaded to that event
@@ -63,6 +50,17 @@ export default function Layout() {
       // set uploadFlag = false, go to next event
     }
   };
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [userDetails]);
 
   return (
     <FontLoader>
