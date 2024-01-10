@@ -47,8 +47,10 @@ export default function Layout() {
 
   const handleAppStateChange = async () => {
     if (AppState.currentState == "active") {
-      const eventsToUpload = await getUserEventsToUpload(userDetails.userId);
-      alert(eventsToUpload);
+      const eventsToUpload = await getUserEventsToUpload(
+        "8rZW0NmCtkh00S5WuQlSuQo32pj1"
+      );
+      alert(JSON.stringify(eventsToUpload));
 
       // run a function to get all user events with upload true, also return the list of ios image ids already uploaded to that event
       // i.e. list of objects with eventId and images [{eventId: 1, images: [image1id, image2id, image3id]}, {eventId: 2, images: [image1id, image2id, image3id]}...]

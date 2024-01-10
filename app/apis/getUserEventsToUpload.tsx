@@ -31,8 +31,8 @@ const getUserEventsToUpload = async (userId) => {
       if (eventSnapshot.exists()) {
         const event = eventSnapshot.data() as EventDetails;
 
-        if (eventId.uploadFlag === true) {
-          const images = getEventImages(eventId.eventId);
+        if (event.uploadFlag === true) {
+          const images = await getEventImages(event.eventId);
           eventsToUpload.push({ eventId: event.eventId, images: images });
         }
       }
