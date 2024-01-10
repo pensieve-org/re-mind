@@ -17,8 +17,8 @@ import Subtitle from "../../components/Subtitle";
 import { AppContext } from "../_layout";
 
 import { auth } from "../../firebase.js";
-import getUserEvents from "../../services/getUserEvents";
-import getUserDetails from "../../services/getUserDetails";
+import getUserEvents from "../../apis/getUserEvents";
+import getUserDetails from "../../apis/getUserDetails";
 
 import theme from "../../assets/theme";
 
@@ -29,7 +29,7 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
-import getUserEmail from "../../services/getUserEmail";
+import getUserEmail from "../../apis/getUserEmail";
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");

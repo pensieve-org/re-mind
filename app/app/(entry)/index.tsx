@@ -6,7 +6,7 @@ import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 
 import { AppContext } from "../_layout";
-import geUserEvents from "../../services/getUserEvents";
+import geUserEvents from "../../apis/getUserEvents";
 import theme from "../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../assets/constants";
 

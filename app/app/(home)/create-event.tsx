@@ -30,11 +30,11 @@ import AddFriendsList from "../../components/AddFriendsList";
 import ImageIcon from "../../assets/image.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
-import createEvent from "../../services/createEvent";
-import getUserEvents from "../../services/getUserEvents";
+import createEvent from "../../apis/createEvent";
+import getUserEvents from "../../apis/getUserEvents";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
-import getFriendDetails from "../../services/getFriendDetails";
+import getFriendDetails from "../../apis/getFriendDetails";
 import GradientScrollView from "../../components/GradientScrollView";
 
 export default function CreateEvent() {

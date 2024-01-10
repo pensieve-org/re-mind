@@ -9,7 +9,8 @@ import {
 } from "@expo-google-fonts/montserrat";
 import * as MediaLibrary from "expo-media-library";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import uploadImageToEvents from "../services/uploadImageToEvents";
+import uploadImageToEvents from "../apis/uploadImageToEvents";
+import getUserEventsToUpload from "../apis/getUserEventsToUpload";
 
 export const AppContext = createContext(null);
 
@@ -44,11 +45,20 @@ export default function Layout() {
     };
   }, []);
 
-  const handleAppStateChange = () => {
+  const handleAppStateChange = async () => {
     if (AppState.currentState == "active") {
-      alert(
-        "App has moved from the background or inactive state to active state"
-      );
+      const eventsToUpload = await getUserEventsToUpload(userDetails.userId);
+      alert(eventsToUpload);
+
+      // run a function to get all user events with upload true, also return the list of ios image ids already uploaded to that event
+      // i.e. list of objects with eventId and images [{eventId: 1, images: [image1id, image2id, image3id]}, {eventId: 2, images: [image1id, image2id, image3id]}...]
+
+      // for each event, go through all media library images that were uploaded between the start and end times of the event
+      // check the images for the appropriate meta data, i.e. taken by the device, image uid not in uploaded image list
+      // if the image has the appropriate meta data, upload it to the event
+
+      // stop looping when an image is uploaded before the event start time
+      // set uploadFlag = false, go to next event
     }
   };
 

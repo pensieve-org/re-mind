@@ -28,14 +28,14 @@ import Body from "../../components/Body";
 import Button from "../../components/Button";
 import Header from "../../components/Header";
 import { AppContext } from "../_layout";
-import getFriendRequests from "../../services/getFriendRequests";
+import getFriendRequests from "../../apis/getFriendRequests";
 import FriendsIcon from "../../assets/friends.svg";
 import ProfileIcon from "../../assets/profile.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
-import updateProfilePicture from "../../services/updateProfilePicture";
+import updateProfilePicture from "../../apis/updateProfilePicture";
 import { uploadImageAsync } from "../../utils";
-import deleteUser from "../../services/deleteUser";
+import deleteUser from "../../apis/deleteUser";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
