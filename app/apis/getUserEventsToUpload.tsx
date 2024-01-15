@@ -33,7 +33,7 @@ const getUserEventsToUpload = async (userId) => {
 
         if (event.uploadFlag === true) {
           const images = await getEventImages(event.eventId);
-          eventsToUpload.push({ eventId: event.eventId, images: images });
+          eventsToUpload.push({ event: event, images: images });
         }
       }
     }

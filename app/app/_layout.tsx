@@ -9,7 +9,7 @@ import {
 } from "@expo-google-fonts/montserrat";
 import * as MediaLibrary from "expo-media-library";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import uploadImageToEvents from "../apis/uploadImageToEvents";
+import uploadImageToEvent from "../apis/uploadImageToEvent";
 import getUserEventsToUpload from "../apis/getUserEventsToUpload";
 
 export const AppContext = createContext(null);
@@ -37,10 +37,60 @@ export default function Layout() {
   const handleAppStateChange = async () => {
     if (AppState.currentState == "active") {
       const eventsToUpload = await getUserEventsToUpload(userDetails.userId);
-      alert(JSON.stringify(eventsToUpload));
+      // alert(JSON.stringify(eventsToUpload));
 
-      // run a function to get all user events with upload true, also return the list of ios image ids already uploaded to that event
-      // i.e. list of objects with eventId and images [{eventId: 1, images: [image1id, image2id, image3id]}, {eventId: 2, images: [image1id, image2id, image3id]}...]
+      if (eventsToUpload.length === 0) {
+        alert("No events to upload");
+        return;
+      }
+
+      for (const item of eventsToUpload) {
+        const eventImagesIosId = item.images.map((image) => image.iosId);
+        const event = item.event;
+
+        // alert(JSON.stringify(eventImagesIosId));
+        // alert(JSON.stringify(event));
+
+        try {
+          const { status } = await MediaLibrary.requestPermissionsAsync();
+          if (status === "granted") {
+            const images = await MediaLibrary.getAssetsAsync({
+              first: 100,
+              mediaType: "photo",
+              createdAfter: event.startTime.toMillis(),
+              createdBefore: event.endTime.toMillis(),
+            });
+            alert(JSON.stringify(images));
+
+            if (images.length === 0) {
+              alert("No images to upload");
+              continue;
+            }
+
+            const deviceImages = images.assets.filter((image) =>
+              image.filename.includes("IMG")
+            );
+
+            alert(`device images: ${deviceImages.length}`);
+
+            for (const image of deviceImages) {
+              if (eventImagesIosId.includes(image.filename)) {
+                continue;
+              }
+              const imageDetails = await MediaLibrary.getAssetInfoAsync(image);
+              alert(imageDetails);
+              // TODO: filter for metadata
+              await uploadImageToEvent(
+                image.uri,
+                image.filename,
+                event.eventId
+              );
+            }
+          }
+        } catch (error) {
+          alert(error);
+        }
+      }
 
       // for each event, go through all media library images that were uploaded between the start and end times of the event
       // check the images for the appropriate meta data, i.e. taken by the device, image uid not in uploaded image list
