@@ -36,50 +36,40 @@ export default function Layout() {
   const [homeTabState, setHomeTabState] = useState<HomeTabState>("memories");
 
   const handleAppStateChange = async () => {
-    if (AppState.currentState == "active") {
-      const eventsToUpload = await getUserEventsToUpload(userDetails.userId);
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    if (status !== "granted") return;
 
-      if (eventsToUpload.length === 0) {
-        alert("No events to upload");
-        return;
-      }
+    if (AppState.currentState !== "active") return;
 
-      for (const item of eventsToUpload) {
-        const iosImageIds = item.iosImageIds;
-        const event = item.event;
+    const eventsToUpload = await getUserEventsToUpload(userDetails.userId);
+    if (eventsToUpload.length === 0) return;
 
-        try {
-          const { status } = await MediaLibrary.requestPermissionsAsync();
-          if (status === "granted") {
-            const imageAssets = await MediaLibrary.getAssetsAsync({
-              first: 100,
-              mediaType: "photo",
-              createdAfter: event.startTime.toMillis(),
-              createdBefore: event.endTime.toMillis(),
-            });
+    for (const item of eventsToUpload) {
+      const { iosImageIds, event } = item;
 
-            const deviceImages = imageAssets.assets.filter(
-              (image) =>
-                image.filename.includes("IMG") &&
-                iosImageIds.includes(image.filename) === false
-            );
+      try {
+        const imageAssets = await MediaLibrary.getAssetsAsync({
+          first: 100,
+          mediaType: "photo",
+          createdAfter: event.startTime.toMillis(),
+          createdBefore: event.endTime.toMillis(),
+        });
 
-            for (const image of deviceImages) {
-              // const imageDetails = await MediaLibrary.getAssetInfoAsync(image);
-              await uploadImageToEvent(
-                image.uri,
-                image.filename,
-                event.eventId
-              );
-            }
+        const imagesToUpload = imageAssets.assets.filter(
+          (image) =>
+            image.filename.includes("IMG") &&
+            !iosImageIds.includes(image.filename)
+        );
 
-            if (event.status === "past") {
-              await clearEventUploadFlag(event.eventId);
-            }
-          }
-        } catch (error) {
-          alert(error);
+        for (const image of imagesToUpload) {
+          await uploadImageToEvent(image, event.eventId);
         }
+
+        if (event.status === "past") {
+          await clearEventUploadFlag(event.eventId);
+        }
+      } catch (error) {
+        alert(error);
       }
     }
   };

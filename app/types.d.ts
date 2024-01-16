@@ -34,7 +34,7 @@ declare type ImageDetails = {
     tagged: string[],
     uploadTime: Date,
     uploadedBy: string
-    iosId: string
+    iosImageId: string
 }
 
 declare type UserType = "guest" | "admin" | "invited";
