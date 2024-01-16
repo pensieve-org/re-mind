@@ -4,7 +4,7 @@ import { uploadImageAsync } from "../utils";
 
 const uploadImageToEvent = async (
   imageUrl: string,
-  iosId: string,
+  iosImageId: string,
   eventId: string
 ) => {
   try {
@@ -22,7 +22,7 @@ const uploadImageToEvent = async (
         queued: false,
         tagged: "",
         uploadTime: Date.now(),
-        iodId: iosId,
+        iosImageId: iosImageId,
       });
     }
     await batch.commit();

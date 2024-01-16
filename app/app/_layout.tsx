@@ -37,7 +37,6 @@ export default function Layout() {
   const handleAppStateChange = async () => {
     if (AppState.currentState == "active") {
       const eventsToUpload = await getUserEventsToUpload(userDetails.userId);
-      // alert(JSON.stringify(eventsToUpload));
 
       if (eventsToUpload.length === 0) {
         alert("No events to upload");
@@ -45,41 +44,34 @@ export default function Layout() {
       }
 
       for (const item of eventsToUpload) {
-        const eventImagesIosId = item.images.map((image) => image.iosId);
+        const iosImageIds = item.iosImageIds;
         const event = item.event;
 
-        // alert(JSON.stringify(eventImagesIosId));
-        // alert(JSON.stringify(event));
+        alert(iosImageIds.map((id) => `iOS ID: ${id}`).join("\n"));
 
         try {
           const { status } = await MediaLibrary.requestPermissionsAsync();
           if (status === "granted") {
-            const images = await MediaLibrary.getAssetsAsync({
+            const imageAssets = await MediaLibrary.getAssetsAsync({
               first: 100,
               mediaType: "photo",
               createdAfter: event.startTime.toMillis(),
               createdBefore: event.endTime.toMillis(),
             });
-            alert(JSON.stringify(images));
 
-            if (images.assets.length === 0) {
-              alert("No images to upload");
+            if (imageAssets.assets.length === 0) {
+              alert("No imageIds to upload");
               continue;
             }
 
-            const deviceImages = images.assets.filter((image) =>
-              image.filename.includes("IMG")
+            const deviceImages = imageAssets.assets.filter(
+              (image) =>
+                image.filename.includes("IMG") &&
+                iosImageIds.includes(image.filename) === false
             );
 
-            alert(`device images: ${deviceImages.length}`);
-
             for (const image of deviceImages) {
-              if (eventImagesIosId.includes(image.filename)) {
-                continue;
-              }
-              const imageDetails = await MediaLibrary.getAssetInfoAsync(image);
-              alert(imageDetails);
-              // TODO: filter for metadata
+              // const imageDetails = await MediaLibrary.getAssetInfoAsync(image);
               await uploadImageToEvent(
                 image.uri,
                 image.filename,
@@ -91,13 +83,6 @@ export default function Layout() {
           alert(error);
         }
       }
-
-      // for each event, go through all media library images that were uploaded between the start and end times of the event
-      // check the images for the appropriate meta data, i.e. taken by the device, image uid not in uploaded image list
-      // if the image has the appropriate meta data, upload it to the event
-
-      // stop looping when an image is uploaded before the event start time
-      // set uploadFlag = false, go to next event
     }
   };
 

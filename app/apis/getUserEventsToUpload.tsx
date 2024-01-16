@@ -32,8 +32,12 @@ const getUserEventsToUpload = async (userId) => {
         const event = eventSnapshot.data() as EventDetails;
 
         if (event.uploadFlag === true) {
-          const images = await getEventImages(event.eventId);
-          eventsToUpload.push({ event: event, images: images });
+          const imagesRef = collection(eventRef, "images");
+          const imagesSnapshot = await getDocs(imagesRef);
+          const iosImageIds = imagesSnapshot.docs.map(
+            (doc) => doc.data().iosImageId
+          );
+          eventsToUpload.push({ event: event, iosImageIds: iosImageIds });
         }
       }
     }
