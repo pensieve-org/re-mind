@@ -11,6 +11,7 @@ import * as MediaLibrary from "expo-media-library";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import uploadImageToEvent from "../apis/uploadImageToEvent";
 import getUserEventsToUpload from "../apis/getUserEventsToUpload";
+import clearEventUploadFlag from "../apis/clearEventUploadFlag";
 
 export const AppContext = createContext(null);
 
@@ -47,8 +48,6 @@ export default function Layout() {
         const iosImageIds = item.iosImageIds;
         const event = item.event;
 
-        alert(iosImageIds.map((id) => `iOS ID: ${id}`).join("\n"));
-
         try {
           const { status } = await MediaLibrary.requestPermissionsAsync();
           if (status === "granted") {
@@ -58,11 +57,6 @@ export default function Layout() {
               createdAfter: event.startTime.toMillis(),
               createdBefore: event.endTime.toMillis(),
             });
-
-            if (imageAssets.assets.length === 0) {
-              alert("No imageIds to upload");
-              continue;
-            }
 
             const deviceImages = imageAssets.assets.filter(
               (image) =>
@@ -77,6 +71,10 @@ export default function Layout() {
                 image.filename,
                 event.eventId
               );
+            }
+
+            if (event.status === "past") {
+              await clearEventUploadFlag(event.eventId);
             }
           }
         } catch (error) {
