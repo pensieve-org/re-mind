@@ -9,7 +9,7 @@ import {
 } from "@expo-google-fonts/montserrat";
 import * as MediaLibrary from "expo-media-library";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import uploadImageToEvent from "../apis/uploadImageToEvent";
+import uploadImagesToEvent from "../apis/uploadImagesToEvent";
 import getUserEventsToUpload from "../apis/getUserEventsToUpload";
 import clearEventUploadFlag from "../apis/clearEventUploadFlag";
 
@@ -61,9 +61,7 @@ export default function Layout() {
             !iosImageIds.includes(image.filename)
         );
 
-        for (const image of imagesToUpload) {
-          await uploadImageToEvent(image, event.eventId);
-        }
+        await uploadImagesToEvent(imagesToUpload, event.eventId);
 
         if (event.status === "past") {
           await clearEventUploadFlag(event.eventId);
