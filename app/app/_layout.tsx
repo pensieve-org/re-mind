@@ -62,7 +62,7 @@ export default function Layout() {
             });
             alert(JSON.stringify(images));
 
-            if (images.length === 0) {
+            if (images.assets.length === 0) {
               alert("No images to upload");
               continue;
             }
