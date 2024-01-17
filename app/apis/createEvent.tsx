@@ -1,6 +1,6 @@
 import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
-import { uploadImageAsync } from "../utils";
+import uploadImageAsync from "../utils/uploadImageAsync";
 import addUserToEvent from "./addUserToEvent";
 
 const createEvent = async (

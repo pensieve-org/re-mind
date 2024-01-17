@@ -34,7 +34,7 @@ import ProfileIcon from "../../assets/profile.svg";
 import CameraIcon from "../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
 import updateProfilePicture from "../../apis/updateProfilePicture";
-import { uploadImageAsync } from "../../utils";
+import uploadImageAsync from "../../utils/uploadImageAsync";
 import deleteUser from "../../apis/deleteUser";
 
 export default function Profile() {

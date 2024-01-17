@@ -10,7 +10,7 @@ import { AppContext } from "../_layout";
 import geUserEvents from "../../apis/getUserEvents";
 import theme from "../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../assets/constants";
-import { handleImageUpload } from "../../utils";
+import handleImageUpload from "../../utils/handleImageUpload";
 import * as BackgroundFetch from "expo-background-fetch";
 import * as TaskManager from "expo-task-manager";
 const BACKGROUND_FETCH_TASK = "background-fetch";

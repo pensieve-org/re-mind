@@ -7,7 +7,7 @@ import {
   Montserrat_400Regular_Italic,
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
-import { handleImageUpload } from "../utils";
+import handleImageUpload from "../utils/handleImageUpload";
 
 export const AppContext = createContext(null);
 

@@ -1,27 +1,11 @@
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { storage } from "./firebase.js";
 import { AppState } from "react-native";
 import * as MediaLibrary from "expo-media-library";
-import uploadImagesToEvent from "./apis/uploadImagesToEvent";
-import getUserEventsToUpload from "./apis/getUserEventsToUpload";
-import clearEventUploadFlag from "./apis/clearEventUploadFlag";
+import uploadImagesToEvent from "../apis/uploadImagesToEvent";
+import getUserEventsToUpload from "../apis/getUserEventsToUpload";
+import clearEventUploadFlag from "../apis/clearEventUploadFlag";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const uploadImageAsync = async (uri, path) => {
-  try {
-    const response = await fetch(uri);
-    const blob = await response.blob();
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, blob);
-    const URL = await getDownloadURL(storageRef);
-    return URL;
-  } catch (e) {
-    console.error("Error in uploadImageAsync", e);
-    throw e;
-  }
-};
-
-export const handleImageUpload = async (batchSize: number = 5) => {
+const handleImageUpload = async (batchSize: number = 5) => {
   const { status } = await MediaLibrary.requestPermissionsAsync();
   if (status !== "granted") return;
 
@@ -61,3 +45,5 @@ export const handleImageUpload = async (batchSize: number = 5) => {
     }
   }
 };
+
+export default handleImageUpload;

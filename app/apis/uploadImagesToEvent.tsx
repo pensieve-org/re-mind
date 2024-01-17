@@ -1,6 +1,6 @@
 import { writeBatch, collection, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
-import { uploadImageAsync } from "../utils";
+import uploadImageAsync from "../utils/uploadImageAsync";
 import { Asset } from "expo-media-library";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
 import * as FileSystem from "expo-file-system";
