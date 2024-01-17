@@ -75,6 +75,10 @@ export const checkEvents = functions
       // Update the status if it has changed
       if (event.status !== status) {
         await doc.ref.update({status});
+
+        if (event.status === "live") {
+          await doc.ref.update({uploadFlag: true});
+        }
       }
     });
   });

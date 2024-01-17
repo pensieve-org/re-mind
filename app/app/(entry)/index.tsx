@@ -4,9 +4,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
+import * as MediaLibrary from "expo-media-library";
 
 import { AppContext } from "../_layout";
-import geUserEvents from "../../services/getUserEvents";
+import geUserEvents from "../../apis/getUserEvents";
 import theme from "../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../assets/constants";
 
@@ -35,6 +36,16 @@ export default function Page() {
   useEffect(() => {
     (async () => {
       await checkLogin();
+    })();
+  }, []);
+
+  useEffect(() => {
+    // TODO: async run the upload image code here
+    (async () => {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access media library is not granted");
+      }
     })();
   }, []);
 

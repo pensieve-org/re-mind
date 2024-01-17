@@ -17,12 +17,12 @@ import Subtitle from "../../components/Subtitle";
 import BackArrow from "../../assets/arrow-left.svg";
 import { AppContext } from "../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import getUserEvents from "../../services/getUserEvents";
+import getUserEvents from "../../apis/getUserEvents";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../../firebase.js";
 import { View as AnimatedView } from "react-native-animatable";
-import createUser from "../../services/createUser";
+import createUser from "../../apis/createUser";
 import GradientScrollView from "../../components/GradientScrollView";
 
 // TODO: Use React Hook Forms / formik

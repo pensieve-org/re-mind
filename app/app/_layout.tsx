@@ -1,4 +1,5 @@
-import React, { createContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useState, useEffect, useContext } from "react";
+import { AppState } from "react-native";
 import { Slot } from "expo-router";
 import { useFonts } from "expo-font";
 import {
@@ -8,8 +9,9 @@ import {
 } from "@expo-google-fonts/montserrat";
 import * as MediaLibrary from "expo-media-library";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import uploadImageToEvents from "../services/uploadImageToEvents";
-import EventListeners from "../services/EventListeners";
+import uploadImagesToEvent from "../apis/uploadImagesToEvent";
+import getUserEventsToUpload from "../apis/getUserEventsToUpload";
+import clearEventUploadFlag from "../apis/clearEventUploadFlag";
 
 export const AppContext = createContext(null);
 
@@ -25,76 +27,63 @@ function FontLoader({ children }) {
   return children;
 }
 
-export default function HomeLayout() {
+// TODO: add back in background task manager
+
+export default function Layout() {
   const [userDetails, setUserDetails] = useState<UserDetails>(
     {} as UserDetails
   );
   const [userEvents, setUserEvents] = useState<UserEvents>({} as UserEvents);
   const [selectedEvent, setSelectedEvent] = useState({});
   const [homeTabState, setHomeTabState] = useState<HomeTabState>("memories");
-  const [isLive, setIsLive] = useState(false);
-  const [liveEventIds, setLiveEventIds] = useState([]);
-  const [imagesToUpload, setImagesToUpload] = useState(false);
-  const uploadQueue = useRef([]);
 
-  useEffect(() => {
-    const uploadImages = async () => {
-      if (uploadQueue.current.length === 0) {
-        setImagesToUpload(false);
-        return;
-      }
+  const handleAppStateChange = async () => {
+    const { status } = await MediaLibrary.requestPermissionsAsync();
+    if (status !== "granted") return;
 
-      const photoUri = uploadQueue.current.shift();
+    if (AppState.currentState !== "active") return;
+
+    const eventsToUpload = await getUserEventsToUpload(userDetails.userId);
+    if (eventsToUpload.length === 0) return;
+
+    for (const item of eventsToUpload) {
+      const { iosImageIds, event } = item;
+
       try {
-        await uploadImageToEvents(photoUri, liveEventIds);
-        uploadImages();
-      } catch (err) {
-        console.log(err);
+        const imageAssets = await MediaLibrary.getAssetsAsync({
+          first: 100,
+          mediaType: "photo",
+          createdAfter: event.startTime.toMillis(),
+          createdBefore: event.endTime.toMillis(),
+        });
+
+        const imagesToUpload = imageAssets.assets.filter(
+          (image) =>
+            image.filename.includes("IMG") &&
+            !iosImageIds.includes(image.filename)
+        );
+
+        await uploadImagesToEvent(imagesToUpload, event.eventId);
+
+        if (event.status === "past") {
+          await clearEventUploadFlag(event.eventId);
+        }
+      } catch (error) {
+        alert(error);
       }
-    };
-
-    uploadImages();
-  }, [imagesToUpload]);
-
-  const updatePhotos = async (insertedAssets: MediaLibrary.Asset[]) => {
-    try {
-      const newUris = insertedAssets.map((asset) => asset.uri);
-      uploadQueue.current.push(newUris);
-
-      setImagesToUpload(true);
-    } catch (err) {
-      alert(err);
     }
   };
 
   useEffect(() => {
-    let newSubscription: MediaLibrary.Subscription | null = null;
-
-    (async () => {
-      try {
-        if (isLive) {
-          const { status } = await MediaLibrary.requestPermissionsAsync();
-          if (status !== "granted") {
-            alert("User needs to grant permission to photos.");
-            return;
-          }
-          newSubscription = MediaLibrary.addListener(
-            async (event: MediaLibrary.MediaLibraryAssetsChangeEvent) => {
-              await updatePhotos(event.insertedAssets);
-            }
-          );
-        } else {
-          newSubscription?.remove();
-        }
-      } catch (err) {
-        alert(err);
-      }
-    })();
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
 
     return () => {
-      newSubscription?.remove();
+      subscription.remove();
     };
-  }, [isLive]);
+  }, [userDetails]);
 
   return (
     <FontLoader>
@@ -110,11 +99,6 @@ export default function HomeLayout() {
           setHomeTabState,
         }}
       >
-        <EventListeners
-          events={userEvents}
-          setIsLive={setIsLive}
-          setLiveEventIds={setLiveEventIds}
-        />
         <Slot />
       </AppContext.Provider>
     </FontLoader>

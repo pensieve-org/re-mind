@@ -4919,6 +4919,13 @@ expo-file-system@~15.4.0, expo-file-system@~15.4.4:
   dependencies:
     uuid "^3.4.0"
 
+expo-file-system@~15.4.5:
+  version "15.4.5"
+  resolved "https://registry.yarnpkg.com/expo-file-system/-/expo-file-system-15.4.5.tgz#3ef68583027ff0e2fb9eca7a22b3caff6cfc550d"
+  integrity sha512-xy61KaTaDgXhT/dllwYDHm3ch026EyO8j4eC6wSVr/yE12MMMxAC09yGwy4f7kkOs6ztGVQF5j7ldRzNLN4l0Q==
+  dependencies:
+    uuid "^3.4.0"
+
 expo-font@~11.4.0:
   version "11.4.0"
   resolved "https://registry.npmjs.org/expo-font/-/expo-font-11.4.0.tgz"
@@ -4937,6 +4944,13 @@ expo-image-loader@~4.3.0:
   version "4.3.0"
   resolved "https://registry.npmjs.org/expo-image-loader/-/expo-image-loader-4.3.0.tgz"
   integrity sha512-2kqJIO+oYM8J3GbvTUHLqTSpt1dLpOn/X0eB4U4RTuzz/faj8l/TyQELsMBLlGAkweNUuG9LqznbaBz+WuSFEw==
+
+expo-image-manipulator@~11.3.0:
+  version "11.3.0"
+  resolved "https://registry.yarnpkg.com/expo-image-manipulator/-/expo-image-manipulator-11.3.0.tgz#3bf5e1d7331c182950f73bfacf2060cc4604170e"
+  integrity sha512-lw17v8VD5LqE+j3YMZNNlfM19OlkBPzLEoVyGcx9FtGC533le5dnXF+UiZTCbFIVr/xyBJTMse9G0oJ70q9MbQ==
+  dependencies:
+    expo-image-loader "~4.3.0"
 
 expo-image-picker@~14.3.2:
   version "14.3.2"

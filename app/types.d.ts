@@ -23,7 +23,8 @@ declare type EventDetails = {
     startTime: Date,
     endTime: Date,
     thumbnail: string,
-    status: "past" | "live" | "future"
+    status: "past" | "live" | "future",
+    uploadFlag: boolean
 }
 
 declare type ImageDetails = {
@@ -33,6 +34,7 @@ declare type ImageDetails = {
     tagged: string[],
     uploadTime: Date,
     uploadedBy: string
+    iosImageId: string
 }
 
 declare type UserType = "guest" | "admin" | "invited";

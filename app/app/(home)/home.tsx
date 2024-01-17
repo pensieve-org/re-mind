@@ -29,7 +29,7 @@ import {
 } from "../../assets/constants";
 
 import { AppContext } from "../_layout";
-import getUserEvents from "../../services/getUserEvents";
+import getUserEvents from "../../apis/getUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 import Calendar from "../../components/Calendar";
 import GradientScrollView from "../../components/GradientScrollView";
