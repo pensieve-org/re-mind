@@ -27,6 +27,8 @@ function FontLoader({ children }) {
   return children;
 }
 
+// TODO: add back in background task manager
+
 export default function Layout() {
   const [userDetails, setUserDetails] = useState<UserDetails>(
     {} as UserDetails

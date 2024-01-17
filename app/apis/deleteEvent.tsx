@@ -44,9 +44,13 @@ const deleteEvent = async (eventId) => {
       }
     }
 
-    // delete thumbnail from storage
+    // delete thumbnail from storage if it exists
     const thumbnailRef = ref(storage, `events/${eventId}/thumbnail`);
-    await deleteObject(thumbnailRef);
+    try {
+      await deleteObject(thumbnailRef);
+    } catch (err) {
+      console.log(err);
+    }
   } catch (error) {
     throw error;
   }

@@ -3,24 +3,34 @@ import { db } from "../firebase.js";
 import { uploadImageAsync } from "../utils";
 import { Asset } from "expo-media-library";
 import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
+import * as FileSystem from "expo-file-system";
 
 const processImage = async (uri) => {
-  const manipResult = await manipulateAsync(
-    uri,
-    [{ resize: { width: 1000 } }],
-    { compress: 0, format: SaveFormat.JPEG }
-  );
+  const manipResult = await manipulateAsync(uri, [{ resize: { width: 500 } }], {
+    compress: 0,
+    format: SaveFormat.JPEG,
+  });
   return manipResult.uri;
 };
 
-const uploadImagesToEvent = async (images: Asset[], eventId: string) => {
+const uploadImagesToEvent = async (
+  images: Asset[],
+  eventId: string,
+  batchSize: number = 5
+) => {
   try {
-    const batch = writeBatch(db);
     const eventRef = doc(db, "events", eventId);
-
     const docSnapshot = await getDoc(eventRef);
     if (docSnapshot.exists()) {
+      let batch = writeBatch(db);
+      let batchCount = 0;
+
       for (const image of images) {
+        const fileInfo = await FileSystem.getInfoAsync(image.uri);
+        if (!fileInfo.exists) {
+          console.warn(`File does not exist at uri: ${image.uri}`);
+          continue;
+        }
         const processedImage = await processImage(image.uri);
         const url = await uploadImageAsync(
           processedImage,
@@ -36,9 +46,20 @@ const uploadImagesToEvent = async (images: Asset[], eventId: string) => {
           uploadTime: Date.now(),
           iosImageId: image.filename,
         });
+
+        batchCount++;
+
+        if (batchCount >= batchSize) {
+          await batch.commit();
+          batch = writeBatch(db); // Create a new batch
+          batchCount = 0;
+        }
+      }
+
+      if (batchCount > 0) {
+        await batch.commit(); // Commit the remaining operations in the batch
       }
     }
-    await batch.commit();
   } catch (error) {
     console.error("Error uploading images:", error);
     throw error;
