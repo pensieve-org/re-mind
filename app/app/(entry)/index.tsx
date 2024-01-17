@@ -15,9 +15,10 @@ import * as BackgroundFetch from "expo-background-fetch";
 import * as TaskManager from "expo-task-manager";
 const BACKGROUND_FETCH_TASK = "background-fetch";
 
+//TODO: fix this, test with instruments app
 TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   try {
-    await handleImageUpload();
+    await handleImageUpload(5);
   } catch (err) {
     console.log(err);
   }
@@ -66,7 +67,7 @@ export default function Page() {
         console.log("Permission to access media library is not granted");
       }
       await registerBackgroundFetchTask();
-      await handleImageUpload(10);
+      handleImageUpload(5);
     })();
   }, []);
 
