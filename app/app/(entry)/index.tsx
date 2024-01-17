@@ -10,6 +10,26 @@ import { AppContext } from "../_layout";
 import geUserEvents from "../../apis/getUserEvents";
 import theme from "../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../assets/constants";
+import { handleImageUpload } from "../../utils";
+import * as BackgroundFetch from "expo-background-fetch";
+import * as TaskManager from "expo-task-manager";
+const BACKGROUND_FETCH_TASK = "background-fetch";
+
+TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+  try {
+    await handleImageUpload();
+  } catch (err) {
+    console.log(err);
+  }
+});
+
+async function registerBackgroundFetchTask() {
+  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+    minimumInterval: 15,
+    stopOnTerminate: false,
+    startOnBoot: true,
+  });
+}
 
 export default function Page() {
   const insets = useSafeAreaInsets();
@@ -40,12 +60,13 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    // TODO: async run the upload image code here
     (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access media library is not granted");
       }
+      await registerBackgroundFetchTask();
+      await handleImageUpload(10);
     })();
   }, []);
 
