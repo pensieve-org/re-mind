@@ -65,12 +65,11 @@ export default function EventSettings() {
             setIsLoading(true);
             try {
               await deleteEvent(selectedEvent.eventId);
-              setUserEvents((prevUserEvents) => ({
-                ...prevUserEvents,
-                [selectedEvent.status]: prevUserEvents[
-                  selectedEvent.status
-                ].filter((event) => event.eventId !== selectedEvent.eventId),
-              }));
+              setUserEvents((prevUserEvents) =>
+                prevUserEvents.filter(
+                  (event) => event.eventId !== selectedEvent.eventId
+                )
+              );
               setIsLoading(false);
               navigateHome();
             } catch (error) {

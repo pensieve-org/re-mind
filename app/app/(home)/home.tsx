@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Image,
   Pressable,
@@ -33,6 +33,9 @@ import getUserEvents from "../../apis/getUserEvents";
 import ProfileIcon from "../../assets/profile.svg";
 import Calendar from "../../components/Calendar";
 import GradientScrollView from "../../components/GradientScrollView";
+import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
+import { db } from "../../firebase.js";
+import getEventDetails from "../../apis/getEventDetails";
 
 const blinkAnimation = {
   0: { opacity: 1 },
@@ -58,6 +61,73 @@ export default function Home() {
   } = useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
+
+  useEffect(() => {
+    const unsubscribes = [];
+
+    // Create listeners for live events
+    userEvents.forEach((event, index) => {
+      const eventRef = doc(collection(db, "events"), event.eventId);
+      const unsubscribe = onSnapshot(eventRef, (d) => {
+        if (d.exists()) {
+          const newDetails = d.data() as EventDetails;
+          const updatedEvent = { ...newDetails, isInvited: event.isInvited };
+
+          // Create a new array with the updated event
+          const updatedUserEvents = [...userEvents];
+          updatedUserEvents[index] = updatedEvent;
+
+          // Update the userEvents state
+          setUserEvents(updatedUserEvents);
+        }
+      });
+      unsubscribes.push(unsubscribe);
+    });
+
+    // TODO: fix this listener so that adding new events and deleting events updates automatically
+
+    // const attendeesRef = collection(db, "attendees");
+    // const q = query(attendeesRef, where("userId", "==", userDetails.userId));
+    // const unsubscribe = onSnapshot(q, async (snapshot) => {
+    //   snapshot.docChanges().forEach(async (change) => {
+    //     if (change.type === "added") {
+    //       // Add the new event to userEvents
+    //       const newEvent = await getEventDetails(change.doc.data().eventId);
+    //       setUserEvents((prevEvents) => [
+    //         ...prevEvents,
+    //         {
+    //           ...newEvent,
+    //           isInvited: change.doc.data().userType === "invited",
+    //         },
+    //       ]);
+    //     } else if (change.type === "modified") {
+    //       setUserEvents((prevEvents) =>
+    //         prevEvents.map((event) =>
+    //           event.eventId === change.doc.data().eventId
+    //             ? {
+    //                 ...event,
+    //                 isInvited: change.doc.data().userType === "invited",
+    //               }
+    //             : event
+    //         )
+    //       );
+    //     } else if (change.type === "removed") {
+    //       // Remove the deleted event from userEvents
+    //       setUserEvents((prevEvents) =>
+    //         prevEvents.filter(
+    //           (event) => event.eventId !== change.doc.data().eventId
+    //         )
+    //       );
+    //     }
+    //   });
+    // });
+    // unsubscribes.push(unsubscribe);
+
+    // Cleanup function to unsubscribe from the listeners when the component is unmounted
+    return () => {
+      unsubscribes.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [userEvents, setUserEvents]);
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);
@@ -160,7 +230,7 @@ export default function Home() {
               >
                 calendar
               </Subtitle>
-              {userEvents.numInvited > 0 && (
+              {userEvents.filter((event) => event.isInvited).length > 0 && (
                 <View
                   style={{
                     position: "absolute",
@@ -179,7 +249,7 @@ export default function Home() {
                     bold={true}
                     style={{ color: theme.PRIMARY }}
                   >
-                    {userEvents.numInvited}
+                    {userEvents.filter((event) => event.isInvited).length}
                   </Body>
                 </View>
               )}
@@ -205,7 +275,8 @@ export default function Home() {
                   >
                     live
                   </Subtitle>
-                  {userEvents.live.length > 0 && (
+                  {userEvents.filter((event) => event.status === "live")
+                    .length > 0 && (
                     <AnimatedView
                       animation="blinkAnimation"
                       iterationCount="infinite"
@@ -222,9 +293,12 @@ export default function Home() {
                   )}
                 </View>
 
-                {userEvents.live.length > 0 ? (
+                {userEvents.filter((event) => event.status === "live").length >
+                0 ? (
                   <EventList
-                    events={userEvents.live}
+                    events={userEvents.filter(
+                      (event) => event.status === "live"
+                    )}
                     onPress={handleEventPress}
                   />
                 ) : (
@@ -243,9 +317,12 @@ export default function Home() {
                   past
                 </Subtitle>
 
-                {userEvents.past.length > 0 ? (
+                {userEvents.filter((event) => event.status === "past").length >
+                0 ? (
                   <EventList
-                    events={userEvents.past}
+                    events={userEvents.filter(
+                      (event) => event.status === "past"
+                    )}
                     onPress={handleEventPress}
                   />
                 ) : (
@@ -256,9 +333,12 @@ export default function Home() {
               </>
             ) : (
               <>
-                {userEvents.future.length > 0 ? (
+                {userEvents.filter((event) => event.status === "future")
+                  .length > 0 ? (
                   <Calendar
-                    events={userEvents.future}
+                    events={userEvents.filter(
+                      (event) => event.status === "future"
+                    )}
                     onPress={handleEventPress}
                   />
                 ) : (

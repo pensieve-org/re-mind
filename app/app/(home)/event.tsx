@@ -44,7 +44,6 @@ import GradientScrollView from "../../components/GradientScrollView";
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
-  // const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
@@ -82,28 +81,15 @@ export default function Event() {
     );
 
     // Listener for changes in events
-    const eventUnsubscribe = onSnapshot(eventRef, (doc) => {
-      if (doc.exists()) {
-        const newDetails = doc.data() as EventDetails;
-        if (
-          newDetails.status !== selectedEvent.status ||
-          newDetails.eventName !== selectedEvent.eventName ||
-          newDetails.eventId !== selectedEvent.eventId ||
-          newDetails.thumbnail !== selectedEvent.thumbnail
-        ) {
-          setUserEvents((prevUserEvents) => ({
-            ...prevUserEvents,
-            [selectedEvent.status]: prevUserEvents[selectedEvent.status].filter(
-              (event) => event.eventId !== selectedEvent.eventId
-            ),
-            [newDetails.status]: [
-              ...prevUserEvents[newDetails.status],
-              newDetails,
-            ],
-          }));
-
-          setSelectedEvent(newDetails);
-        }
+    const eventUnsubscribe = onSnapshot(eventRef, (d) => {
+      if (d.exists()) {
+        const newDetails = d.data() as EventDetails;
+        const updatedEvent = {
+          ...newDetails,
+          isInvited: selectedEvent.isInvited,
+        };
+        // Update the userEvents state
+        setSelectedEvent(updatedEvent);
       }
     });
 
@@ -127,17 +113,6 @@ export default function Event() {
       router.push(route);
     }, ANIMATION_DURATION);
   };
-
-  // const onRefresh = React.useCallback(async () => {
-  //   setRefreshing(true);
-  //   const eventDetails = await getEventDetails(selectedEvent.eventId);
-  //   setSelectedEvent((prevEvent) => ({
-  //     ...eventDetails,
-  //     isInvited: prevEvent.isInvited,
-  //   }));
-  //   fetchEventImages();
-  //   setRefreshing(false);
-  // }, []);
 
   const formatDate = (date: Date | null) => {
     return date

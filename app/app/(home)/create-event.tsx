@@ -96,7 +96,6 @@ export default function CreateEvent() {
     }
 
     setIsLoading(true);
-
     const now = new Date();
 
     let status, uploadFlag;
@@ -125,6 +124,7 @@ export default function CreateEvent() {
         userDetails
       );
 
+      // TODO: remove this eventually, when the auto listener works
       setUserEvents(await getUserEvents(userDetails.userId));
 
       setIsLoading(false);
