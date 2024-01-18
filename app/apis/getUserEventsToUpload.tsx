@@ -4,11 +4,9 @@ import {
   getDoc,
   getDocs,
   query,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import { db } from "../firebase.js";
-import getEventImages from "./getEventImages";
 
 const getUserEventsToUpload = async (userId) => {
   try {
