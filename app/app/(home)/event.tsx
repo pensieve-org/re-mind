@@ -37,7 +37,7 @@ import getEventAttendees from "../../apis/getEventAttendees";
 import getEventImages from "../../apis/getEventImages";
 import EventInvitation from "../../components/EventInvitation";
 import respondEventInvitation from "../../apis/respondEventInvitation";
-import { collection, doc, onSnapshot } from "firebase/firestore";
+import { collection, doc, onSnapshot, where, query } from "firebase/firestore";
 import { db } from "../../firebase.js";
 import GradientScrollView from "../../components/GradientScrollView";
 
@@ -93,10 +93,29 @@ export default function Event() {
       }
     });
 
+    // Listener for changes in event attendees
+    const attendeesRef = collection(db, "attendees");
+    const q = query(
+      attendeesRef,
+      where("eventId", "==", selectedEvent.eventId),
+      where("userId", "==", userDetails.userId)
+    );
+    const attendeesUnsubscribe = onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === "added" || change.type === "modified") {
+          setSelectedEvent((prevEvent) => ({
+            ...prevEvent,
+            isInvited: change.doc.data().userType === "invited",
+          }));
+        }
+      });
+    });
+
     // Cleanup function to unsubscribe from the listeners when the component is unmounted
     return () => {
       imagesUnsubscribe();
       eventUnsubscribe();
+      attendeesUnsubscribe();
     };
   }, []);
 
@@ -167,34 +186,28 @@ export default function Event() {
       userDetails.userId
     );
 
+    // TODO: remove this? handle with listeners instead
     if (response) {
       // if accept, change isInvited to false in both selected and user events
-      setUserEvents((prevUserEvents) => ({
-        ...prevUserEvents,
-        numInvited:
-          prevUserEvents.numInvited > 0 ? prevUserEvents.numInvited - 1 : 0,
-        [selectedEvent.status]: prevUserEvents[selectedEvent.status].map(
-          (event) =>
-            event.eventId === selectedEvent.eventId
-              ? { ...event, isInvited: false }
-              : event
-        ),
-      }));
-
       setSelectedEvent({
         ...selectedEvent,
         isInvited: false,
       });
+
+      setUserEvents((prevUserEvents) =>
+        prevUserEvents.map((event) =>
+          event.eventId === selectedEvent.eventId
+            ? { ...event, isInvited: false }
+            : event
+        )
+      );
     } else {
       // otherwise, delete the event from the list of user events
-      setUserEvents((prevUserEvents) => ({
-        ...prevUserEvents,
-        numInvited:
-          prevUserEvents.numInvited > 0 ? prevUserEvents.numInvited - 1 : 0,
-        [selectedEvent.status]: prevUserEvents[selectedEvent.status].filter(
+      setUserEvents((prevUserEvents) =>
+        prevUserEvents.filter(
           (event) => event.eventId !== selectedEvent.eventId
-        ),
-      }));
+        )
+      );
 
       navigateBack();
     }

@@ -85,43 +85,44 @@ export default function Home() {
     });
 
     // TODO: fix this listener so that adding new events and deleting events updates automatically
+    // will probably need to be done by adding a list of events to the users doc and listeninng to that
 
-    // const attendeesRef = collection(db, "attendees");
-    // const q = query(attendeesRef, where("userId", "==", userDetails.userId));
-    // const unsubscribe = onSnapshot(q, async (snapshot) => {
-    //   snapshot.docChanges().forEach(async (change) => {
-    //     if (change.type === "added") {
-    //       // Add the new event to userEvents
-    //       const newEvent = await getEventDetails(change.doc.data().eventId);
-    //       setUserEvents((prevEvents) => [
-    //         ...prevEvents,
-    //         {
-    //           ...newEvent,
-    //           isInvited: change.doc.data().userType === "invited",
-    //         },
-    //       ]);
-    //     } else if (change.type === "modified") {
-    //       setUserEvents((prevEvents) =>
-    //         prevEvents.map((event) =>
-    //           event.eventId === change.doc.data().eventId
-    //             ? {
-    //                 ...event,
-    //                 isInvited: change.doc.data().userType === "invited",
-    //               }
-    //             : event
-    //         )
-    //       );
-    //     } else if (change.type === "removed") {
-    //       // Remove the deleted event from userEvents
-    //       setUserEvents((prevEvents) =>
-    //         prevEvents.filter(
-    //           (event) => event.eventId !== change.doc.data().eventId
-    //         )
-    //       );
-    //     }
-    //   });
-    // });
-    // unsubscribes.push(unsubscribe);
+    const attendeesRef = collection(db, "attendees");
+    const q = query(attendeesRef, where("userId", "==", userDetails.userId));
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      snapshot.docChanges().forEach(async (change) => {
+        if (change.type === "added") {
+          // Add the new event to userEvents
+          const newEvent = await getEventDetails(change.doc.data().eventId);
+          setUserEvents((prevEvents) => [
+            ...prevEvents,
+            {
+              ...newEvent,
+              isInvited: change.doc.data().userType === "invited",
+            },
+          ]);
+        } else if (change.type === "modified") {
+          setUserEvents((prevEvents) =>
+            prevEvents.map((event) =>
+              event.eventId === change.doc.data().eventId
+                ? {
+                    ...event,
+                    isInvited: change.doc.data().userType === "invited",
+                  }
+                : event
+            )
+          );
+        } else if (change.type === "removed") {
+          // Remove the deleted event from userEvents
+          setUserEvents((prevEvents) =>
+            prevEvents.filter(
+              (event) => event.eventId !== change.doc.data().eventId
+            )
+          );
+        }
+      });
+    });
+    unsubscribes.push(unsubscribe);
 
     // Cleanup function to unsubscribe from the listeners when the component is unmounted
     return () => {
@@ -216,21 +217,11 @@ export default function Home() {
               >
                 memories
               </Subtitle>
-            </Pressable>
-
-            <Pressable onPress={() => setHomeTabState("calendar")}>
-              <Subtitle
-                size={25}
-                style={{
-                  color:
-                    homeTabState === "calendar"
-                      ? theme.PRIMARY
-                      : theme.PLACEHOLDER,
-                }}
-              >
-                calendar
-              </Subtitle>
-              {userEvents.filter((event) => event.isInvited).length > 0 && (
+              {userEvents.filter(
+                (event) =>
+                  event.isInvited &&
+                  (event.status === "live" || event.status === "past")
+              ).length > 0 && (
                 <View
                   style={{
                     position: "absolute",
@@ -249,7 +240,56 @@ export default function Home() {
                     bold={true}
                     style={{ color: theme.PRIMARY }}
                   >
-                    {userEvents.filter((event) => event.isInvited).length}
+                    {
+                      userEvents.filter(
+                        (event) =>
+                          event.isInvited &&
+                          (event.status === "live" || event.status === "past")
+                      ).length
+                    }
+                  </Body>
+                </View>
+              )}
+            </Pressable>
+
+            <Pressable onPress={() => setHomeTabState("calendar")}>
+              <Subtitle
+                size={25}
+                style={{
+                  color:
+                    homeTabState === "calendar"
+                      ? theme.PRIMARY
+                      : theme.PLACEHOLDER,
+                }}
+              >
+                calendar
+              </Subtitle>
+              {userEvents.filter(
+                (event) => event.isInvited && event.status === "future"
+              ).length > 0 && (
+                <View
+                  style={{
+                    position: "absolute",
+                    right: -20,
+                    top: -5,
+                    backgroundColor: theme.RED,
+                    borderRadius: 100,
+                    height: 20,
+                    width: 20,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Body
+                    adjustsFontSizeToFit={true}
+                    bold={true}
+                    style={{ color: theme.PRIMARY }}
+                  >
+                    {
+                      userEvents.filter(
+                        (event) => event.isInvited && event.status === "future"
+                      ).length
+                    }
                   </Body>
                 </View>
               )}

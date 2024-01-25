@@ -11,26 +11,26 @@ import geUserEvents from "../../apis/getUserEvents";
 import theme from "../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../assets/constants";
 import handleImageUpload from "../../utils/handleImageUpload";
-import * as BackgroundFetch from "expo-background-fetch";
-import * as TaskManager from "expo-task-manager";
-const BACKGROUND_FETCH_TASK = "background-fetch";
+// import * as BackgroundFetch from "expo-background-fetch";
+// import * as TaskManager from "expo-task-manager";
+// const BACKGROUND_FETCH_TASK = "background-fetch";
 
-//TODO: fix this, test with instruments app
-TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
-  try {
-    await handleImageUpload(5);
-  } catch (err) {
-    console.log(err);
-  }
-});
+// TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
+//   try {
+//     alert(`Background fetch called at ${new Date().toISOString()}`);
+//     await handleImageUpload(5);
+//   } catch (err) {
+//     console.error("Background fetch failed:", err);
+//   }
+// });
 
-async function registerBackgroundFetchTask() {
-  return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
-    minimumInterval: 15,
-    stopOnTerminate: false,
-    startOnBoot: true,
-  });
-}
+// async function registerBackgroundFetchTask() {
+//   return BackgroundFetch.registerTaskAsync(BACKGROUND_FETCH_TASK, {
+//     minimumInterval: 15,
+//     stopOnTerminate: false,
+//     startOnBoot: true,
+//   });
+// }
 
 export default function Page() {
   const insets = useSafeAreaInsets();
@@ -66,7 +66,7 @@ export default function Page() {
       if (status !== "granted") {
         console.log("Permission to access media library is not granted");
       }
-      await registerBackgroundFetchTask();
+      // await registerBackgroundFetchTask();
       handleImageUpload(5);
     })();
   }, []);
