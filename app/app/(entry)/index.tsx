@@ -76,7 +76,6 @@ export default function Page() {
       <StatusBar style="light" />
       <View style={[styles.container, { paddingTop: insets.top }]}>
         {/* TODO: replace with a cool animation of dish filling up  */}
-        {/* TODO: move font loading in here? */}
         <ActivityIndicator size="large" color={theme.PRIMARY} />
       </View>
     </View>
