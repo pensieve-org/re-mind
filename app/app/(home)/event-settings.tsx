@@ -19,10 +19,20 @@ import Button from "../../components/Button";
 import deleteEvent from "../../apis/deleteEvent";
 import getEventAdmins from "../../apis/getEventAdmins";
 import leaveEvent from "../../apis/leaveEvent";
+import ImageIcon from "../../assets/image.svg";
+import CameraIcon from "../../assets/camera.svg";
+import * as ImagePicker from "expo-image-picker";
+import uploadImageAsync from "../../utils/uploadImageAsync";
+import updateThumbnail from "../../apis/updateThumbnail";
 
 export default function EventSettings() {
-  const { userDetails, selectedEvent, setUserEvents, userEvents } =
-    useContext(AppContext);
+  const {
+    userDetails,
+    selectedEvent,
+    setSelectedEvent,
+    setUserEvents,
+    userEvents,
+  } = useContext(AppContext);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(null);
@@ -52,6 +62,46 @@ export default function EventSettings() {
 
     checkAdminStatus();
   }, [selectedEvent, userDetails]);
+
+  const handleThumbnailChange = async () => {
+    try {
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3, 3],
+        quality: 0,
+      });
+
+      if (pickerResult.canceled) {
+        console.log("User cancelled image picker");
+        return null;
+      }
+
+      if (!pickerResult.assets[0].uri) {
+        console.log("No URI found");
+        return null;
+      }
+
+      console.log(pickerResult.assets[0].uri);
+
+      setIsLoading(true);
+
+      const uploadUrl = await uploadImageAsync(
+        selectedEvent.thumbnail,
+        `/events/${selectedEvent.eventId}/thumbnail`
+      );
+
+      console.log(uploadUrl);
+
+      await updateThumbnail(selectedEvent.eventId, uploadUrl);
+
+      setSelectedEvent({ ...selectedEvent, thumbnail: uploadUrl });
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error("An error occurred:", error.message);
+    }
+  };
 
   const handleDeleteEvent = async () => {
     Alert.alert(
@@ -147,6 +197,64 @@ export default function EventSettings() {
         <View style={styles.container}>
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={25}>settings</Subtitle>
+          </View>
+
+          <View style={styles.thumbnailContainer}>
+            <View>
+              <View
+                style={{
+                  width: PROFILE_ICON_DIMENSION,
+                  height: PROFILE_ICON_DIMENSION,
+                  borderRadius: 100,
+                  backgroundColor: thumbnail
+                    ? "transparent"
+                    : theme.PLACEHOLDER,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {thumbnail ? (
+                  <Image
+                    source={{ uri: thumbnail }}
+                    style={{
+                      width: PROFILE_ICON_DIMENSION,
+                      height: PROFILE_ICON_DIMENSION,
+                      borderRadius: 100,
+                    }}
+                  />
+                ) : (
+                  <ImageIcon
+                    height={70}
+                    width={70}
+                    style={{ color: theme.PRIMARY }}
+                  />
+                )}
+              </View>
+
+              <Pressable
+                onPress={handleThumbnailChange}
+                style={({ pressed }) => [
+                  {
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                    borderRadius: 100,
+                    backgroundColor: theme.PRIMARY,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 40,
+                    width: 40,
+                    transform: [{ scale: pressed ? 0.9 : 1 }],
+                  },
+                ]}
+              >
+                <CameraIcon
+                  height={20}
+                  width={20}
+                  style={{ color: theme.BACKGROUND }}
+                />
+              </Pressable>
+            </View>
           </View>
 
           {isAdmin && (

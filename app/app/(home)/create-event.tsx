@@ -27,15 +27,13 @@ import Subtitle from "../../components/Subtitle";
 import SubtitleInput from "../../components/SubtitleInput";
 import DatePicker from "../../components/DatePicker";
 import AddFriendsList from "../../components/AddFriendsList";
-import ImageIcon from "../../assets/image.svg";
-import CameraIcon from "../../assets/camera.svg";
-import * as ImagePicker from "expo-image-picker";
 import createEvent from "../../apis/createEvent";
 import getUserEvents from "../../apis/getUserEvents";
 import Alert from "../../components/Alert";
 import Button from "../../components/Button";
 import getFriendDetails from "../../apis/getFriendDetails";
 import GradientScrollView from "../../components/GradientScrollView";
+import LocationSelector from "../../components/LocationSelector";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
@@ -45,7 +43,6 @@ export default function CreateEvent() {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [unselectedFriends, setUnselectedFriends] = useState([]);
   const [selectedFriends, setSelectedFriends] = useState([]);
-  const [thumbnail, setThumbnail] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -55,33 +52,6 @@ export default function CreateEvent() {
     setTimeout(() => {
       router.back();
     }, ANIMATION_DURATION);
-  };
-
-  const handleThumbnailChange = async () => {
-    try {
-      const pickerResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [3, 3],
-        quality: 0,
-      });
-
-      if (pickerResult.canceled) {
-        console.log("User cancelled image picker");
-        return null;
-      }
-
-      if (!pickerResult.assets[0].uri) {
-        console.log("No URI found");
-        return null;
-      }
-
-      console.log(pickerResult.assets[0].uri);
-
-      setThumbnail(pickerResult.assets[0].uri);
-    } catch (error) {
-      console.error("An error occurred:", error.message);
-    }
   };
 
   const handleCreateEvent = async () => {
@@ -117,7 +87,7 @@ export default function CreateEvent() {
           endTime: endDate,
           eventName: eventName,
           status: status,
-          thumbnail: thumbnail,
+          thumbnail: null,
           uploadFlag: uploadFlag,
         },
         selectedFriends,
@@ -185,69 +155,13 @@ export default function CreateEvent() {
             contentContainerStyle={{ paddingBottom: 80 }}
             showsVerticalScrollIndicator={false}
           >
-            <View style={styles.thumbnailContainer}>
-              <View>
-                <View
-                  style={{
-                    width: PROFILE_ICON_DIMENSION,
-                    height: PROFILE_ICON_DIMENSION,
-                    borderRadius: 100,
-                    backgroundColor: thumbnail
-                      ? "transparent"
-                      : theme.PLACEHOLDER,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  {thumbnail ? (
-                    <Image
-                      source={{ uri: thumbnail }}
-                      style={{
-                        width: PROFILE_ICON_DIMENSION,
-                        height: PROFILE_ICON_DIMENSION,
-                        borderRadius: 100,
-                      }}
-                    />
-                  ) : (
-                    <ImageIcon
-                      height={70}
-                      width={70}
-                      style={{ color: theme.PRIMARY }}
-                    />
-                  )}
-                </View>
-
-                <Pressable
-                  onPress={handleThumbnailChange}
-                  style={({ pressed }) => [
-                    {
-                      position: "absolute",
-                      right: 0,
-                      bottom: 0,
-                      borderRadius: 100,
-                      backgroundColor: theme.PRIMARY,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      height: 40,
-                      width: 40,
-                      transform: [{ scale: pressed ? 0.9 : 1 }],
-                    },
-                  ]}
-                >
-                  <CameraIcon
-                    height={20}
-                    width={20}
-                    style={{ color: theme.BACKGROUND }}
-                  />
-                </Pressable>
-              </View>
-            </View>
-
             <SubtitleInput
               size={20}
               text={"event name..."}
               onChangeText={setEventName}
             />
+
+            <LocationSelector />
 
             <DatePicker
               selectedStartDate={setStartDate}
