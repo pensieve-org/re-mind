@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  View,
+  Image,
+  Pressable,
+  Modal,
+} from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
 
@@ -10,6 +18,7 @@ import {
   ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
+  PROFILE_ICON_DIMENSION, // Added missing constant
 } from "../../assets/constants";
 import theme from "../../assets/theme";
 import Header from "../../components/Header";
@@ -36,6 +45,7 @@ export default function EventSettings() {
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(null);
+  const [thumbnail, setThumbnail] = useState(selectedEvent.thumbnail); // Added state for thumbnail
 
   const navigateBack = () => {
     setAnimation(ANIMATION_EXIT);
@@ -96,6 +106,7 @@ export default function EventSettings() {
       await updateThumbnail(selectedEvent.eventId, uploadUrl);
 
       setSelectedEvent({ ...selectedEvent, thumbnail: uploadUrl });
+      setThumbnail(uploadUrl); // Update thumbnail state
 
       setIsLoading(false);
     } catch (error) {
@@ -187,13 +198,6 @@ export default function EventSettings() {
         duration={ANIMATION_DURATION}
         style={styles.page}
       >
-        {isLoading && (
-          <ActivityIndicator
-            style={styles.loading}
-            size={"large"}
-            color={theme.PRIMARY}
-          />
-        )}
         <View style={styles.container}>
           <View style={{ paddingVertical: 20 }}>
             <Subtitle size={25}>settings</Subtitle>
@@ -275,6 +279,19 @@ export default function EventSettings() {
             leave event
           </Button>
         </View>
+
+        <Modal animationType="fade" transparent={true} visible={isLoading}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+            }}
+          >
+            <ActivityIndicator size={"large"} color={theme.PRIMARY} />
+          </View>
+        </Modal>
       </AnimatedView>
     </View>
   );
@@ -293,5 +310,11 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     paddingVertical: 30,
+  },
+  thumbnailContainer: {
+    marginBottom: 30,
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

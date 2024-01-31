@@ -6,12 +6,13 @@ import {
   Image,
   Alert as RNAlert,
   ActivityIndicator,
+  Modal,
 } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
-import { router } from "expo-router";
+import { router, Link } from "expo-router";
 
-import BackArrow from "../../assets/arrow-left.svg";
-import theme from "../../assets/theme";
+import BackArrow from "../../../assets/arrow-left.svg";
+import theme from "../../../assets/theme";
 import {
   ANIMATION_DURATION,
   ANIMATION_ENTRY,
@@ -19,21 +20,22 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
-} from "../../assets/constants";
-import Body from "../../components/Body";
-import Header from "../../components/Header";
-import { AppContext } from "../_layout";
-import Subtitle from "../../components/Subtitle";
-import SubtitleInput from "../../components/SubtitleInput";
-import DatePicker from "../../components/DatePicker";
-import AddFriendsList from "../../components/AddFriendsList";
-import createEvent from "../../apis/createEvent";
-import getUserEvents from "../../apis/getUserEvents";
-import Alert from "../../components/Alert";
-import Button from "../../components/Button";
-import getFriendDetails from "../../apis/getFriendDetails";
-import GradientScrollView from "../../components/GradientScrollView";
-import LocationSelector from "../../components/LocationSelector";
+} from "../../../assets/constants";
+import Body from "../../../components/Body";
+import Header from "../../../components/Header";
+import { AppContext } from "../../_layout";
+import Subtitle from "../../../components/Subtitle";
+import SubtitleInput from "../../../components/SubtitleInput";
+import DatePicker from "../../../components/DatePicker";
+import AddFriendsList from "../../../components/AddFriendsList";
+import createEvent from "../../../apis/createEvent";
+import getUserEvents from "../../../apis/getUserEvents";
+import Alert from "../../../components/Alert";
+import Button from "../../../components/Button";
+import getFriendDetails from "../../../apis/getFriendDetails";
+import GradientScrollView from "../../../components/GradientScrollView";
+import LocationSelector from "../../../components/LocationSelector";
+import LocationDot from "../../../assets/location-dot.svg";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
@@ -98,12 +100,6 @@ export default function CreateEvent() {
       setUserEvents(await getUserEvents(userDetails.userId));
 
       setIsLoading(false);
-
-      RNAlert.alert(
-        "Event Created",
-        "Your event has been successfully created.",
-        [{ text: "OK", onPress: navigateBack }]
-      );
     } catch (error) {
       setError(true);
       setIsLoading(false);
@@ -147,7 +143,7 @@ export default function CreateEvent() {
         )}
 
         <View style={styles.container}>
-          <View style={{ paddingVertical: 20 }}>
+          <View style={{ paddingTop: 20 }}>
             <Subtitle size={25}>new event</Subtitle>
           </View>
 
@@ -161,7 +157,24 @@ export default function CreateEvent() {
               onChangeText={setEventName}
             />
 
-            <LocationSelector />
+            <Link href="/location-modal">
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingTop: 20,
+                }}
+              >
+                <LocationDot
+                  height={20}
+                  width={20}
+                  style={{ color: theme.PRIMARY }}
+                />
+                <Subtitle size={20} style={{ paddingLeft: 10 }}>
+                  location
+                </Subtitle>
+              </View>
+            </Link>
 
             <DatePicker
               selectedStartDate={setStartDate}
@@ -220,15 +233,20 @@ export default function CreateEvent() {
                 create event
               </Button>
             </View>
-            {isLoading && (
-              <ActivityIndicator
-                style={styles.loading}
-                size={"large"}
-                color={theme.PRIMARY}
-              />
-            )}
           </GradientScrollView>
         </View>
+        <Modal animationType="fade" transparent={true} visible={isLoading}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "rgba(0, 0, 0, 0.8)",
+            }}
+          >
+            <ActivityIndicator size={"large"} color={theme.PRIMARY} />
+          </View>
+        </Modal>
       </AnimatedView>
     </View>
   );
@@ -242,12 +260,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: HORIZONTAL_PADDING,
-  },
-  thumbnailContainer: {
-    marginBottom: 30,
-    borderRadius: 100,
-    alignItems: "center",
-    justifyContent: "center",
   },
   alertContainer: {
     alignItems: "center",
