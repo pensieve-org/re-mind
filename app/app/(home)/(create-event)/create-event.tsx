@@ -166,12 +166,12 @@ export default function CreateEvent() {
                 }}
               >
                 <LocationDot
-                  height={20}
-                  width={20}
-                  style={{ color: theme.PRIMARY }}
+                  height={30}
+                  width={30}
+                  style={{ color: theme.RED }}
                 />
                 <Subtitle size={20} style={{ paddingLeft: 10 }}>
-                  location
+                  location...
                 </Subtitle>
               </View>
             </Link>
