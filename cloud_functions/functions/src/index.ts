@@ -48,7 +48,7 @@ function getAdmin() {
 // 3. The third Cloud Function updates the event's status to 'past'.
 
 export const checkEvents = functions
-  .region("europe-west3")
+  .region("europe-west2")
   .pubsub.schedule("every 1 minutes")
   .onRun(async () => {
     const firestore = getAdmin().firestore();

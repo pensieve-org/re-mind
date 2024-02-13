@@ -62,73 +62,37 @@ export default function Home() {
   const [refreshing, setRefreshing] = useState(false);
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
-  // useEffect(() => {
-  //   const unsubscribes = [];
+  // TODO: Listener causes duplication bug
+  useEffect(() => {
+    const unsubscribes = [];
 
-  //   // Create listeners for live events
-  //   userEvents.forEach((event, index) => {
-  //     const eventRef = doc(collection(db, "events"), event.eventId);
-  //     const unsubscribe = onSnapshot(eventRef, (d) => {
-  //       if (d.exists()) {
-  //         const newDetails = d.data() as EventDetails;
-  //         const updatedEvent = { ...newDetails, isInvited: event.isInvited };
+    // Create listeners for events
+    userEvents.forEach((event, index) => {
+      const eventRef = doc(collection(db, "events"), event.eventId);
+      const unsubscribe = onSnapshot(eventRef, (d) => {
+        if (d.exists()) {
+          const newDetails = d.data() as EventDetails;
+          const updatedEvent = { ...newDetails, isInvited: event.isInvited };
 
-  //         // Create a new array with the updated event
-  //         const updatedUserEvents = [...userEvents];
-  //         updatedUserEvents[index] = updatedEvent;
+          // Create a new array with the updated event
+          const updatedUserEvents = [...userEvents];
+          updatedUserEvents[index] = updatedEvent;
 
-  //         // Update the userEvents state
-  //         setUserEvents(updatedUserEvents);
-  //       }
-  //     });
-  //     unsubscribes.push(unsubscribe);
-  //   });
+          // Update the userEvents state
+          setUserEvents(updatedUserEvents);
+        }
+      });
+      unsubscribes.push(unsubscribe);
+    });
 
-  //   // TODO: fix this listener so that adding new events and deleting events updates automatically
-  //   // will probably need to be done by adding a list of events to the users doc and listeninng to that
+    // TODO: add listener so that adding new events and deleting events updates automatically
+    // will probably need to be done by adding a list of events to the users doc and listening to that
 
-  //   const attendeesRef = collection(db, "attendees");
-  //   const q = query(attendeesRef, where("userId", "==", userDetails.userId));
-  //   const unsubscribe = onSnapshot(q, async (snapshot) => {
-  //     snapshot.docChanges().forEach(async (change) => {
-  //       if (change.type === "added") {
-  //         // Add the new event to userEvents
-  //         const newEvent = await getEventDetails(change.doc.data().eventId);
-  //         setUserEvents((prevEvents) => [
-  //           ...prevEvents,
-  //           {
-  //             ...newEvent,
-  //             isInvited: change.doc.data().userType === "invited",
-  //           },
-  //         ]);
-  //       } else if (change.type === "modified") {
-  //         setUserEvents((prevEvents) =>
-  //           prevEvents.map((event) =>
-  //             event.eventId === change.doc.data().eventId
-  //               ? {
-  //                   ...event,
-  //                   isInvited: change.doc.data().userType === "invited",
-  //                 }
-  //               : event
-  //           )
-  //         );
-  //       } else if (change.type === "removed") {
-  //         // Remove the deleted event from userEvents
-  //         setUserEvents((prevEvents) =>
-  //           prevEvents.filter(
-  //             (event) => event.eventId !== change.doc.data().eventId
-  //           )
-  //         );
-  //       }
-  //     });
-  //   });
-  //   unsubscribes.push(unsubscribe);
-
-  //   // Cleanup function to unsubscribe from the listeners when the component is unmounted
-  //   return () => {
-  //     unsubscribes.forEach((unsubscribe) => unsubscribe());
-  //   };
-  // }, [userEvents, setUserEvents]);
+    // Cleanup function to unsubscribe from the listeners when the component is unmounted
+    return () => {
+      unsubscribes.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [userEvents, setUserEvents]);
 
   const navigate = (route) => {
     setAnimation(ANIMATION_EXIT);

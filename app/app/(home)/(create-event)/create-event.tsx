@@ -98,7 +98,7 @@ export default function CreateEvent() {
 
       // TODO: remove this eventually, when the auto listener works
       setUserEvents(await getUserEvents(userDetails.userId));
-
+      navigateBack();
       setIsLoading(false);
     } catch (error) {
       setError(true);
