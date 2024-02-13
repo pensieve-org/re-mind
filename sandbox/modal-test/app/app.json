@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "scheme": "acme",
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-apple-authentication",
+      "@react-native-google-signin/google-signin",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
+      ]
+    ],
+    "android": {
+      "package": "com.pensieve.remind"
+    },
+    "ios": {
+      "bundleIdentifier": "com.pensieve.remind"
+    },
+    "orientation": "portrait"
+  },
+  "ios": {
+    "usesAppleSignIn": true
+  }
+}

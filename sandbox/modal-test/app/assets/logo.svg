@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
+<defs>
+    <style>
+        .cls-1{fill:currentColor;}
+        .cls-2{fill:none;stroke:currentColor;stroke-linecap:round;stroke-miterlimit:10;stroke-width:26.7px;}
+    </style>
+</defs>
+<rect class="cls-1" x="231.51" y="643.74" width="616.98" height="23.51" rx="11.76" ry="11.76"/>
+<path class="cls-2" d="M835.69,404.56c-57.07,106.36-168.38,178.56-296.35,178.56-127.97,0-239.28-72.2-296.35-178.56"/>
+</svg>
