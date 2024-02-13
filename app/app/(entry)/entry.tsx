@@ -19,9 +19,10 @@ import {
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
 
-import * as SystemUI from "expo-system-ui";
+// TODO: this reduces the noticeable flicker effect of the location modal on the create event screen but doenst resolve the issue
+// import * as SystemUI from "expo-system-ui";
 
-SystemUI.setBackgroundColorAsync("transparent");
+// SystemUI.setBackgroundColorAsync("transparent");
 
 export default function Page() {
   const insets = useSafeAreaInsets();
