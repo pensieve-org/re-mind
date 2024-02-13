@@ -19,6 +19,10 @@ import {
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
 
+import * as SystemUI from "expo-system-ui";
+
+SystemUI.setBackgroundColorAsync("transparent");
+
 export default function Page() {
   const insets = useSafeAreaInsets();
   const [animation, setAnimation] = useState(ANIMATION_ENTRY);

@@ -4,12 +4,7 @@ import theme from "../../../assets/theme";
 export default function Layout() {
   return (
     <Stack>
-      <Stack.Screen
-        name="create-event"
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen name="create-event" options={{ headerShown: false }} />
       <Stack.Screen
         name="location-modal"
         options={{
