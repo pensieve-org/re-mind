@@ -6,7 +6,6 @@ import {
   Image,
   Alert as RNAlert,
   ActivityIndicator,
-  Modal,
 } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
 import { router, Link } from "expo-router";
@@ -235,18 +234,6 @@ export default function CreateEvent() {
             </View>
           </GradientScrollView>
         </View>
-        <Modal animationType="fade" transparent={true} visible={isLoading}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.8)",
-            }}
-          >
-            <ActivityIndicator size={"large"} color={theme.PRIMARY} />
-          </View>
-        </Modal>
       </AnimatedView>
     </View>
   );
