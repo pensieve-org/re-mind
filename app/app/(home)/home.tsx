@@ -21,9 +21,6 @@ import Plus from "../../assets/plus.svg";
 import theme from "../../assets/theme";
 
 import {
-  ANIMATION_DURATION,
-  ANIMATION_ENTRY,
-  ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
@@ -60,7 +57,6 @@ export default function Home() {
     setHomeTabState,
   } = useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
-  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
 
   // TODO: Listener causes duplication bug
   useEffect(() => {
@@ -94,16 +90,9 @@ export default function Home() {
     };
   }, [userEvents, setUserEvents]);
 
-  const navigate = (route) => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.push(route);
-    }, ANIMATION_DURATION);
-  };
-
   const handleEventPress = (event) => {
     setSelectedEvent(event);
-    navigate("/event");
+    router.push("/event");
   };
 
   const onRefresh = React.useCallback(async () => {
@@ -146,7 +135,7 @@ export default function Home() {
             )}
           </View>
         }
-        onPressLeft={() => navigate("/profile")}
+        onPressLeft={() => router.push("/profile")}
         imageRight={
           <Plus
             height={HEADER_ICON_DIMENSION}
@@ -154,207 +143,198 @@ export default function Home() {
             style={{ color: theme.PRIMARY }}
           />
         }
-        onPressRight={() => navigate("/create-event")}
+        onPressRight={() => router.push("/create-event")}
       />
-      <AnimatedView
-        animation={animation}
-        duration={ANIMATION_DURATION}
-        style={styles.page}
-      >
-        <View style={styles.container}>
-          <View
-            style={{
-              paddingTop: 10,
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-          >
-            <Pressable onPress={() => setHomeTabState("memories")}>
-              <Subtitle
-                size={25}
+
+      <View style={styles.container}>
+        <View
+          style={{
+            paddingTop: 10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+          }}
+        >
+          <Pressable onPress={() => setHomeTabState("memories")}>
+            <Subtitle
+              size={25}
+              style={{
+                color:
+                  homeTabState === "memories"
+                    ? theme.PRIMARY
+                    : theme.PLACEHOLDER,
+              }}
+            >
+              memories
+            </Subtitle>
+            {userEvents.filter(
+              (event) =>
+                event.isInvited &&
+                (event.status === "live" || event.status === "past")
+            ).length > 0 && (
+              <View
                 style={{
-                  color:
-                    homeTabState === "memories"
-                      ? theme.PRIMARY
-                      : theme.PLACEHOLDER,
+                  position: "absolute",
+                  right: -20,
+                  top: -5,
+                  backgroundColor: theme.RED,
+                  borderRadius: 100,
+                  height: 20,
+                  width: 20,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                memories
-              </Subtitle>
-              {userEvents.filter(
-                (event) =>
-                  event.isInvited &&
-                  (event.status === "live" || event.status === "past")
-              ).length > 0 && (
-                <View
-                  style={{
-                    position: "absolute",
-                    right: -20,
-                    top: -5,
-                    backgroundColor: theme.RED,
-                    borderRadius: 100,
-                    height: 20,
-                    width: 20,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                <Body
+                  adjustsFontSizeToFit={true}
+                  bold={true}
+                  style={{ color: theme.PRIMARY }}
                 >
-                  <Body
-                    adjustsFontSizeToFit={true}
-                    bold={true}
-                    style={{ color: theme.PRIMARY }}
-                  >
-                    {
-                      userEvents.filter(
-                        (event) =>
-                          event.isInvited &&
-                          (event.status === "live" || event.status === "past")
-                      ).length
-                    }
-                  </Body>
-                </View>
-              )}
-            </Pressable>
+                  {
+                    userEvents.filter(
+                      (event) =>
+                        event.isInvited &&
+                        (event.status === "live" || event.status === "past")
+                    ).length
+                  }
+                </Body>
+              </View>
+            )}
+          </Pressable>
 
-            <Pressable onPress={() => setHomeTabState("calendar")}>
-              <Subtitle
-                size={25}
+          <Pressable onPress={() => setHomeTabState("calendar")}>
+            <Subtitle
+              size={25}
+              style={{
+                color:
+                  homeTabState === "calendar"
+                    ? theme.PRIMARY
+                    : theme.PLACEHOLDER,
+              }}
+            >
+              calendar
+            </Subtitle>
+            {userEvents.filter(
+              (event) => event.isInvited && event.status === "future"
+            ).length > 0 && (
+              <View
                 style={{
-                  color:
-                    homeTabState === "calendar"
-                      ? theme.PRIMARY
-                      : theme.PLACEHOLDER,
+                  position: "absolute",
+                  right: -20,
+                  top: -5,
+                  backgroundColor: theme.RED,
+                  borderRadius: 100,
+                  height: 20,
+                  width: 20,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                calendar
-              </Subtitle>
-              {userEvents.filter(
-                (event) => event.isInvited && event.status === "future"
-              ).length > 0 && (
-                <View
-                  style={{
-                    position: "absolute",
-                    right: -20,
-                    top: -5,
-                    backgroundColor: theme.RED,
-                    borderRadius: 100,
-                    height: 20,
-                    width: 20,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                <Body
+                  adjustsFontSizeToFit={true}
+                  bold={true}
+                  style={{ color: theme.PRIMARY }}
                 >
-                  <Body
-                    adjustsFontSizeToFit={true}
-                    bold={true}
-                    style={{ color: theme.PRIMARY }}
-                  >
-                    {
-                      userEvents.filter(
-                        (event) => event.isInvited && event.status === "future"
-                      ).length
-                    }
-                  </Body>
-                </View>
-              )}
-            </Pressable>
-          </View>
+                  {
+                    userEvents.filter(
+                      (event) => event.isInvited && event.status === "future"
+                    ).length
+                  }
+                </Body>
+              </View>
+            )}
+          </Pressable>
+        </View>
 
-          <GradientScrollView
-            style={{ flex: 1 }}
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          >
-            {homeTabState === "memories" ? (
-              <>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Subtitle
-                    size={20}
-                    style={{
-                      color: theme.PRIMARY,
-                      paddingBottom: 10,
-                    }}
-                  >
-                    live
-                  </Subtitle>
-                  {userEvents.filter((event) => event.status === "live")
-                    .length > 0 && (
-                    <AnimatedView
-                      animation="blinkAnimation"
-                      iterationCount="infinite"
-                      duration={2000}
-                      style={{
-                        width: 10,
-                        height: 10,
-                        borderRadius: 100,
-                        backgroundColor: theme.RED,
-                        marginLeft: 5,
-                        marginBottom: 25,
-                      }}
-                    />
-                  )}
-                </View>
-
-                {userEvents.filter((event) => event.status === "live").length >
-                0 ? (
-                  <EventList
-                    events={userEvents.filter(
-                      (event) => event.status === "live"
-                    )}
-                    onPress={handleEventPress}
-                  />
-                ) : (
-                  <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                    no live events
-                  </Body>
-                )}
-
+        <GradientScrollView
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {homeTabState === "memories" ? (
+            <>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <Subtitle
                   size={20}
                   style={{
                     color: theme.PRIMARY,
-                    paddingVertical: 10,
+                    paddingBottom: 10,
                   }}
                 >
-                  past
+                  live
                 </Subtitle>
+                {userEvents.filter((event) => event.status === "live").length >
+                  0 && (
+                  <AnimatedView
+                    animation="blinkAnimation"
+                    iterationCount="infinite"
+                    duration={2000}
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 100,
+                      backgroundColor: theme.RED,
+                      marginLeft: 5,
+                      marginBottom: 25,
+                    }}
+                  />
+                )}
+              </View>
 
-                {userEvents.filter((event) => event.status === "past").length >
-                0 ? (
-                  <EventList
-                    events={userEvents.filter(
-                      (event) => event.status === "past"
-                    )}
-                    onPress={handleEventPress}
-                  />
-                ) : (
-                  <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                    no past events
-                  </Body>
-                )}
-              </>
-            ) : (
-              <>
-                {userEvents.filter((event) => event.status === "future")
-                  .length > 0 ? (
-                  <Calendar
-                    events={userEvents.filter(
-                      (event) => event.status === "future"
-                    )}
-                    onPress={handleEventPress}
-                  />
-                ) : (
-                  <Body style={{ textAlign: "center", paddingVertical: 10 }}>
-                    no upcoming events
-                  </Body>
-                )}
-              </>
-            )}
-          </GradientScrollView>
-        </View>
-      </AnimatedView>
+              {userEvents.filter((event) => event.status === "live").length >
+              0 ? (
+                <EventList
+                  events={userEvents.filter((event) => event.status === "live")}
+                  onPress={handleEventPress}
+                />
+              ) : (
+                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                  no live events
+                </Body>
+              )}
+
+              <Subtitle
+                size={20}
+                style={{
+                  color: theme.PRIMARY,
+                  paddingVertical: 10,
+                }}
+              >
+                past
+              </Subtitle>
+
+              {userEvents.filter((event) => event.status === "past").length >
+              0 ? (
+                <EventList
+                  events={userEvents.filter((event) => event.status === "past")}
+                  onPress={handleEventPress}
+                />
+              ) : (
+                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                  no past events
+                </Body>
+              )}
+            </>
+          ) : (
+            <>
+              {userEvents.filter((event) => event.status === "future").length >
+              0 ? (
+                <Calendar
+                  events={userEvents.filter(
+                    (event) => event.status === "future"
+                  )}
+                  onPress={handleEventPress}
+                />
+              ) : (
+                <Body style={{ textAlign: "center", paddingVertical: 10 }}>
+                  no upcoming events
+                </Body>
+              )}
+            </>
+          )}
+        </GradientScrollView>
+      </View>
     </View>
   );
 }

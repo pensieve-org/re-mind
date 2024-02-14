@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { View as AnimatedView } from "react-native-animatable";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -16,9 +15,6 @@ import { signOut } from "firebase/auth";
 import BackArrow from "../../assets/arrow-left.svg";
 import theme from "../../assets/theme";
 import {
-  ANIMATION_DURATION,
-  ANIMATION_ENTRY,
-  ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
@@ -40,31 +36,9 @@ import deleteUser from "../../apis/deleteUser";
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
-  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [friendRequests, setFriendRequests] = useState([]);
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(false);
-
-  const navigate = (route) => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.replace(route);
-    }, ANIMATION_DURATION);
-  };
-
-  const navigatePush = (route) => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.push(route);
-    }, ANIMATION_DURATION);
-  };
-
-  const navigateBack = () => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.back();
-    }, ANIMATION_DURATION);
-  };
 
   const handleLogout = async () => {
     try {
@@ -73,7 +47,7 @@ export default function Profile() {
       setUserDetails({});
       setSelectedEvent({});
       setUserEvents({});
-      navigate("/");
+      router.replace("/");
     } catch (error) {
       console.error("Error signing out: ", error);
     }
@@ -94,7 +68,7 @@ export default function Profile() {
               setUserDetails({});
               setSelectedEvent({});
               setUserEvents({});
-              navigate("/");
+              router.replace("/");
             },
           },
         ]
@@ -168,7 +142,7 @@ export default function Profile() {
             style={{ color: theme.PRIMARY }}
           />
         }
-        onPressLeft={navigateBack}
+        onPressLeft={() => router.back()}
         imageRight={
           <View>
             <FriendsIcon
@@ -202,107 +176,101 @@ export default function Profile() {
           </View>
         }
         onPressRight={() => {
-          navigatePush("/friends");
+          router.push("/friends");
         }}
       />
 
-      <AnimatedView
-        animation={animation}
-        duration={ANIMATION_DURATION}
-        style={styles.page}
-      >
-        <View style={styles.container}>
-          <View style={styles.profileImage}>
-            <View>
-              <View
-                style={{
-                  width: PROFILE_ICON_DIMENSION,
-                  height: PROFILE_ICON_DIMENSION,
+      <View style={styles.container}>
+        <View style={styles.profileImage}>
+          <View>
+            <View
+              style={{
+                width: PROFILE_ICON_DIMENSION,
+                height: PROFILE_ICON_DIMENSION,
+                borderRadius: 100,
+                backgroundColor: theme.PLACEHOLDER,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {isLoading ? (
+                <ActivityIndicator size={"large"} color={theme.PRIMARY} />
+              ) : userDetails.profilePicture ? (
+                <Image
+                  source={{ uri: userDetails.profilePicture }}
+                  style={{
+                    width: PROFILE_ICON_DIMENSION,
+                    height: PROFILE_ICON_DIMENSION,
+                    borderRadius: 100,
+                  }}
+                />
+              ) : (
+                <ProfileIcon
+                  height={90}
+                  width={90}
+                  style={{ color: theme.PRIMARY }}
+                />
+              )}
+            </View>
+
+            <Pressable
+              onPress={handleProfilePictureChange}
+              style={({ pressed }) => [
+                {
+                  position: "absolute",
+                  right: 0,
+                  bottom: 0,
                   borderRadius: 100,
-                  backgroundColor: theme.PLACEHOLDER,
+                  backgroundColor: theme.PRIMARY,
                   alignItems: "center",
                   justifyContent: "center",
-                }}
-              >
-                {isLoading ? (
-                  <ActivityIndicator size={"large"} color={theme.PRIMARY} />
-                ) : userDetails.profilePicture ? (
-                  <Image
-                    source={{ uri: userDetails.profilePicture }}
-                    style={{
-                      width: PROFILE_ICON_DIMENSION,
-                      height: PROFILE_ICON_DIMENSION,
-                      borderRadius: 100,
-                    }}
-                  />
-                ) : (
-                  <ProfileIcon
-                    height={90}
-                    width={90}
-                    style={{ color: theme.PRIMARY }}
-                  />
-                )}
-              </View>
-
-              <Pressable
-                onPress={handleProfilePictureChange}
-                style={({ pressed }) => [
-                  {
-                    position: "absolute",
-                    right: 0,
-                    bottom: 0,
-                    borderRadius: 100,
-                    backgroundColor: theme.PRIMARY,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: 40,
-                    width: 40,
-                    transform: [{ scale: pressed ? 0.9 : 1 }],
-                  },
-                ]}
-              >
-                <CameraIcon
-                  height={20}
-                  width={20}
-                  style={{ color: theme.BACKGROUND }}
-                />
-              </Pressable>
-            </View>
-
-            <View style={{ paddingTop: 10 }}>
-              <Body style={{ textAlign: "center" }} size={16}>
-                {userDetails.firstName} {userDetails.lastName}
-              </Body>
-              <Body
-                style={{ textAlign: "center", color: theme.PLACEHOLDER }}
-                size={14}
-              >
-                {userDetails.username}
-              </Body>
-            </View>
-          </View>
-
-          <View style={{ flex: 1 }} />
-
-          <View style={{ paddingVertical: 20 }}>
-            <Button
-              fill={theme.TEXT}
-              textColor={theme.BACKGROUND}
-              onPress={handleLogout}
+                  height: 40,
+                  width: 40,
+                  transform: [{ scale: pressed ? 0.9 : 1 }],
+                },
+              ]}
             >
-              logout
-            </Button>
+              <CameraIcon
+                height={20}
+                width={20}
+                style={{ color: theme.BACKGROUND }}
+              />
+            </Pressable>
           </View>
 
+          <View style={{ paddingTop: 10 }}>
+            <Body style={{ textAlign: "center" }} size={16}>
+              {userDetails.firstName} {userDetails.lastName}
+            </Body>
+            <Body
+              style={{ textAlign: "center", color: theme.PLACEHOLDER }}
+              size={14}
+            >
+              {userDetails.username}
+            </Body>
+          </View>
+        </View>
+
+        <View style={{ flex: 1 }} />
+
+        <View style={{ paddingVertical: 20 }}>
           <Button
             fill={theme.TEXT}
             textColor={theme.BACKGROUND}
-            onPress={handleDeleteUser}
+            onPress={handleLogout}
           >
-            delete user
+            logout
           </Button>
         </View>
-      </AnimatedView>
+
+        <Button
+          fill={theme.TEXT}
+          textColor={theme.BACKGROUND}
+          onPress={handleDeleteUser}
+        >
+          delete user
+        </Button>
+      </View>
     </View>
   );
 }

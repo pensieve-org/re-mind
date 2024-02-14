@@ -13,9 +13,6 @@ import { router, Link } from "expo-router";
 import BackArrow from "../../../assets/arrow-left.svg";
 import theme from "../../../assets/theme";
 import {
-  ANIMATION_DURATION,
-  ANIMATION_ENTRY,
-  ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
@@ -38,7 +35,6 @@ import LocationDot from "../../../assets/location-dot.svg";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
-  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [eventName, setEventName] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -47,13 +43,6 @@ export default function CreateEvent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
-  const navigateBack = () => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.back();
-    }, ANIMATION_DURATION);
-  };
 
   const handleCreateEvent = async () => {
     if (isLoading) return;
@@ -97,7 +86,7 @@ export default function CreateEvent() {
 
       // TODO: remove this eventually, when the auto listener works
       setUserEvents(await getUserEvents(userDetails.userId));
-      navigateBack();
+      router.back();
       setIsLoading(false);
     } catch (error) {
       setError(true);
@@ -128,113 +117,107 @@ export default function CreateEvent() {
             style={{ color: theme.PRIMARY }}
           />
         }
-        onPressLeft={navigateBack}
+        onPressLeft={() => router.back()}
       />
-      <AnimatedView
-        animation={animation}
-        duration={ANIMATION_DURATION}
-        style={styles.page}
-      >
-        {error && (
-          <View style={styles.alertContainer}>
-            <Alert text={errorMsg} />
-          </View>
-        )}
-
-        <View style={styles.container}>
-          <View style={{ paddingTop: 20 }}>
-            <Subtitle size={25}>new event</Subtitle>
-          </View>
-
-          <GradientScrollView
-            contentContainerStyle={{ paddingBottom: 80 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <SubtitleInput
-              size={20}
-              text={"event name..."}
-              onChangeText={setEventName}
-            />
-
-            <Link href="/location-modal">
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  paddingTop: 20,
-                }}
-              >
-                <LocationDot
-                  height={30}
-                  width={30}
-                  style={{ color: theme.RED }}
-                />
-                <Subtitle size={20} style={{ paddingLeft: 10 }}>
-                  location...
-                </Subtitle>
-              </View>
-            </Link>
-
-            <DatePicker
-              selectedStartDate={setStartDate}
-              selectedEndDate={setEndDate}
-            />
-
-            <Subtitle size={20} style={{ paddingBottom: 10 }}>
-              attendees
-            </Subtitle>
-            {selectedFriends.length > 0 ? (
-              <AddFriendsList
-                unselectedFriends={selectedFriends}
-                selectedFriends={unselectedFriends}
-                setSelectedFriends={setUnselectedFriends}
-                setUnselectedFriends={setSelectedFriends}
-              />
-            ) : (
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingVertical: 10,
-                }}
-              >
-                <Body style={{ paddingBottom: 10 }}>no friends invited</Body>
-              </View>
-            )}
-
-            <Subtitle size={20} style={{ paddingBottom: 10 }}>
-              invite friends
-            </Subtitle>
-            {unselectedFriends.length > 0 ? (
-              <AddFriendsList
-                unselectedFriends={unselectedFriends}
-                selectedFriends={selectedFriends}
-                setSelectedFriends={setSelectedFriends}
-                setUnselectedFriends={setUnselectedFriends}
-              />
-            ) : (
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  paddingVertical: 10,
-                }}
-              >
-                <Body style={{ paddingBottom: 10 }}>no friends to add</Body>
-              </View>
-            )}
-            <View style={{ paddingVertical: 20 }}>
-              <Button
-                fill={theme.TEXT}
-                textColor={theme.BACKGROUND}
-                onPress={handleCreateEvent}
-              >
-                create event
-              </Button>
-            </View>
-          </GradientScrollView>
+      {error && (
+        <View style={styles.alertContainer}>
+          <Alert text={errorMsg} />
         </View>
-      </AnimatedView>
+      )}
+
+      <View style={styles.container}>
+        <View style={{ paddingTop: 20 }}>
+          <Subtitle size={25}>new event</Subtitle>
+        </View>
+
+        <GradientScrollView
+          contentContainerStyle={{ paddingBottom: 80 }}
+          showsVerticalScrollIndicator={false}
+        >
+          <SubtitleInput
+            size={20}
+            text={"event name..."}
+            onChangeText={setEventName}
+          />
+
+          <Link href="/location-modal">
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                paddingTop: 20,
+              }}
+            >
+              <LocationDot
+                height={30}
+                width={30}
+                style={{ color: theme.RED }}
+              />
+              <Subtitle size={20} style={{ paddingLeft: 10 }}>
+                location...
+              </Subtitle>
+            </View>
+          </Link>
+
+          <DatePicker
+            selectedStartDate={setStartDate}
+            selectedEndDate={setEndDate}
+          />
+
+          <Subtitle size={20} style={{ paddingBottom: 10 }}>
+            attendees
+          </Subtitle>
+          {selectedFriends.length > 0 ? (
+            <AddFriendsList
+              unselectedFriends={selectedFriends}
+              selectedFriends={unselectedFriends}
+              setSelectedFriends={setUnselectedFriends}
+              setUnselectedFriends={setSelectedFriends}
+            />
+          ) : (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                paddingVertical: 10,
+              }}
+            >
+              <Body style={{ paddingBottom: 10 }}>no friends invited</Body>
+            </View>
+          )}
+
+          <Subtitle size={20} style={{ paddingBottom: 10 }}>
+            invite friends
+          </Subtitle>
+          {unselectedFriends.length > 0 ? (
+            <AddFriendsList
+              unselectedFriends={unselectedFriends}
+              selectedFriends={selectedFriends}
+              setSelectedFriends={setSelectedFriends}
+              setUnselectedFriends={setUnselectedFriends}
+            />
+          ) : (
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                paddingVertical: 10,
+              }}
+            >
+              <Body style={{ paddingBottom: 10 }}>no friends to add</Body>
+            </View>
+          )}
+          <View style={{ paddingVertical: 20 }}>
+            <Button
+              fill={theme.TEXT}
+              textColor={theme.BACKGROUND}
+              onPress={handleCreateEvent}
+            >
+              create event
+            </Button>
+          </View>
+        </GradientScrollView>
+      </View>
     </View>
   );
 }

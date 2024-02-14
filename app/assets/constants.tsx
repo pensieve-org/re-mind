@@ -5,10 +5,6 @@ export const PROFILE_ICON_DIMENSION = 150;
 export const CORNER_RADIUS = 10;
 export const COMPONENT_HEIGHT = 55;
 
-export const ANIMATION_DURATION = 400;
-export const ANIMATION_ENTRY = "fadeIn";
-export const ANIMATION_EXIT = "fadeOut";
-
 export const FRIEND_ICON_GAP = 10;
 export const FRIEND_ICON_GAP_BOTTOM = 10;
 export const FRIEND_ROW_ICONS = 4;

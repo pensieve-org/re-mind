@@ -8,17 +8,13 @@ import {
   Pressable,
   Modal,
 } from "react-native";
-import { View as AnimatedView } from "react-native-animatable";
 import { router } from "expo-router";
 
 import BackArrow from "../../assets/arrow-left.svg";
 import {
-  ANIMATION_DURATION,
-  ANIMATION_ENTRY,
-  ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
-  PROFILE_ICON_DIMENSION, // Added missing constant
+  PROFILE_ICON_DIMENSION,
 } from "../../assets/constants";
 import theme from "../../assets/theme";
 import Header from "../../components/Header";
@@ -42,24 +38,9 @@ export default function EventSettings() {
     setUserEvents,
     userEvents,
   } = useContext(AppContext);
-  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
   const [isLoading, setIsLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(null);
   const [thumbnail, setThumbnail] = useState(selectedEvent.thumbnail); // Added state for thumbnail
-
-  const navigateBack = () => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.back();
-    }, ANIMATION_DURATION);
-  };
-
-  const navigateHome = () => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.replace("/home");
-    }, ANIMATION_DURATION);
-  };
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -106,7 +87,7 @@ export default function EventSettings() {
       await updateThumbnail(selectedEvent.eventId, uploadUrl);
 
       setSelectedEvent({ ...selectedEvent, thumbnail: uploadUrl });
-      setThumbnail(uploadUrl); // Update thumbnail state
+      setThumbnail(uploadUrl);
 
       setIsLoading(false);
     } catch (error) {
@@ -132,7 +113,7 @@ export default function EventSettings() {
                 )
               );
               setIsLoading(false);
-              navigateHome();
+              router.replace("/home");
             } catch (error) {
               setIsLoading(false);
               console.error(error);
@@ -166,7 +147,7 @@ export default function EventSettings() {
                 ].filter((event) => event.eventId !== selectedEvent.eventId),
               }));
               setIsLoading(false);
-              navigateHome();
+              router.replace("/home");
             } catch (error) {
               setIsLoading(false);
               console.error(error);
@@ -191,108 +172,101 @@ export default function EventSettings() {
             style={{ color: theme.PRIMARY }}
           />
         }
-        onPressLeft={navigateBack}
+        onPressLeft={() => router.back()}
       />
-      <AnimatedView
-        animation={animation}
-        duration={ANIMATION_DURATION}
-        style={styles.page}
-      >
-        <View style={styles.container}>
-          <View style={{ paddingVertical: 20 }}>
-            <Subtitle size={25}>settings</Subtitle>
-          </View>
 
-          <View style={styles.thumbnailContainer}>
-            <View>
-              <View
-                style={{
-                  width: PROFILE_ICON_DIMENSION,
-                  height: PROFILE_ICON_DIMENSION,
+      <View style={styles.container}>
+        <View style={{ paddingVertical: 20 }}>
+          <Subtitle size={25}>settings</Subtitle>
+        </View>
+
+        <View style={styles.thumbnailContainer}>
+          <View>
+            <View
+              style={{
+                width: PROFILE_ICON_DIMENSION,
+                height: PROFILE_ICON_DIMENSION,
+                borderRadius: 100,
+                backgroundColor: thumbnail ? "transparent" : theme.PLACEHOLDER,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {thumbnail ? (
+                <Image
+                  source={{ uri: thumbnail }}
+                  style={{
+                    width: PROFILE_ICON_DIMENSION,
+                    height: PROFILE_ICON_DIMENSION,
+                    borderRadius: 100,
+                  }}
+                />
+              ) : (
+                <ImageIcon
+                  height={70}
+                  width={70}
+                  style={{ color: theme.PRIMARY }}
+                />
+              )}
+            </View>
+
+            <Pressable
+              onPress={handleThumbnailChange}
+              style={({ pressed }) => [
+                {
+                  position: "absolute",
+                  right: 0,
+                  bottom: 0,
                   borderRadius: 100,
-                  backgroundColor: thumbnail
-                    ? "transparent"
-                    : theme.PLACEHOLDER,
+                  backgroundColor: theme.PRIMARY,
                   alignItems: "center",
                   justifyContent: "center",
-                }}
-              >
-                {thumbnail ? (
-                  <Image
-                    source={{ uri: thumbnail }}
-                    style={{
-                      width: PROFILE_ICON_DIMENSION,
-                      height: PROFILE_ICON_DIMENSION,
-                      borderRadius: 100,
-                    }}
-                  />
-                ) : (
-                  <ImageIcon
-                    height={70}
-                    width={70}
-                    style={{ color: theme.PRIMARY }}
-                  />
-                )}
-              </View>
-
-              <Pressable
-                onPress={handleThumbnailChange}
-                style={({ pressed }) => [
-                  {
-                    position: "absolute",
-                    right: 0,
-                    bottom: 0,
-                    borderRadius: 100,
-                    backgroundColor: theme.PRIMARY,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    height: 40,
-                    width: 40,
-                    transform: [{ scale: pressed ? 0.9 : 1 }],
-                  },
-                ]}
-              >
-                <CameraIcon
-                  height={20}
-                  width={20}
-                  style={{ color: theme.BACKGROUND }}
-                />
-              </Pressable>
-            </View>
-          </View>
-
-          {isAdmin && (
-            <Button
-              fill={theme.TEXT}
-              textColor={theme.BACKGROUND}
-              onPress={handleDeleteEvent}
+                  height: 40,
+                  width: 40,
+                  transform: [{ scale: pressed ? 0.9 : 1 }],
+                },
+              ]}
             >
-              delete event
-            </Button>
-          )}
+              <CameraIcon
+                height={20}
+                width={20}
+                style={{ color: theme.BACKGROUND }}
+              />
+            </Pressable>
+          </View>
+        </View>
 
+        {isAdmin && (
           <Button
             fill={theme.TEXT}
             textColor={theme.BACKGROUND}
-            onPress={handleLeaveEvent}
+            onPress={handleDeleteEvent}
           >
-            leave event
+            delete event
           </Button>
-        </View>
+        )}
 
-        <Modal animationType="fade" transparent={true} visible={isLoading}>
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "rgba(0, 0, 0, 0.8)",
-            }}
-          >
-            <ActivityIndicator size={"large"} color={theme.PRIMARY} />
-          </View>
-        </Modal>
-      </AnimatedView>
+        <Button
+          fill={theme.TEXT}
+          textColor={theme.BACKGROUND}
+          onPress={handleLeaveEvent}
+        >
+          leave event
+        </Button>
+      </View>
+
+      <Modal animationType="fade" transparent={true} visible={isLoading}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+          }}
+        >
+          <ActivityIndicator size={"large"} color={theme.PRIMARY} />
+        </View>
+      </Modal>
     </View>
   );
 }

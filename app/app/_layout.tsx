@@ -55,7 +55,7 @@ export default function Layout() {
           setHomeTabState,
         }}
       >
-        <Stack screenOptions={{ headerShown: false, animation: "none" }} />
+        <Stack screenOptions={{ headerShown: false, animation: "fade" }} />
       </AppContext.Provider>
     </FontLoader>
   );

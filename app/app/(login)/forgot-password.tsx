@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { router } from "expo-router";
-import { View as AnimatedView } from "react-native-animatable";
 
 import AlertBanner from "../../components/Alert";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -15,11 +14,8 @@ import { auth } from "../../firebase.js";
 import theme from "../../assets/theme";
 
 import {
-  ANIMATION_DURATION,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
-  ANIMATION_ENTRY,
-  ANIMATION_EXIT,
 } from "../../assets/constants";
 
 export default function Login() {
@@ -27,14 +23,6 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
-
-  const navigateBack = () => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.back();
-    }, ANIMATION_DURATION);
-  };
 
   const handleResetPassword = async () => {
     setError(false);
@@ -45,7 +33,7 @@ export default function Login() {
       Alert.alert(
         "Password Reset Link Sent",
         "A link to reset your password has been sent to provided email",
-        [{ text: "OK", onPress: navigateBack }]
+        [{ text: "OK", onPress: () => router.back() }]
       );
     } catch (error) {
       if (error.code === "auth/invalid-email") {
@@ -70,45 +58,39 @@ export default function Login() {
             style={{ color: theme.PRIMARY }}
           />
         }
-        onPressLeft={navigateBack}
+        onPressLeft={() => router.back()}
       />
-      <AnimatedView
-        animation={animation}
-        duration={ANIMATION_DURATION}
-        style={styles.page}
-      >
-        <View style={styles.alertContainer}>
-          {error && <AlertBanner text={errorMsg} />}
+      <View style={styles.alertContainer}>
+        {error && <AlertBanner text={errorMsg} />}
+      </View>
+
+      <View style={styles.container}>
+        <View style={styles.subtitle}>
+          <Subtitle>reset password</Subtitle>
         </View>
 
-        <View style={styles.container}>
-          <View style={styles.subtitle}>
-            <Subtitle>reset password</Subtitle>
-          </View>
+        <Input
+          placeholder="enter email"
+          label="email"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <Button
+          fill={theme.TEXT}
+          textColor={theme.BACKGROUND}
+          onPress={handleResetPassword}
+        >
+          send password reset link
+        </Button>
 
-          <Input
-            placeholder="enter email"
-            label="email"
-            value={email}
-            onChangeText={setEmail}
+        {isLoading && (
+          <ActivityIndicator
+            style={styles.loading}
+            size={"large"}
+            color={theme.PRIMARY}
           />
-          <Button
-            fill={theme.TEXT}
-            textColor={theme.BACKGROUND}
-            onPress={handleResetPassword}
-          >
-            send password reset link
-          </Button>
-
-          {isLoading && (
-            <ActivityIndicator
-              style={styles.loading}
-              size={"large"}
-              color={theme.PRIMARY}
-            />
-          )}
-        </View>
-      </AnimatedView>
+        )}
+      </View>
     </View>
   );
 }

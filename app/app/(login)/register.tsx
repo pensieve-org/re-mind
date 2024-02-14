@@ -9,9 +9,6 @@ import theme from "../../assets/theme";
 import {
   HORIZONTAL_PADDING,
   HEADER_ICON_DIMENSION,
-  ANIMATION_DURATION,
-  ANIMATION_ENTRY,
-  ANIMATION_EXIT,
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -21,7 +18,6 @@ import getUserEvents from "../../apis/getUserEvents";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { auth, db } from "../../firebase.js";
-import { View as AnimatedView } from "react-native-animatable";
 import createUser from "../../apis/createUser";
 import GradientScrollView from "../../components/GradientScrollView";
 
@@ -37,21 +33,6 @@ const Register = () => {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const { setUserDetails, setUserEvents } = useContext(AppContext);
-  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
-
-  const navigate = (route) => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.replace(route);
-    }, ANIMATION_DURATION);
-  };
-
-  const navigateBack = () => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.back();
-    }, ANIMATION_DURATION);
-  };
 
   const handleRegister = async () => {
     setError(false);
@@ -103,7 +84,7 @@ const Register = () => {
 
       setUserEvents(await getUserEvents(user.userId));
       setIsLoading(false);
-      navigate("/home");
+      router.replace("/home");
     } catch (error) {
       if (error.code === "auth/weak-password") {
         setErrorMsg("password must be at least 6 characters");
@@ -131,73 +112,68 @@ const Register = () => {
             style={{ color: theme.PRIMARY }}
           />
         }
-        onPressLeft={navigateBack}
+        onPressLeft={() => router.back()}
       />
-      <AnimatedView
-        animation={animation}
-        duration={ANIMATION_DURATION}
-        style={styles.page}
-      >
-        {error && (
-          <View style={styles.alertContainer}>
-            <Alert text={errorMsg} />
-          </View>
-        )}
 
-        <GradientScrollView style={styles.container}>
-          <View style={{ paddingVertical: 50, paddingTop: 30 }}>
-            <Subtitle>register</Subtitle>
-          </View>
-          <Input
-            placeholder="enter first name"
-            label="first name"
-            value={firstName}
-            onChangeText={setFirstName}
+      {error && (
+        <View style={styles.alertContainer}>
+          <Alert text={errorMsg} />
+        </View>
+      )}
+
+      <GradientScrollView style={styles.container}>
+        <View style={{ paddingVertical: 50, paddingTop: 30 }}>
+          <Subtitle>register</Subtitle>
+        </View>
+        <Input
+          placeholder="enter first name"
+          label="first name"
+          value={firstName}
+          onChangeText={setFirstName}
+        />
+        <Input
+          placeholder="enter last name"
+          label="last name"
+          value={lastName}
+          onChangeText={setLastName}
+        />
+        <Input
+          placeholder="enter username"
+          label="username"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <Input
+          placeholder="enter email"
+          label="email"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <Input
+          placeholder="enter password"
+          label="password"
+          type="password"
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Input
+          placeholder="enter password"
+          label="confirm password"
+          type="password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+        />
+        <Button fill="white" textColor="black" onPress={handleRegister}>
+          register
+        </Button>
+        {isLoading && (
+          <ActivityIndicator
+            style={styles.loading}
+            size={"large"}
+            color={theme.PRIMARY}
           />
-          <Input
-            placeholder="enter last name"
-            label="last name"
-            value={lastName}
-            onChangeText={setLastName}
-          />
-          <Input
-            placeholder="enter username"
-            label="username"
-            value={username}
-            onChangeText={setUsername}
-          />
-          <Input
-            placeholder="enter email"
-            label="email"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <Input
-            placeholder="enter password"
-            label="password"
-            type="password"
-            value={password}
-            onChangeText={setPassword}
-          />
-          <Input
-            placeholder="enter password"
-            label="confirm password"
-            type="password"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-          />
-          <Button fill="white" textColor="black" onPress={handleRegister}>
-            register
-          </Button>
-          {isLoading && (
-            <ActivityIndicator
-              style={styles.loading}
-              size={"large"}
-              color={theme.PRIMARY}
-            />
-          )}
-        </GradientScrollView>
-      </AnimatedView>
+        )}
+      </GradientScrollView>
     </View>
   );
 };
