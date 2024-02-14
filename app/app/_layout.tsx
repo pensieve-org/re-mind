@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { AppState } from "react-native";
-import { Slot } from "expo-router";
+import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import {
   Montserrat_400Regular,
@@ -55,7 +55,7 @@ export default function Layout() {
           setHomeTabState,
         }}
       >
-        <Slot />
+        <Stack screenOptions={{ headerShown: false, animation: "fade" }} />
       </AppContext.Provider>
     </FontLoader>
   );

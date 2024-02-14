@@ -15,12 +15,12 @@
 - [x] Deleting a user should delete the profile picture
 
 ### Essential
-- [ ] Cloud function - make a cloud function to update all future and live event statuses
+- [x] Cloud function - make a cloud function to update all future and live event statuses
 - [ ] Caching - minimise the number of firebase calls
 - [ ] Optimise code (use batch queries?)
-- [ ] Image upload to live events
-- [ ] Look at how to auto reload when something changes in firebase (we should be able to auto trigger the background image upload for a user if an event status they are part of is set to live by the cloud function)
-- [ ] Event invitations? should go on profile? When added, remember to delete when event is deleted. 
+- [x] Image upload to live events
+- [x] Look at how to auto reload when something changes in firebase (we should be able to auto trigger the background image upload for a user if an event status they are part of is set to live by the cloud function)
+- [x] Event invitations? should go on profile? When added, remember to delete when event is deleted. 
 - [ ] go through all screens and clean up 
 
 

@@ -4,7 +4,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { router } from "expo-router";
 import "react-native-get-random-values";
-import { View as AnimatedView } from "react-native-animatable";
 
 import Alert from "../../components/Alert";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -23,9 +22,6 @@ import getUserDetails from "../../apis/getUserDetails";
 import theme from "../../assets/theme";
 
 import {
-  ANIMATION_DURATION,
-  ANIMATION_ENTRY,
-  ANIMATION_EXIT,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
 } from "../../assets/constants";
@@ -38,21 +34,6 @@ export default function Login() {
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const { setUserDetails, setUserEvents } = useContext(AppContext);
-  const [animation, setAnimation] = useState(ANIMATION_ENTRY);
-
-  const navigate = (route, replace = false) => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      replace ? router.replace(route) : router.push(route);
-    }, ANIMATION_DURATION);
-  };
-
-  const navigateBack = () => {
-    setAnimation(ANIMATION_EXIT);
-    setTimeout(() => {
-      router.back();
-    }, ANIMATION_DURATION);
-  };
 
   const handleLogin = async () => {
     setError(false);
@@ -78,7 +59,7 @@ export default function Login() {
 
       setUserEvents(await getUserEvents(user.userId));
       setIsLoading(false);
-      navigate("/home", true);
+      router.replace("/home");
     } catch (error) {
       if (error.code === "auth/invalid-email") {
         setErrorMsg("invalid email address");
@@ -102,61 +83,56 @@ export default function Login() {
             style={{ color: theme.PRIMARY }}
           />
         }
-        onPressLeft={navigateBack}
+        onPressLeft={() => router.back()}
       />
-      <AnimatedView
-        animation={animation}
-        duration={ANIMATION_DURATION}
-        style={styles.page}
-      >
-        <View style={styles.alertContainer}>
-          {error && <Alert text={errorMsg} />}
+
+      <View style={styles.alertContainer}>
+        {error && <Alert text={errorMsg} />}
+      </View>
+
+      <View style={styles.container}>
+        <View style={styles.subtitle}>
+          <Subtitle>login</Subtitle>
         </View>
 
-        <View style={styles.container}>
-          <View style={styles.subtitle}>
-            <Subtitle>login</Subtitle>
-          </View>
+        <Input
+          placeholder="enter email/username"
+          label="email/username"
+          value={identifier}
+          onChangeText={setIdentifier}
+        />
+        <Input
+          placeholder="enter password"
+          label="password"
+          type="password"
+          value={password}
+          onChangeText={setPassword}
+        />
+        <Button
+          fill={theme.TEXT}
+          textColor={theme.BACKGROUND}
+          onPress={handleLogin}
+        >
+          login
+        </Button>
 
-          <Input
-            placeholder="enter email/username"
-            label="email/username"
-            value={identifier}
-            onChangeText={setIdentifier}
+        <Body
+          style={styles.forgotPassword}
+          onPress={() => {
+            router.push("/forgot-password");
+          }}
+        >
+          forgot password?
+        </Body>
+
+        {isLoading && (
+          <ActivityIndicator
+            style={styles.loading}
+            size={"large"}
+            color={theme.PRIMARY}
           />
-          <Input
-            placeholder="enter password"
-            label="password"
-            type="password"
-            value={password}
-            onChangeText={setPassword}
-          />
-          <Button
-            fill={theme.TEXT}
-            textColor={theme.BACKGROUND}
-            onPress={handleLogin}
-          >
-            login
-          </Button>
-
-          <Body
-            style={styles.forgotPassword}
-            onPress={() => {
-              navigate("/forgot-password");
-            }}
-          >
-            forgot password?
-          </Body>
-
-          {isLoading && (
-            <ActivityIndicator
-              style={styles.loading}
-              size={"large"}
-              color={theme.PRIMARY}
-            />
-          )}
-        </View>
-      </AnimatedView>
+        )}
+      </View>
     </View>
   );
 }
