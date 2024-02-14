@@ -74,6 +74,10 @@ export default function Modal() {
     );
   };
 
+  const confirmLocation = async (placeId) => {
+    // TODO: when a location is selected, send info back to other screen like this: https://stackoverflow.com/questions/76819796/how-to-pass-data-from-a-modal-with-expo-router-using-react-native
+  };
+
   const handleSearchChange = (text) => {
     setSearch(text);
     searchLocations(text);
@@ -81,7 +85,6 @@ export default function Modal() {
 
   return (
     <View style={styles.container}>
-      {!router.canGoBack() && <Link href="../">Dismiss</Link>}
       <StatusBar style="light" />
       <TextInput
         placeholder="Search"
