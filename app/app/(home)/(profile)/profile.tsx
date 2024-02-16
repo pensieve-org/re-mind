@@ -41,13 +41,17 @@ export default function Profile() {
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(false);
 
+  const clearContext = () => {
+    setUserDetails({});
+    setSelectedEvent({});
+    setUserEvents([]);
+  };
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
       await AsyncStorage.clear();
-      setUserDetails({});
-      setSelectedEvent({});
-      setUserEvents({});
+      clearContext();
       router.replace("/");
     } catch (error) {
       console.error("Error signing out: ", error);
@@ -66,9 +70,7 @@ export default function Profile() {
             onPress: async () => {
               await deleteUser(userDetails.userId);
               await AsyncStorage.clear();
-              setUserDetails({});
-              setSelectedEvent({});
-              setUserEvents({});
+              clearContext();
               router.replace("/");
             },
           },

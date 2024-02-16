@@ -33,8 +33,6 @@ import Calendar from "../../components/Calendar";
 import GradientScrollView from "../../components/GradientScrollView";
 import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "../../firebase.js";
-import getEventDetails from "../../apis/getEventDetails";
-import Title from "../../components/Title";
 
 const blinkAnimation = {
   0: { opacity: 1 },

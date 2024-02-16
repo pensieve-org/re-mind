@@ -44,6 +44,8 @@ export default function Page() {
         setUserDetails(userJSON);
         setUserEvents(await geUserEvents(userJSON.userId));
         router.replace("/home");
+        // await registerBackgroundFetchTask();
+        handleImageUpload(5);
       } catch (error) {
         console.log(error);
         router.replace("/entry");
@@ -56,17 +58,10 @@ export default function Page() {
   useEffect(() => {
     (async () => {
       await checkLogin();
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access media library is not granted");
       }
-      // await registerBackgroundFetchTask();
-      handleImageUpload(5);
     })();
   }, []);
 
