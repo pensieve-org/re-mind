@@ -1,24 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  View,
-  Image,
-  Alert as RNAlert,
-  ActivityIndicator,
-} from "react-native";
-import { View as AnimatedView } from "react-native-animatable";
+import { StyleSheet, View } from "react-native";
 import { router, Link } from "expo-router";
-
-import BackArrow from "../../../assets/arrow-left.svg";
 import theme from "../../../assets/theme";
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-  PROFILE_ICON_DIMENSION,
-} from "../../../assets/constants";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
 import Body from "../../../components/Body";
-import Header from "../../../components/Header";
 import { AppContext } from "../../_layout";
 import Subtitle from "../../../components/Subtitle";
 import SubtitleInput from "../../../components/SubtitleInput";
@@ -30,7 +15,6 @@ import Alert from "../../../components/Alert";
 import Button from "../../../components/Button";
 import getFriendDetails from "../../../apis/getFriendDetails";
 import GradientScrollView from "../../../components/GradientScrollView";
-import LocationSelector from "../../../components/LocationSelector";
 import LocationDot from "../../../assets/location-dot.svg";
 
 export default function CreateEvent() {
@@ -109,16 +93,6 @@ export default function CreateEvent() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
       {error && (
         <View style={styles.alertContainer}>
           <Alert text={errorMsg} />

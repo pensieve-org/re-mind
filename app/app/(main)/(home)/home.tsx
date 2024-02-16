@@ -5,34 +5,30 @@ import {
   RefreshControl,
   StyleSheet,
   View,
+  TouchableOpacity,
 } from "react-native";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import {
   View as AnimatedView,
   initializeRegistryWithDefinitions,
 } from "react-native-animatable";
-
-import Body from "../../components/Body";
-import EventList from "../../components/EventList";
-import Header from "../../components/Header";
-import Subtitle from "../../components/Subtitle";
-
-import Plus from "../../assets/plus.svg";
-import theme from "../../assets/theme";
-
+import Body from "../../../components/Body";
+import EventList from "../../../components/EventList";
+import Subtitle from "../../../components/Subtitle";
+import Plus from "../../../assets/plus.svg";
+import theme from "../../../assets/theme";
 import {
   HEADER_ICON_DIMENSION,
+  HEADER_MARGIN,
   HORIZONTAL_PADDING,
-} from "../../assets/constants";
-
-import { AppContext } from "../_layout";
-import getUserEvents from "../../apis/getUserEvents";
-import ProfileIcon from "../../assets/profile.svg";
-import Calendar from "../../components/Calendar";
-import GradientScrollView from "../../components/GradientScrollView";
-import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "../../firebase.js";
-import getEventDetails from "../../apis/getEventDetails";
+} from "../../../assets/constants";
+import { AppContext } from "../../_layout";
+import getUserEvents from "../../../apis/getUserEvents";
+import ProfileIcon from "../../../assets/profile.svg";
+import Calendar from "../../../components/Calendar";
+import GradientScrollView from "../../../components/GradientScrollView";
+import { collection, doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../../firebase.js";
 
 const blinkAnimation = {
   0: { opacity: 1 },
@@ -103,47 +99,57 @@ export default function Home() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <View
-            style={{
-              width: HEADER_ICON_DIMENSION,
-              height: HEADER_ICON_DIMENSION,
-              borderRadius: 100,
-              backgroundColor: userDetails.profilePicture
-                ? "transparent"
-                : theme.PLACEHOLDER,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {userDetails.profilePicture ? (
-              <Image
-                source={{ uri: userDetails.profilePicture }}
+      <Stack.Screen
+        options={{
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.push("/profile")}
+              style={{ marginLeft: HEADER_MARGIN }}
+            >
+              <View
                 style={{
                   width: HEADER_ICON_DIMENSION,
                   height: HEADER_ICON_DIMENSION,
                   borderRadius: 100,
+                  backgroundColor: userDetails.profilePicture
+                    ? "transparent"
+                    : theme.PLACEHOLDER,
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-              />
-            ) : (
-              <ProfileIcon
-                height={15}
-                width={15}
+              >
+                {userDetails.profilePicture ? (
+                  <Image
+                    source={{ uri: userDetails.profilePicture }}
+                    style={{
+                      width: HEADER_ICON_DIMENSION,
+                      height: HEADER_ICON_DIMENSION,
+                      borderRadius: 100,
+                    }}
+                  />
+                ) : (
+                  <ProfileIcon
+                    height={15}
+                    width={15}
+                    style={{ color: theme.PRIMARY }}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
+          ),
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => router.push("/create-event")}
+              style={{ marginRight: HEADER_MARGIN }}
+            >
+              <Plus
+                height={HEADER_ICON_DIMENSION}
+                width={HEADER_ICON_DIMENSION}
                 style={{ color: theme.PRIMARY }}
               />
-            )}
-          </View>
-        }
-        onPressLeft={() => router.push("/profile")}
-        imageRight={
-          <Plus
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressRight={() => router.push("/create-event")}
+            </TouchableOpacity>
+          ),
+        }}
       />
 
       <View style={styles.container}>

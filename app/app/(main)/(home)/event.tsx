@@ -1,41 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Modal,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { router } from "expo-router";
-
-import BackArrow from "../../assets/arrow-left.svg";
-import ThreeDots from "../../assets/three-dots.svg";
+import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { router, Stack } from "expo-router";
+import BackArrow from "../../../assets/arrow-left.svg";
+import ThreeDots from "../../../assets/three-dots.svg";
 import {
   EVENT_IMAGE_WIDTH,
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   IMAGE_GAP,
   ROW_IMAGES,
-} from "../../assets/constants";
-import theme from "../../assets/theme";
-import Body from "../../components/Body";
-import Header from "../../components/Header";
-import getEventDetails from "../../apis/getEventDetails";
-import { AppContext } from "../_layout";
-import Subtitle from "../../components/Subtitle";
-import ShowAttendees from "../../components/ShowAttendees";
-import CountdownTimer from "../../components/CountdownTimer";
+  HEADER_MARGIN,
+} from "../../../assets/constants";
+import theme from "../../../assets/theme";
+import Body from "../../../components/Body";
+import { AppContext } from "../../_layout";
+import Subtitle from "../../../components/Subtitle";
+import ShowAttendees from "../../../components/ShowAttendees";
+import CountdownTimer from "../../../components/CountdownTimer";
 import Swiper from "react-native-swiper";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
-import getEventAttendees from "../../apis/getEventAttendees";
-import getEventImages from "../../apis/getEventImages";
-import EventInvitation from "../../components/EventInvitation";
-import respondEventInvitation from "../../apis/respondEventInvitation";
+import getEventAttendees from "../../../apis/getEventAttendees";
+import getEventImages from "../../../apis/getEventImages";
+import EventInvitation from "../../../components/EventInvitation";
+import respondEventInvitation from "../../../apis/respondEventInvitation";
 import { collection, doc, onSnapshot, where, query } from "firebase/firestore";
-import { db } from "../../firebase.js";
-import GradientScrollView from "../../components/GradientScrollView";
+import { db } from "../../../firebase.js";
+import GradientScrollView from "../../../components/GradientScrollView";
 
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
@@ -196,24 +186,20 @@ export default function Event() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-        imageRight={
-          <ThreeDots
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressRight={() => {
-          router.push("/event-settings");
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => router.push("/event-settings")}
+              style={{ marginRight: HEADER_MARGIN }}
+            >
+              <ThreeDots
+                height={HEADER_ICON_DIMENSION}
+                width={HEADER_ICON_DIMENSION}
+                style={{ color: theme.PRIMARY }}
+              />
+            </TouchableOpacity>
+          ),
         }}
       />
 

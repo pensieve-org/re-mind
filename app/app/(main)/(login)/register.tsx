@@ -1,25 +1,20 @@
 import React, { useContext, useState } from "react";
 import { StyleSheet, View, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
-import Header from "../../components/Header";
-import Input from "../../components/Input";
-import Button from "../../components/Button";
-import Alert from "../../components/Alert";
-import theme from "../../assets/theme";
-import {
-  HORIZONTAL_PADDING,
-  HEADER_ICON_DIMENSION,
-} from "../../assets/constants";
-import Subtitle from "../../components/Subtitle";
-import BackArrow from "../../assets/arrow-left.svg";
-import { AppContext } from "../_layout";
+import Input from "../../../components/Input";
+import Button from "../../../components/Button";
+import Alert from "../../../components/Alert";
+import theme from "../../../assets/theme";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
+import Subtitle from "../../../components/Subtitle";
+import { AppContext } from "../../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import getUserEvents from "../../apis/getUserEvents";
+import getUserEvents from "../../../apis/getUserEvents";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { auth, db } from "../../firebase.js";
-import createUser from "../../apis/createUser";
-import GradientScrollView from "../../components/GradientScrollView";
+import { auth, db } from "../../../firebase.js";
+import createUser from "../../../apis/createUser";
+import GradientScrollView from "../../../components/GradientScrollView";
 
 // TODO: Use React Hook Forms / formik
 const Register = () => {
@@ -104,17 +99,6 @@ const Register = () => {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
-
       {error && (
         <View style={styles.alertContainer}>
           <Alert text={errorMsg} />

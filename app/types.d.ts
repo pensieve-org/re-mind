@@ -7,11 +7,7 @@ declare type UserDetails = {
     profilePicture: string,
 }
 
-declare type UserEvents = {
-    live: EventDetails[],
-    past: EventDetails[],
-    future: EventDetails[]
-}
+declare type UserEvents = EventDetails[];
 
 type HomeTabState = "memories" | "calendar";
 

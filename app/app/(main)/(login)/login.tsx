@@ -5,27 +5,22 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { router } from "expo-router";
 import "react-native-get-random-values";
 
-import Alert from "../../components/Alert";
-import BackArrow from "../../assets/arrow-left.svg";
-import Body from "../../components/Body";
-import Button from "../../components/Button";
-import Header from "../../components/Header";
-import Input from "../../components/Input";
-import Subtitle from "../../components/Subtitle";
+import Alert from "../../../components/Alert";
+import Body from "../../../components/Body";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Subtitle from "../../../components/Subtitle";
 
-import { AppContext } from "../_layout";
+import { AppContext } from "../../_layout";
 
-import { auth } from "../../firebase.js";
-import getUserEvents from "../../apis/getUserEvents";
-import getUserDetails from "../../apis/getUserDetails";
+import { auth } from "../../../firebase.js";
+import getUserEvents from "../../../apis/getUserEvents";
+import getUserDetails from "../../../apis/getUserDetails";
 
-import theme from "../../assets/theme";
+import theme from "../../../assets/theme";
 
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-} from "../../assets/constants";
-import getUserEmail from "../../apis/getUserEmail";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
+import getUserEmail from "../../../apis/getUserEmail";
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");
@@ -75,17 +70,6 @@ export default function Login() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
-
       <View style={styles.alertContainer}>
         {error && <Alert text={errorMsg} />}
       </View>

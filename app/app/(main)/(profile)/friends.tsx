@@ -1,26 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
-import { router } from "expo-router";
-
-import BackArrow from "../../assets/arrow-left.svg";
-import theme from "../../assets/theme";
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-} from "../../assets/constants";
-import Body from "../../components/Body";
-import FriendList from "../../components/FriendList";
-import Header from "../../components/Header";
-import { AppContext } from "../_layout";
-import sendFriendRequest from "../../apis/sendFriendRequest";
-import getUserDetails from "../../apis/getUserDetails";
-import removeFriend from "../../apis/removeFriend";
-import AddFriend from "../../components/AddFriendInput";
-import FloatingActionBar from "../../components/FloatingActionBar";
-import FriendRequestList from "../../components/FriendRequestList";
-import acceptFriendRequest from "../../apis/acceptFriendRequest";
-import getFriendRequests from "../../apis/getFriendRequests";
-import getFriendDetails from "../../apis/getFriendDetails";
+import theme from "../../../assets/theme";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
+import Body from "../../../components/Body";
+import FriendList from "../../../components/FriendList";
+import { AppContext } from "../../_layout";
+import sendFriendRequest from "../../../apis/sendFriendRequest";
+import removeFriend from "../../../apis/removeFriend";
+import AddFriend from "../../../components/AddFriendInput";
+import FloatingActionBar from "../../../components/FloatingActionBar";
+import FriendRequestList from "../../../components/FriendRequestList";
+import acceptFriendRequest from "../../../apis/acceptFriendRequest";
+import getFriendRequests from "../../../apis/getFriendRequests";
+import getFriendDetails from "../../../apis/getFriendDetails";
 
 export default function MyFriends() {
   const { userDetails } = useContext(AppContext);
@@ -103,16 +95,6 @@ export default function MyFriends() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
       <View style={styles.container}>
         {/* TODO: update this to show the 5 most similar names in the database. 
           Allow user to select by choosing from list */}

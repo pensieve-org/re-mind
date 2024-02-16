@@ -7,8 +7,7 @@ import {
   TouchableOpacity,
   Text,
 } from "react-native";
-import { router, Link } from "expo-router";
-import { StatusBar } from "expo-status-bar";
+import { Stack } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import debounce from "lodash.debounce";
@@ -85,7 +84,12 @@ export default function Modal() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <Stack.Screen
+        options={{
+          presentation: "modal",
+          headerShown: false,
+        }}
+      />
       <TextInput
         placeholder="Search"
         value={search}

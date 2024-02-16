@@ -8,6 +8,7 @@ import {
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
 import handleImageUpload from "../utils/handleImageUpload";
+import { StatusBar } from "expo-status-bar";
 
 export const AppContext = createContext(null);
 
@@ -55,6 +56,7 @@ export default function Layout() {
           setHomeTabState,
         }}
       >
+        <StatusBar style="light" />
         <Stack screenOptions={{ headerShown: false, animation: "fade" }} />
       </AppContext.Provider>
     </FontLoader>
