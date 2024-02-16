@@ -1,19 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Alert, StyleSheet, View, TouchableOpacity } from "react-native";
-import { router, Stack } from "expo-router";
-
-import BackArrow from "../../../assets/arrow-left.svg";
+import { Alert, StyleSheet, View } from "react-native";
 import theme from "../../../assets/theme";
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-  HEADER_MARGIN,
-} from "../../../assets/constants";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
 import Body from "../../../components/Body";
 import FriendList from "../../../components/FriendList";
 import { AppContext } from "../../_layout";
 import sendFriendRequest from "../../../apis/sendFriendRequest";
-import getUserDetails from "../../../apis/getUserDetails";
 import removeFriend from "../../../apis/removeFriend";
 import AddFriend from "../../../components/AddFriendInput";
 import FloatingActionBar from "../../../components/FloatingActionBar";

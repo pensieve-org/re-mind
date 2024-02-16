@@ -1,24 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Pressable,
-  StyleSheet,
-  View,
-  Image,
-  Alert as RNAlert,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
-import { View as AnimatedView } from "react-native-animatable";
-import { router, Link, Stack } from "expo-router";
-
-import BackArrow from "../../../assets/arrow-left.svg";
+import { StyleSheet, View } from "react-native";
+import { router, Link } from "expo-router";
 import theme from "../../../assets/theme";
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-  PROFILE_ICON_DIMENSION,
-  HEADER_MARGIN,
-} from "../../../assets/constants";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
 import Body from "../../../components/Body";
 import { AppContext } from "../../_layout";
 import Subtitle from "../../../components/Subtitle";
@@ -31,7 +15,6 @@ import Alert from "../../../components/Alert";
 import Button from "../../../components/Button";
 import getFriendDetails from "../../../apis/getFriendDetails";
 import GradientScrollView from "../../../components/GradientScrollView";
-import LocationSelector from "../../../components/LocationSelector";
 import LocationDot from "../../../assets/location-dot.svg";
 
 export default function CreateEvent() {

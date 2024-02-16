@@ -1,17 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Modal,
-  RefreshControl,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 import { router, Stack } from "expo-router";
-
-import BackArrow from "../../assets/arrow-left.svg";
-import ThreeDots from "../../assets/three-dots.svg";
+import BackArrow from "../../../assets/arrow-left.svg";
+import ThreeDots from "../../../assets/three-dots.svg";
 import {
   EVENT_IMAGE_WIDTH,
   HEADER_ICON_DIMENSION,
@@ -19,23 +10,22 @@ import {
   IMAGE_GAP,
   ROW_IMAGES,
   HEADER_MARGIN,
-} from "../../assets/constants";
-import theme from "../../assets/theme";
-import Body from "../../components/Body";
-import getEventDetails from "../../apis/getEventDetails";
-import { AppContext } from "../_layout";
-import Subtitle from "../../components/Subtitle";
-import ShowAttendees from "../../components/ShowAttendees";
-import CountdownTimer from "../../components/CountdownTimer";
+} from "../../../assets/constants";
+import theme from "../../../assets/theme";
+import Body from "../../../components/Body";
+import { AppContext } from "../../_layout";
+import Subtitle from "../../../components/Subtitle";
+import ShowAttendees from "../../../components/ShowAttendees";
+import CountdownTimer from "../../../components/CountdownTimer";
 import Swiper from "react-native-swiper";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
-import getEventAttendees from "../../apis/getEventAttendees";
-import getEventImages from "../../apis/getEventImages";
-import EventInvitation from "../../components/EventInvitation";
-import respondEventInvitation from "../../apis/respondEventInvitation";
+import getEventAttendees from "../../../apis/getEventAttendees";
+import getEventImages from "../../../apis/getEventImages";
+import EventInvitation from "../../../components/EventInvitation";
+import respondEventInvitation from "../../../apis/respondEventInvitation";
 import { collection, doc, onSnapshot, where, query } from "firebase/firestore";
-import { db } from "../../firebase.js";
-import GradientScrollView from "../../components/GradientScrollView";
+import { db } from "../../../firebase.js";
+import GradientScrollView from "../../../components/GradientScrollView";
 
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =

@@ -12,8 +12,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, Stack } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signOut } from "firebase/auth";
-
-import BackArrow from "../../../assets/arrow-left.svg";
 import theme from "../../../assets/theme";
 import {
   HEADER_ICON_DIMENSION,

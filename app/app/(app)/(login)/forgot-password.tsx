@@ -1,28 +1,17 @@
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, View } from "react-native";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { router, Stack } from "expo-router";
+import { router } from "expo-router";
 
-import AlertBanner from "../../components/Alert";
-import BackArrow from "../../assets/arrow-left.svg";
-import Button from "../../components/Button";
-import Input from "../../components/Input";
-import Subtitle from "../../components/Subtitle";
+import AlertBanner from "../../../components/Alert";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Subtitle from "../../../components/Subtitle";
 
-import { auth } from "../../firebase.js";
-import theme from "../../assets/theme";
+import { auth } from "../../../firebase.js";
+import theme from "../../../assets/theme";
 
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-  HEADER_MARGIN,
-} from "../../assets/constants";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
 
 export default function Login() {
   const [email, setEmail] = useState("");

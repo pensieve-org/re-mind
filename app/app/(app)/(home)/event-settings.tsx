@@ -7,29 +7,24 @@ import {
   Image,
   Pressable,
   Modal,
-  TouchableOpacity,
 } from "react-native";
-import { router, Stack } from "expo-router";
-
-import BackArrow from "../../assets/arrow-left.svg";
+import { router } from "expo-router";
 import {
-  HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
-  HEADER_MARGIN,
-} from "../../assets/constants";
-import theme from "../../assets/theme";
-import { AppContext } from "../_layout";
-import Subtitle from "../../components/Subtitle";
-import Button from "../../components/Button";
-import deleteEvent from "../../apis/deleteEvent";
-import getEventAdmins from "../../apis/getEventAdmins";
-import leaveEvent from "../../apis/leaveEvent";
-import ImageIcon from "../../assets/image.svg";
-import CameraIcon from "../../assets/camera.svg";
+} from "../../../assets/constants";
+import theme from "../../../assets/theme";
+import { AppContext } from "../../_layout";
+import Subtitle from "../../../components/Subtitle";
+import Button from "../../../components/Button";
+import deleteEvent from "../../../apis/deleteEvent";
+import getEventAdmins from "../../../apis/getEventAdmins";
+import leaveEvent from "../../../apis/leaveEvent";
+import ImageIcon from "../../../assets/image.svg";
+import CameraIcon from "../../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
-import uploadImageAsync from "../../utils/uploadImageAsync";
-import updateThumbnail from "../../apis/updateThumbnail";
+import uploadImageAsync from "../../../utils/uploadImageAsync";
+import updateThumbnail from "../../../apis/updateThumbnail";
 
 export default function EventSettings() {
   const {

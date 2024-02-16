@@ -12,27 +12,23 @@ import {
   View as AnimatedView,
   initializeRegistryWithDefinitions,
 } from "react-native-animatable";
-
-import Body from "../../components/Body";
-import EventList from "../../components/EventList";
-import Subtitle from "../../components/Subtitle";
-
-import Plus from "../../assets/plus.svg";
-import theme from "../../assets/theme";
-
+import Body from "../../../components/Body";
+import EventList from "../../../components/EventList";
+import Subtitle from "../../../components/Subtitle";
+import Plus from "../../../assets/plus.svg";
+import theme from "../../../assets/theme";
 import {
   HEADER_ICON_DIMENSION,
   HEADER_MARGIN,
   HORIZONTAL_PADDING,
-} from "../../assets/constants";
-
-import { AppContext } from "../_layout";
-import getUserEvents from "../../apis/getUserEvents";
-import ProfileIcon from "../../assets/profile.svg";
-import Calendar from "../../components/Calendar";
-import GradientScrollView from "../../components/GradientScrollView";
-import { collection, doc, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "../../firebase.js";
+} from "../../../assets/constants";
+import { AppContext } from "../../_layout";
+import getUserEvents from "../../../apis/getUserEvents";
+import ProfileIcon from "../../../assets/profile.svg";
+import Calendar from "../../../components/Calendar";
+import GradientScrollView from "../../../components/GradientScrollView";
+import { collection, doc, onSnapshot } from "firebase/firestore";
+import { db } from "../../../firebase.js";
 
 const blinkAnimation = {
   0: { opacity: 1 },

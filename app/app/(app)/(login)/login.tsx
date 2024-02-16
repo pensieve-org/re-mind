@@ -1,36 +1,26 @@
 import React, { useContext, useState } from "react";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { router, Stack } from "expo-router";
+import { router } from "expo-router";
 import "react-native-get-random-values";
 
-import Alert from "../../components/Alert";
-import BackArrow from "../../assets/arrow-left.svg";
-import Body from "../../components/Body";
-import Button from "../../components/Button";
-import Input from "../../components/Input";
-import Subtitle from "../../components/Subtitle";
+import Alert from "../../../components/Alert";
+import Body from "../../../components/Body";
+import Button from "../../../components/Button";
+import Input from "../../../components/Input";
+import Subtitle from "../../../components/Subtitle";
 
-import { AppContext } from "../_layout";
+import { AppContext } from "../../_layout";
 
-import { auth } from "../../firebase.js";
-import getUserEvents from "../../apis/getUserEvents";
-import getUserDetails from "../../apis/getUserDetails";
+import { auth } from "../../../firebase.js";
+import getUserEvents from "../../../apis/getUserEvents";
+import getUserDetails from "../../../apis/getUserDetails";
 
-import theme from "../../assets/theme";
+import theme from "../../../assets/theme";
 
-import {
-  HEADER_ICON_DIMENSION,
-  HORIZONTAL_PADDING,
-  HEADER_MARGIN,
-} from "../../assets/constants";
-import getUserEmail from "../../apis/getUserEmail";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
+import getUserEmail from "../../../apis/getUserEmail";
 
 export default function Login() {
   const [identifier, setIdentifier] = useState("");

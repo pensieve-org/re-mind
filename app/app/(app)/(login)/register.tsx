@@ -1,30 +1,20 @@
 import React, { useContext, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
-import { router, Stack } from "expo-router";
-import Input from "../../components/Input";
-import Button from "../../components/Button";
-import Alert from "../../components/Alert";
-import theme from "../../assets/theme";
-import {
-  HORIZONTAL_PADDING,
-  HEADER_ICON_DIMENSION,
-  HEADER_MARGIN,
-} from "../../assets/constants";
-import Subtitle from "../../components/Subtitle";
-import BackArrow from "../../assets/arrow-left.svg";
-import { AppContext } from "../_layout";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
+import { router } from "expo-router";
+import Input from "../../../components/Input";
+import Button from "../../../components/Button";
+import Alert from "../../../components/Alert";
+import theme from "../../../assets/theme";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
+import Subtitle from "../../../components/Subtitle";
+import { AppContext } from "../../_layout";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import getUserEvents from "../../apis/getUserEvents";
+import getUserEvents from "../../../apis/getUserEvents";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { auth, db } from "../../firebase.js";
-import createUser from "../../apis/createUser";
-import GradientScrollView from "../../components/GradientScrollView";
+import { auth, db } from "../../../firebase.js";
+import createUser from "../../../apis/createUser";
+import GradientScrollView from "../../../components/GradientScrollView";
 
 // TODO: Use React Hook Forms / formik
 const Register = () => {
