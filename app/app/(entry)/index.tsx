@@ -2,7 +2,6 @@ import { useContext, useEffect } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import * as MediaLibrary from "expo-media-library";
 
@@ -73,7 +72,6 @@ export default function Page() {
 
   return (
     <View style={styles.page}>
-      <StatusBar style="light" />
       <View style={[styles.container, { paddingTop: insets.top }]}>
         {/* TODO: replace with a cool animation of dish filling up  */}
         <ActivityIndicator size="large" color={theme.PRIMARY} />

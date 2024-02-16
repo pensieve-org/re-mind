@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import { router } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -18,7 +17,6 @@ export default function Page() {
 
   return (
     <View style={styles.page}>
-      <StatusBar style="light" />
       <View style={[styles.container, { paddingTop: insets.top }]}>
         <View style={styles.topContainer}>
           <Title size={55}>re:mind</Title>

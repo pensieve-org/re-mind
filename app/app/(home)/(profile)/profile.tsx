@@ -6,32 +6,33 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
+  TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { signOut } from "firebase/auth";
 
-import BackArrow from "../../assets/arrow-left.svg";
-import theme from "../../assets/theme";
+import BackArrow from "../../../assets/arrow-left.svg";
+import theme from "../../../assets/theme";
 import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
-} from "../../assets/constants";
-import { auth } from "../../firebase.js";
-import Body from "../../components/Body";
-import Button from "../../components/Button";
-import Header from "../../components/Header";
-import { AppContext } from "../_layout";
-import getFriendRequests from "../../apis/getFriendRequests";
-import FriendsIcon from "../../assets/friends.svg";
-import ProfileIcon from "../../assets/profile.svg";
-import CameraIcon from "../../assets/camera.svg";
+  HEADER_MARGIN,
+} from "../../../assets/constants";
+import { auth } from "../../../firebase.js";
+import Body from "../../../components/Body";
+import Button from "../../../components/Button";
+import { AppContext } from "../../_layout";
+import getFriendRequests from "../../../apis/getFriendRequests";
+import FriendsIcon from "../../../assets/friends.svg";
+import ProfileIcon from "../../../assets/profile.svg";
+import CameraIcon from "../../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
-import updateProfilePicture from "../../apis/updateProfilePicture";
-import uploadImageAsync from "../../utils/uploadImageAsync";
-import deleteUser from "../../apis/deleteUser";
+import updateProfilePicture from "../../../apis/updateProfilePicture";
+import uploadImageAsync from "../../../utils/uploadImageAsync";
+import deleteUser from "../../../apis/deleteUser";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
@@ -134,49 +135,45 @@ export default function Profile() {
 
   return (
     <View style={[styles.page, { paddingBottom: insets.bottom }]}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-        imageRight={
-          <View>
-            <FriendsIcon
-              height={HEADER_ICON_DIMENSION}
-              width={HEADER_ICON_DIMENSION}
-              style={{ color: theme.PRIMARY }}
-            />
-            {friendRequests.length > 0 && (
-              <View
-                style={{
-                  position: "absolute",
-                  right: -12,
-                  top: -10,
-                  backgroundColor: theme.RED,
-                  borderRadius: 100,
-                  height: 20,
-                  width: 20,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Body
-                  adjustsFontSizeToFit={true}
-                  bold={true}
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => router.push("/friends")}
+              style={{ marginRight: HEADER_MARGIN }}
+            >
+              <View>
+                <FriendsIcon
+                  height={HEADER_ICON_DIMENSION}
+                  width={HEADER_ICON_DIMENSION}
                   style={{ color: theme.PRIMARY }}
-                >
-                  {friendRequests.length}
-                </Body>
+                />
+                {friendRequests.length > 0 && (
+                  <View
+                    style={{
+                      position: "absolute",
+                      right: -12,
+                      top: -10,
+                      backgroundColor: theme.RED,
+                      borderRadius: 100,
+                      height: 20,
+                      width: 20,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Body
+                      adjustsFontSizeToFit={true}
+                      bold={true}
+                      style={{ color: theme.PRIMARY }}
+                    >
+                      {friendRequests.length}
+                    </Body>
+                  </View>
+                )}
               </View>
-            )}
-          </View>
-        }
-        onPressRight={() => {
-          router.push("/friends");
+            </TouchableOpacity>
+          ),
         }}
       />
 

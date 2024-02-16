@@ -6,9 +6,10 @@ import {
   Image,
   Alert as RNAlert,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { View as AnimatedView } from "react-native-animatable";
-import { router, Link } from "expo-router";
+import { router, Link, Stack } from "expo-router";
 
 import BackArrow from "../../../assets/arrow-left.svg";
 import theme from "../../../assets/theme";
@@ -16,9 +17,9 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
+  HEADER_MARGIN,
 } from "../../../assets/constants";
 import Body from "../../../components/Body";
-import Header from "../../../components/Header";
 import { AppContext } from "../../_layout";
 import Subtitle from "../../../components/Subtitle";
 import SubtitleInput from "../../../components/SubtitleInput";
@@ -109,16 +110,6 @@ export default function CreateEvent() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
       {error && (
         <View style={styles.alertContainer}>
           <Alert text={errorMsg} />

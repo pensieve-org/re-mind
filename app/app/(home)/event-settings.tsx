@@ -7,17 +7,18 @@ import {
   Image,
   Pressable,
   Modal,
+  TouchableOpacity,
 } from "react-native";
-import { router } from "expo-router";
+import { router, Stack } from "expo-router";
 
 import BackArrow from "../../assets/arrow-left.svg";
 import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
+  HEADER_MARGIN,
 } from "../../assets/constants";
 import theme from "../../assets/theme";
-import Header from "../../components/Header";
 import { AppContext } from "../_layout";
 import Subtitle from "../../components/Subtitle";
 import Button from "../../components/Button";
@@ -164,17 +165,6 @@ export default function EventSettings() {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
-
       <View style={styles.container}>
         <View style={{ paddingVertical: 20 }}>
           <Subtitle size={25}>settings</Subtitle>

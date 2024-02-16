@@ -1,5 +1,6 @@
 import { Dimensions } from "react-native";
 export const HORIZONTAL_PADDING = 28;
+export const HEADER_MARGIN = 8;
 export const HEADER_ICON_DIMENSION = 30;
 export const PROFILE_ICON_DIMENSION = 150;
 export const CORNER_RADIUS = 10;

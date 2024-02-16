@@ -1,7 +1,11 @@
 import React, { useContext, useState } from "react";
-import { StyleSheet, View, ActivityIndicator } from "react-native";
-import { router } from "expo-router";
-import Header from "../../components/Header";
+import {
+  StyleSheet,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
+import { router, Stack } from "expo-router";
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 import Alert from "../../components/Alert";
@@ -9,6 +13,7 @@ import theme from "../../assets/theme";
 import {
   HORIZONTAL_PADDING,
   HEADER_ICON_DIMENSION,
+  HEADER_MARGIN,
 } from "../../assets/constants";
 import Subtitle from "../../components/Subtitle";
 import BackArrow from "../../assets/arrow-left.svg";
@@ -104,17 +109,6 @@ const Register = () => {
 
   return (
     <View style={styles.page}>
-      <Header
-        imageLeft={
-          <BackArrow
-            height={HEADER_ICON_DIMENSION}
-            width={HEADER_ICON_DIMENSION}
-            style={{ color: theme.PRIMARY }}
-          />
-        }
-        onPressLeft={() => router.back()}
-      />
-
       {error && (
         <View style={styles.alertContainer}>
           <Alert text={errorMsg} />
