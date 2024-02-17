@@ -57,37 +57,37 @@ export default function Home() {
 
   // TODO: Listener causes duplication bug
   // TODO: listener also now continues down through stacks I think so clean up on navigation
-  useEffect(() => {
-    const unsubscribes = [];
-    isMounted.current = true;
-    // Create listeners for events
-    userEvents.forEach((event, index) => {
-      const eventRef = doc(collection(db, "events"), event.eventId);
-      const unsubscribe = onSnapshot(eventRef, (d) => {
-        if (d.exists() && isMounted.current) {
-          const newDetails = d.data() as EventDetails;
-          const updatedEvent = { ...newDetails, isInvited: event.isInvited };
+  // useEffect(() => {
+  //   const unsubscribes = [];
+  //   isMounted.current = true;
+  //   // Create listeners for events
+  //   userEvents.forEach((event, index) => {
+  //     const eventRef = doc(collection(db, "events"), event.eventId);
+  //     const unsubscribe = onSnapshot(eventRef, (d) => {
+  //       if (d.exists() && isMounted.current) {
+  //         const newDetails = d.data() as EventDetails;
+  //         const updatedEvent = { ...newDetails, isInvited: event.isInvited };
 
-          // Create a new array with the updated event
-          const updatedUserEvents = [...userEvents];
-          updatedUserEvents[index] = updatedEvent;
+  //         // Create a new array with the updated event
+  //         const updatedUserEvents = [...userEvents];
+  //         updatedUserEvents[index] = updatedEvent;
 
-          // Update the userEvents state
-          setUserEvents(updatedUserEvents);
-        }
-      });
-      unsubscribes.push(unsubscribe);
-    });
+  //         // Update the userEvents state
+  //         setUserEvents(updatedUserEvents);
+  //       }
+  //     });
+  //     unsubscribes.push(unsubscribe);
+  //   });
 
-    // TODO: add listener so that adding new events and deleting events updates automatically
-    // will probably need to be done by adding a list of events to the users doc and listening to that
+  //   // TODO: add listener so that adding new events and deleting events updates automatically
+  //   // will probably need to be done by adding a list of events to the users doc and listening to that
 
-    // Cleanup function to unsubscribe from the listeners when the component is unmounted
-    return () => {
-      isMounted.current = false;
-      unsubscribes.forEach((unsubscribe) => unsubscribe());
-    };
-  }, [userEvents, setUserEvents]);
+  //   // Cleanup function to unsubscribe from the listeners when the component is unmounted
+  //   return () => {
+  //     isMounted.current = false;
+  //     unsubscribes.forEach((unsubscribe) => unsubscribe());
+  //   };
+  // }, [userEvents, setUserEvents]);
 
   const handleEventPress = (event) => {
     setSelectedEvent(event);

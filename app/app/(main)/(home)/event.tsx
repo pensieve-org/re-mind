@@ -39,7 +39,6 @@ export default function Event() {
   useEffect(() => {
     const eventRef = doc(collection(db, "events"), selectedEvent.eventId);
 
-    // Listener for changes in the images subcollection
     const imagesUnsubscribe = onSnapshot(
       collection(eventRef, "images"),
       (snapshot) => {
@@ -339,9 +338,10 @@ export default function Event() {
                   parallaxScrollingOffset: 50,
                   parallaxAdjacentItemScale: 0.8,
                 }}
+                defaultIndex={selectedImageIndex}
                 width={Dimensions.get("window").width}
                 height={Dimensions.get("window").height}
-                autoPlay={true}
+                autoPlay={false}
                 data={images}
                 scrollAnimationDuration={1000}
                 onSnapToItem={(index) => console.log("current index:", index)}
