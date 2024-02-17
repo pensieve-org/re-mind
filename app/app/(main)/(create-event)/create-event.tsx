@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Modal, ActivityIndicator } from "react-native";
 import { router, Link } from "expo-router";
 import theme from "../../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../../assets/constants";
@@ -70,6 +70,7 @@ export default function CreateEvent() {
 
       // TODO: remove this eventually, when the auto listener works
       setUserEvents(await getUserEvents(userDetails.userId));
+
       router.back();
       setIsLoading(false);
     } catch (error) {
@@ -192,6 +193,18 @@ export default function CreateEvent() {
           </View>
         </GradientScrollView>
       </View>
+      <Modal animationType="fade" transparent={true} visible={isLoading}>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+          }}
+        >
+          <ActivityIndicator size={"large"} color={theme.PRIMARY} />
+        </View>
+      </Modal>
     </View>
   );
 }

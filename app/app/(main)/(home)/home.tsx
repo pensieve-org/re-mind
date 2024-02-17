@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   Image,
   Pressable,
@@ -53,16 +53,18 @@ export default function Home() {
     setHomeTabState,
   } = useContext(AppContext);
   const [refreshing, setRefreshing] = useState(false);
+  const isMounted = useRef(true);
 
   // TODO: Listener causes duplication bug
+  // TODO: listener also now continues down through stacks I think so clean up on navigation
   useEffect(() => {
     const unsubscribes = [];
-
+    isMounted.current = true;
     // Create listeners for events
     userEvents.forEach((event, index) => {
       const eventRef = doc(collection(db, "events"), event.eventId);
       const unsubscribe = onSnapshot(eventRef, (d) => {
-        if (d.exists()) {
+        if (d.exists() && isMounted.current) {
           const newDetails = d.data() as EventDetails;
           const updatedEvent = { ...newDetails, isInvited: event.isInvited };
 
@@ -82,6 +84,7 @@ export default function Home() {
 
     // Cleanup function to unsubscribe from the listeners when the component is unmounted
     return () => {
+      isMounted.current = false;
       unsubscribes.forEach((unsubscribe) => unsubscribe());
     };
   }, [userEvents, setUserEvents]);

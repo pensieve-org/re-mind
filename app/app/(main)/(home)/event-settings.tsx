@@ -35,6 +35,7 @@ export default function EventSettings() {
     userEvents,
   } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(false);
+  const [isThumbnailLoading, setIsThumbnailLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(null);
   const [thumbnail, setThumbnail] = useState(selectedEvent.thumbnail); // Added state for thumbnail
 
@@ -71,10 +72,10 @@ export default function EventSettings() {
 
       console.log(pickerResult.assets[0].uri);
 
-      setIsLoading(true);
+      setIsThumbnailLoading(true);
 
       const uploadUrl = await uploadImageAsync(
-        selectedEvent.thumbnail,
+        pickerResult.assets[0].uri,
         `/events/${selectedEvent.eventId}/thumbnail`
       );
 
@@ -83,9 +84,8 @@ export default function EventSettings() {
       await updateThumbnail(selectedEvent.eventId, uploadUrl);
 
       setSelectedEvent({ ...selectedEvent, thumbnail: uploadUrl });
-      setThumbnail(uploadUrl);
 
-      setIsLoading(false);
+      setIsThumbnailLoading(false);
     } catch (error) {
       console.error("An error occurred:", error.message);
     }
@@ -108,8 +108,8 @@ export default function EventSettings() {
                   (event) => event.eventId !== selectedEvent.eventId
                 )
               );
-              setIsLoading(false);
               router.replace("/home");
+              setIsLoading(false);
             } catch (error) {
               setIsLoading(false);
               console.error(error);
@@ -142,8 +142,8 @@ export default function EventSettings() {
                   selectedEvent.status
                 ].filter((event) => event.eventId !== selectedEvent.eventId),
               }));
-              setIsLoading(false);
               router.replace("/home");
+              setIsLoading(false);
             } catch (error) {
               setIsLoading(false);
               console.error(error);
@@ -172,12 +172,14 @@ export default function EventSettings() {
                 width: PROFILE_ICON_DIMENSION,
                 height: PROFILE_ICON_DIMENSION,
                 borderRadius: 100,
-                backgroundColor: thumbnail ? "transparent" : theme.PLACEHOLDER,
+                backgroundColor: theme.PLACEHOLDER,
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              {thumbnail ? (
+              {isThumbnailLoading ? (
+                <ActivityIndicator size={"large"} color={theme.PRIMARY} />
+              ) : thumbnail ? (
                 <Image
                   source={{ uri: thumbnail }}
                   style={{

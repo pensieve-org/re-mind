@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { AppState } from "react-native";
 import { Stack, router } from "expo-router";
 import Title from "../../components/Title";
 import theme from "../../assets/theme";
 import { HEADER_MARGIN, HEADER_ICON_DIMENSION } from "../../assets/constants";
 import { TouchableOpacity } from "react-native";
 import BackArrow from "../../assets/arrow-left.svg";
+import handleImageUpload from "../../utils/handleImageUpload";
 
 export default function Layout() {
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", () =>
+      handleImageUpload(5)
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
   return (
     <Stack
       screenOptions={{
