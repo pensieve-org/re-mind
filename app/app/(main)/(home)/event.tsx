@@ -17,7 +17,8 @@ import { AppContext } from "../../_layout";
 import Subtitle from "../../../components/Subtitle";
 import ShowAttendees from "../../../components/ShowAttendees";
 import CountdownTimer from "../../../components/CountdownTimer";
-import Swiper from "react-native-swiper";
+import Carousel from "react-native-reanimated-carousel";
+import { Dimensions } from "react-native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
 import getEventAttendees from "../../../apis/getEventAttendees";
 import getEventImages from "../../../apis/getEventImages";
@@ -31,7 +32,7 @@ export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [attendees, setAttendees] = useState([]);
   const [images, setImages] = useState([]);
 
@@ -330,40 +331,38 @@ export default function Event() {
                 backgroundColor: "rgba(0, 0, 0, 0.8)",
               }}
             >
-              <Swiper
-                showsButtons={true}
-                index={selectedImageIndex}
-                dotColor={theme.PLACEHOLDER}
-                activeDotColor={theme.PRIMARY}
-                nextButton={
-                  <BackArrow
-                    height={20}
-                    width={20}
+              <Carousel
+                loop
+                mode="parallax"
+                modeConfig={{
+                  parallaxScrollingScale: 0.9,
+                  parallaxScrollingOffset: 50,
+                  parallaxAdjacentItemScale: 0.8,
+                }}
+                width={Dimensions.get("window").width}
+                height={Dimensions.get("window").height}
+                autoPlay={true}
+                data={images}
+                scrollAnimationDuration={1000}
+                onSnapToItem={(index) => console.log("current index:", index)}
+                panGestureHandlerProps={{
+                  activeOffsetX: [-10, 10],
+                }}
+                renderItem={({ item }) => (
+                  <View
                     style={{
-                      color: theme.PRIMARY,
-                      transform: [{ rotate: "180deg" }],
+                      justifyContent: "center",
+                      alignItems: "center",
                     }}
-                  />
-                }
-                prevButton={
-                  <BackArrow
-                    height={20}
-                    width={20}
-                    style={{
-                      color: theme.PRIMARY,
-                    }}
-                  />
-                }
-              >
-                {images.map((image, index) => (
-                  <Image
-                    key={index}
-                    source={{ uri: image.imageUrl }}
-                    style={{ width: "100%", height: "100%" }}
-                    resizeMode="contain"
-                  />
-                ))}
-              </Swiper>
+                  >
+                    <Image
+                      source={{ uri: item.imageUrl }}
+                      style={{ width: "100%", height: "100%" }}
+                      resizeMode="contain"
+                    />
+                  </View>
+                )}
+              />
             </View>
           </PanGestureHandler>
         </Modal>

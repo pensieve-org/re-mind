@@ -54,7 +54,7 @@ const DatePicker: React.FC<Props> = ({
   const getMinEndDate = () => {
     if (startDate) {
       let minEndDate = new Date(startDate);
-      minEndDate.setHours(minEndDate.getHours() + 1);
+      minEndDate.setMinutes(minEndDate.getMinutes() + 1);
       return minEndDate;
     }
     return new Date();
@@ -114,7 +114,7 @@ const DatePicker: React.FC<Props> = ({
         onCancel={() => setStartVisibility(false)}
         date={startDate || new Date()}
         minimumDate={new Date()}
-        maximumDate={endDate}
+        maximumDate={endDate || undefined}
         is24Hour={true}
       />
 
