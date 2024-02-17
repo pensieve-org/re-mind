@@ -136,12 +136,11 @@ export default function EventSettings() {
             setIsLoading(true);
             try {
               await leaveEvent(selectedEvent.eventId, userDetails.userId);
-              setUserEvents((prevUserEvents) => ({
-                ...prevUserEvents,
-                [selectedEvent.status]: prevUserEvents[
-                  selectedEvent.status
-                ].filter((event) => event.eventId !== selectedEvent.eventId),
-              }));
+              setUserEvents((prevUserEvents) =>
+                prevUserEvents.filter(
+                  (event) => event.eventId !== selectedEvent.eventId
+                )
+              );
               router.replace("/home");
               setIsLoading(false);
             } catch (error) {
