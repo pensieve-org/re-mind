@@ -37,7 +37,6 @@ export default function EventSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const [isThumbnailLoading, setIsThumbnailLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(null);
-  const [thumbnail, setThumbnail] = useState(selectedEvent.thumbnail); // Added state for thumbnail
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -178,9 +177,9 @@ export default function EventSettings() {
             >
               {isThumbnailLoading ? (
                 <ActivityIndicator size={"large"} color={theme.PRIMARY} />
-              ) : thumbnail ? (
+              ) : selectedEvent.thumbnail ? (
                 <Image
-                  source={{ uri: thumbnail }}
+                  source={{ uri: selectedEvent.thumbnail }}
                   style={{
                     width: PROFILE_ICON_DIMENSION,
                     height: PROFILE_ICON_DIMENSION,
