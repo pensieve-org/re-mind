@@ -23,6 +23,7 @@ export default function Layout() {
     <Stack
       screenOptions={{
         headerShown: true,
+        gestureEnabled: false,
         animation: "fade",
         headerStyle: { backgroundColor: theme.BACKGROUND },
         headerTitle: () => <Title size={30}>re:mind</Title>,
