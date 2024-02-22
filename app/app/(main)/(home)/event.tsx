@@ -248,6 +248,7 @@ export default function Event() {
                     style={{
                       width: "100%",
                       height: "100%",
+                      borderRadius: 0,
                     }}
                     sharedTransitionTag={`event-${selectedEvent.eventId}`}
                   />

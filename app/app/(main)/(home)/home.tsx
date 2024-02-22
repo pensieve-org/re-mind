@@ -29,6 +29,7 @@ import Calendar from "../../../components/Calendar";
 import GradientScrollView from "../../../components/GradientScrollView";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebase.js";
+import Animated from "react-native-reanimated";
 
 const blinkAnimation = {
   0: { opacity: 1 },
@@ -119,21 +120,23 @@ export default function Home() {
                     : theme.PLACEHOLDER,
                   alignItems: "center",
                   justifyContent: "center",
+                  overflow: "hidden",
                 }}
               >
                 {userDetails.profilePicture ? (
-                  <Image
+                  <Animated.Image
                     source={{ uri: userDetails.profilePicture }}
                     style={{
-                      width: HEADER_ICON_DIMENSION,
-                      height: HEADER_ICON_DIMENSION,
-                      borderRadius: 100,
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: 0,
                     }}
+                    sharedTransitionTag="profile-picture"
                   />
                 ) : (
                   <ProfileIcon
-                    height={15}
-                    width={15}
+                    height={"50%"}
+                    width={"50%"}
                     style={{ color: theme.PRIMARY }}
                   />
                 )}

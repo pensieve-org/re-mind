@@ -25,9 +25,11 @@ export default function Layout() {
       screenOptions={{
         headerShown: true,
         gestureEnabled: false,
+        presentation: "card",
         animation: "fade",
         animationDuration: ANIMATION_DURATION,
         headerStyle: { backgroundColor: theme.BACKGROUND },
+
         headerTitle: () => <Title size={30}>re:mind</Title>,
         headerLeft: () => (
           <TouchableOpacity

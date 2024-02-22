@@ -31,6 +31,7 @@ import * as ImagePicker from "expo-image-picker";
 import updateProfilePicture from "../../../apis/updateProfilePicture";
 import uploadImageAsync from "../../../utils/uploadImageAsync";
 import deleteUser from "../../../apis/deleteUser";
+import Animated from "react-native-reanimated";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
@@ -185,26 +186,30 @@ export default function Profile() {
                 width: PROFILE_ICON_DIMENSION,
                 height: PROFILE_ICON_DIMENSION,
                 borderRadius: 100,
-                backgroundColor: theme.PLACEHOLDER,
+                backgroundColor: userDetails.profilePicture
+                  ? "transparent"
+                  : theme.PLACEHOLDER,
                 alignItems: "center",
                 justifyContent: "center",
+                overflow: "hidden",
               }}
             >
               {isLoading ? (
                 <ActivityIndicator size={"large"} color={theme.PRIMARY} />
               ) : userDetails.profilePicture ? (
-                <Image
+                <Animated.Image
                   source={{ uri: userDetails.profilePicture }}
                   style={{
-                    width: PROFILE_ICON_DIMENSION,
-                    height: PROFILE_ICON_DIMENSION,
-                    borderRadius: 100,
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: 0,
                   }}
+                  sharedTransitionTag="profile-picture"
                 />
               ) : (
                 <ProfileIcon
-                  height={90}
-                  width={90}
+                  height={"50%"}
+                  width={"50%"}
                   style={{ color: theme.PRIMARY }}
                 />
               )}

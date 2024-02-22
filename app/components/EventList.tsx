@@ -54,7 +54,11 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
             {event.thumbnail ? (
               <Animated.Image
                 source={{ uri: event.thumbnail }}
-                style={styles.image}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: 0,
+                }}
                 sharedTransitionTag={`event-${event.eventId}`}
               />
             ) : (
@@ -109,10 +113,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     flexWrap: "wrap",
     width: EVENT_ICON_DIAMETER,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
