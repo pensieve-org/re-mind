@@ -10,6 +10,8 @@ import {
 import theme from "../assets/theme";
 import ImageIcon from "../assets/image.svg";
 
+import Animated from "react-native-reanimated";
+
 interface Props {
   events: any[];
   onPress?: (event) => void;
@@ -32,7 +34,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
           }}
           onPress={() => handleOnPress(event)}
         >
-          <View
+          <Animated.View
             style={[
               styles.imageContainer,
               {
@@ -47,6 +49,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 borderColor: theme.RED,
               },
             ]}
+            sharedTransitionTag={`event-${event.id}`}
           >
             {event.thumbnail ? (
               <Image source={{ uri: event.thumbnail }} style={styles.image} />
@@ -76,7 +79,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 <View style={styles.overlay} />
               </>
             )}
-          </View>
+          </Animated.View>
           <Body style={styles.text} adjustsFontSizeToFit numberOfLines={1}>
             {event.eventName}
           </Body>

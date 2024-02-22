@@ -10,6 +10,8 @@ import {
   IMAGE_GAP,
   ROW_IMAGES,
   HEADER_MARGIN,
+  EVENT_ICON_DIAMETER,
+  THUMBNAIL_WIDTH,
 } from "../../../assets/constants";
 import theme from "../../../assets/theme";
 import Body from "../../../components/Body";
@@ -27,7 +29,8 @@ import respondEventInvitation from "../../../apis/respondEventInvitation";
 import { collection, doc, onSnapshot, where, query } from "firebase/firestore";
 import { db } from "../../../firebase.js";
 import GradientScrollView from "../../../components/GradientScrollView";
-
+import ImageIcon from "../../../assets/image.svg";
+import Animated from "react-native-reanimated";
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
@@ -212,15 +215,61 @@ export default function Event() {
         // }
       >
         <View style={styles.container}>
-          <Subtitle
-            size={23}
+          <View
             style={{
-              color: theme.PRIMARY,
-              paddingVertical: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              alignContent: "center",
+              paddingBottom: 20,
             }}
           >
-            {selectedEvent.eventName}
-          </Subtitle>
+            <Animated.View
+              style={{
+                borderRadius: 100,
+                marginRight: 15,
+              }}
+              sharedTransitionTag={`event-${selectedEvent.id}`}
+            >
+              <View
+                style={{
+                  width: THUMBNAIL_WIDTH,
+                  height: THUMBNAIL_WIDTH,
+                  borderRadius: 100,
+                  backgroundColor: selectedEvent.thumbnail
+                    ? "transparent"
+                    : theme.PLACEHOLDER,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {selectedEvent.thumbnail ? (
+                  <Image
+                    source={{ uri: selectedEvent.thumbnail }}
+                    style={{
+                      width: THUMBNAIL_WIDTH,
+                      height: THUMBNAIL_WIDTH,
+                      borderRadius: 100,
+                    }}
+                  />
+                ) : (
+                  <ImageIcon
+                    height={THUMBNAIL_WIDTH / 2}
+                    width={THUMBNAIL_WIDTH / 2}
+                    style={{ color: theme.PRIMARY }}
+                  />
+                )}
+              </View>
+            </Animated.View>
+
+            <Subtitle
+              size={23}
+              style={{
+                color: theme.PRIMARY,
+              }}
+            >
+              {selectedEvent.eventName}
+            </Subtitle>
+          </View>
 
           {selectedEvent.isInvited && (
             <EventInvitation onPress={handleEventInvitation} />

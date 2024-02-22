@@ -27,6 +27,7 @@ export const EVENT_ICON_DIAMETER =
   ROW_ICONS;
 
 // For Event Screen
+export const THUMBNAIL_WIDTH = 80;
 export const IMAGE_GAP = 5;
 export const ROW_IMAGES = 3;
 export const EVENT_IMAGE_WIDTH =
