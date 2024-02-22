@@ -7,6 +7,7 @@ import {
   Montserrat_600SemiBold,
 } from "@expo-google-fonts/montserrat";
 import { StatusBar } from "expo-status-bar";
+import { ANIMATION_DURATION } from "../assets/constants";
 
 export const AppContext = createContext(null);
 
@@ -50,6 +51,7 @@ export default function Layout() {
             headerShown: false,
             animation: "fade",
             gestureEnabled: false,
+            animationDuration: ANIMATION_DURATION,
           }}
         />
       </AppContext.Provider>

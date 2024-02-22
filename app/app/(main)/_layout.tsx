@@ -7,6 +7,7 @@ import { HEADER_MARGIN, HEADER_ICON_DIMENSION } from "../../assets/constants";
 import { TouchableOpacity } from "react-native";
 import BackArrow from "../../assets/arrow-left.svg";
 import handleImageUpload from "../../utils/handleImageUpload";
+import { ANIMATION_DURATION } from "../../assets/constants";
 
 export default function Layout() {
   useEffect(() => {
@@ -25,6 +26,7 @@ export default function Layout() {
         headerShown: true,
         gestureEnabled: false,
         animation: "fade",
+        animationDuration: ANIMATION_DURATION,
         headerStyle: { backgroundColor: theme.BACKGROUND },
         headerTitle: () => <Title size={30}>re:mind</Title>,
         headerLeft: () => (
