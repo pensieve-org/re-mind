@@ -10,6 +10,7 @@ import {
 import theme from "../assets/theme";
 import moment from "moment";
 import Subtitle from "./Subtitle";
+import Animated from "react-native-reanimated";
 
 interface Props {
   events: any[];
@@ -91,6 +92,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                             : theme.PLACEHOLDER,
                           alignItems: "center",
                           justifyContent: "center",
+                          overflow: "hidden",
                         },
                         event.isInvited && {
                           borderWidth: 3,
@@ -100,9 +102,14 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                     >
                       {event.thumbnail && (
                         <>
-                          <Image
+                          <Animated.Image
                             source={{ uri: event.thumbnail }}
-                            style={styles.image}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: 0,
+                            }}
+                            sharedTransitionTag={`event-${event.eventId}`}
                           />
                           <View style={styles.overlay} />
                         </>
@@ -170,11 +177,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     flexWrap: "wrap",
     width: EVENT_ICON_DIAMETER,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 100,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

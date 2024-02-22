@@ -9,8 +9,6 @@ import {
   HORIZONTAL_PADDING,
   IMAGE_GAP,
   ROW_IMAGES,
-  HEADER_MARGIN,
-  EVENT_ICON_DIAMETER,
   THUMBNAIL_WIDTH,
 } from "../../../assets/constants";
 import theme from "../../../assets/theme";
