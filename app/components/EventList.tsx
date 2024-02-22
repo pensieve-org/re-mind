@@ -49,7 +49,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 borderColor: theme.RED,
               },
             ]}
-            sharedTransitionTag={`event-${event.id}`}
+            sharedTransitionTag={`event-${event.eventId}`}
           >
             {event.thumbnail ? (
               <Image source={{ uri: event.thumbnail }} style={styles.image} />

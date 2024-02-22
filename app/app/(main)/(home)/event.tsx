@@ -228,7 +228,7 @@ export default function Event() {
                 borderRadius: 100,
                 marginRight: 15,
               }}
-              sharedTransitionTag={`event-${selectedEvent.id}`}
+              sharedTransitionTag={`event-${selectedEvent.eventId}`}
             >
               <View
                 style={{
