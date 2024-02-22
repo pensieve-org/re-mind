@@ -6,6 +6,7 @@ import {
   ICON_GAP,
   ICON_GAP_BOTTOM,
   ROW_ICONS,
+  ANIMATED_BORDER_RADIUS,
 } from "../assets/constants";
 import theme from "../assets/theme";
 import ImageIcon from "../assets/image.svg";
@@ -57,7 +58,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 style={{
                   width: "100%",
                   height: "100%",
-                  borderRadius: 0,
+                  borderRadius: ANIMATED_BORDER_RADIUS,
                 }}
                 sharedTransitionTag={`event-${event.eventId}`}
               />

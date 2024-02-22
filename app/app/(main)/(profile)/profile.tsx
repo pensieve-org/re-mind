@@ -16,6 +16,7 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
+  ANIMATED_BORDER_RADIUS,
 } from "../../../assets/constants";
 import { auth } from "../../../firebase.js";
 import Body from "../../../components/Body";
@@ -204,7 +205,7 @@ export default function Profile() {
                   style={{
                     width: "100%",
                     height: "100%",
-                    borderRadius: 0,
+                    borderRadius: ANIMATED_BORDER_RADIUS,
                   }}
                   sharedTransitionTag="profile-picture"
                 />

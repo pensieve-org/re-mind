@@ -12,6 +12,7 @@ import { router } from "expo-router";
 import {
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
+  ANIMATED_BORDER_RADIUS,
 } from "../../../assets/constants";
 import theme from "../../../assets/theme";
 import { AppContext } from "../../_layout";
@@ -187,7 +188,7 @@ export default function EventSettings() {
                   style={{
                     width: PROFILE_ICON_DIMENSION,
                     height: PROFILE_ICON_DIMENSION,
-                    borderRadius: 0,
+                    borderRadius: ANIMATED_BORDER_RADIUS,
                   }}
                   sharedTransitionTag={`event-${selectedEvent.eventId}`}
                 />

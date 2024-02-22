@@ -6,6 +6,7 @@ export const PROFILE_ICON_DIMENSION = 150;
 export const CORNER_RADIUS = 10;
 export const COMPONENT_HEIGHT = 55;
 export const ANIMATION_DURATION = 300;
+export const ANIMATED_BORDER_RADIUS = 0;
 
 export const FRIEND_ICON_GAP = 10;
 export const FRIEND_ICON_GAP_BOTTOM = 10;

@@ -21,6 +21,7 @@ import {
   HEADER_ICON_DIMENSION,
   HEADER_MARGIN,
   HORIZONTAL_PADDING,
+  ANIMATED_BORDER_RADIUS,
 } from "../../../assets/constants";
 import { AppContext } from "../../_layout";
 import getUserEvents from "../../../apis/getUserEvents";
@@ -117,7 +118,7 @@ export default function Home() {
                     style={{
                       width: HEADER_ICON_DIMENSION,
                       height: HEADER_ICON_DIMENSION,
-                      borderRadius: HEADER_ICON_DIMENSION / 2,
+                      borderRadius: 100,
                     }}
                     sharedTransitionTag="profile-picture"
                   />
