@@ -31,6 +31,7 @@ import { db } from "../../../firebase.js";
 import GradientScrollView from "../../../components/GradientScrollView";
 import ImageIcon from "../../../assets/image.svg";
 import Animated from "react-native-reanimated";
+
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
     useContext(AppContext);
@@ -223,12 +224,10 @@ export default function Event() {
               paddingBottom: 20,
             }}
           >
-            <Animated.View
+            <View
               style={{
-                borderRadius: 100,
                 marginRight: 15,
               }}
-              sharedTransitionTag={`event-${selectedEvent.eventId}`}
             >
               <View
                 style={{
@@ -240,26 +239,27 @@ export default function Event() {
                     : theme.PLACEHOLDER,
                   alignItems: "center",
                   justifyContent: "center",
+                  overflow: "hidden",
                 }}
               >
                 {selectedEvent.thumbnail ? (
-                  <Image
+                  <Animated.Image
                     source={{ uri: selectedEvent.thumbnail }}
                     style={{
-                      width: THUMBNAIL_WIDTH,
-                      height: THUMBNAIL_WIDTH,
-                      borderRadius: 100,
+                      width: "100%",
+                      height: "100%",
                     }}
+                    sharedTransitionTag={`event-${selectedEvent.eventId}`}
                   />
                 ) : (
                   <ImageIcon
-                    height={THUMBNAIL_WIDTH / 2}
-                    width={THUMBNAIL_WIDTH / 2}
+                    height={"50%"}
+                    width={"50%"}
                     style={{ color: theme.PRIMARY }}
                   />
                 )}
               </View>
-            </Animated.View>
+            </View>
 
             <Subtitle
               size={23}

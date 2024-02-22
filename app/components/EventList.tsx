@@ -34,7 +34,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
           }}
           onPress={() => handleOnPress(event)}
         >
-          <Animated.View
+          <View
             style={[
               styles.imageContainer,
               {
@@ -43,20 +43,24 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                   : theme.PLACEHOLDER,
                 alignItems: "center",
                 justifyContent: "center",
+                overflow: "hidden",
               },
               event.isInvited && {
                 borderWidth: 3,
                 borderColor: theme.RED,
               },
             ]}
-            sharedTransitionTag={`event-${event.eventId}`}
           >
             {event.thumbnail ? (
-              <Image source={{ uri: event.thumbnail }} style={styles.image} />
+              <Animated.Image
+                source={{ uri: event.thumbnail }}
+                style={styles.image}
+                sharedTransitionTag={`event-${event.eventId}`}
+              />
             ) : (
               <ImageIcon
-                height={EVENT_ICON_DIAMETER - 80}
-                width={EVENT_ICON_DIAMETER - 80}
+                height={"50%"}
+                width={"50%"}
                 style={{ color: theme.PRIMARY }}
               />
             )}
@@ -79,7 +83,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                 <View style={styles.overlay} />
               </>
             )}
-          </Animated.View>
+          </View>
           <Body style={styles.text} adjustsFontSizeToFit numberOfLines={1}>
             {event.eventName}
           </Body>
@@ -109,7 +113,6 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: 100,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
