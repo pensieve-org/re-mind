@@ -31,6 +31,8 @@ import { db } from "../../../firebase.js";
 import GradientScrollView from "../../../components/GradientScrollView";
 import ImageIcon from "../../../assets/image.svg";
 import Animated from "react-native-reanimated";
+import Header from "../../../components/Header";
+import { useHeaderProps } from "../../../hooks/useHeaderProps";
 
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
@@ -39,6 +41,7 @@ export default function Event() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [attendees, setAttendees] = useState([]);
   const [images, setImages] = useState([]);
+  const headerProps = useHeaderProps();
 
   useEffect(() => {
     const eventRef = doc(collection(db, "events"), selectedEvent.eventId);
@@ -192,17 +195,18 @@ export default function Event() {
     <View style={styles.page}>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/event-settings")}
-              style={{ marginRight: HEADER_MARGIN }}
-            >
-              <ThreeDots
-                height={HEADER_ICON_DIMENSION}
-                width={HEADER_ICON_DIMENSION}
-                style={{ color: theme.PRIMARY }}
-              />
-            </TouchableOpacity>
+          header: () => (
+            <Header
+              {...headerProps}
+              onPressRight={() => router.push("/event-settings")}
+              imageRight={
+                <ThreeDots
+                  height={HEADER_ICON_DIMENSION}
+                  width={HEADER_ICON_DIMENSION}
+                  style={{ color: theme.PRIMARY }}
+                />
+              }
+            />
           ),
         }}
       />

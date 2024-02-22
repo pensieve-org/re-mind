@@ -30,6 +30,7 @@ import GradientScrollView from "../../../components/GradientScrollView";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebase.js";
 import Animated from "react-native-reanimated";
+import Header from "../../../components/Header";
 
 const blinkAnimation = {
   0: { opacity: 1 },
@@ -105,31 +106,18 @@ export default function Home() {
     <View style={styles.page}>
       <Stack.Screen
         options={{
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/profile")}
-              style={{ marginLeft: HEADER_MARGIN }}
-            >
-              <View
-                style={{
-                  width: HEADER_ICON_DIMENSION,
-                  height: HEADER_ICON_DIMENSION,
-                  borderRadius: 100,
-                  backgroundColor: userDetails.profilePicture
-                    ? "transparent"
-                    : theme.PLACEHOLDER,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
-                }}
-              >
-                {userDetails.profilePicture ? (
+          header: () => (
+            <Header
+              onPressLeft={() => router.push("/profile")}
+              onPressRight={() => router.push("/create-event")}
+              imageLeft={
+                userDetails.profilePicture ? (
                   <Animated.Image
                     source={{ uri: userDetails.profilePicture }}
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: 0,
+                      width: HEADER_ICON_DIMENSION,
+                      height: HEADER_ICON_DIMENSION,
+                      borderRadius: HEADER_ICON_DIMENSION / 2,
                     }}
                     sharedTransitionTag="profile-picture"
                   />
@@ -139,21 +127,16 @@ export default function Home() {
                     width={"50%"}
                     style={{ color: theme.PRIMARY }}
                   />
-                )}
-              </View>
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/create-event")}
-              style={{ marginRight: HEADER_MARGIN }}
-            >
-              <Plus
-                height={HEADER_ICON_DIMENSION}
-                width={HEADER_ICON_DIMENSION}
-                style={{ color: theme.PRIMARY }}
-              />
-            </TouchableOpacity>
+                )
+              }
+              imageRight={
+                <Plus
+                  height={HEADER_ICON_DIMENSION}
+                  width={HEADER_ICON_DIMENSION}
+                  style={{ color: theme.PRIMARY }}
+                />
+              }
+            />
           ),
         }}
       />

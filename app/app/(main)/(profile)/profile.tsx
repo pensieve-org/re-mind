@@ -6,7 +6,6 @@ import {
   Pressable,
   ActivityIndicator,
   Alert,
-  TouchableOpacity,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, Stack } from "expo-router";
@@ -17,7 +16,6 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
-  HEADER_MARGIN,
 } from "../../../assets/constants";
 import { auth } from "../../../firebase.js";
 import Body from "../../../components/Body";
@@ -32,6 +30,8 @@ import updateProfilePicture from "../../../apis/updateProfilePicture";
 import uploadImageAsync from "../../../utils/uploadImageAsync";
 import deleteUser from "../../../apis/deleteUser";
 import Animated from "react-native-reanimated";
+import Header from "../../../components/Header";
+import { useHeaderProps } from "../../../hooks/useHeaderProps";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
@@ -39,6 +39,7 @@ export default function Profile() {
   const [friendRequests, setFriendRequests] = useState([]);
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(false);
+  const headerProps = useHeaderProps();
 
   const clearContext = () => {
     setUserDetails({});
@@ -138,42 +139,43 @@ export default function Profile() {
     <View style={[styles.page, { paddingBottom: insets.bottom }]}>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/friends")}
-              style={{ marginRight: HEADER_MARGIN }}
-            >
-              <View>
-                <FriendsIcon
-                  height={HEADER_ICON_DIMENSION}
-                  width={HEADER_ICON_DIMENSION}
-                  style={{ color: theme.PRIMARY }}
-                />
-                {friendRequests.length > 0 && (
-                  <View
-                    style={{
-                      position: "absolute",
-                      right: -12,
-                      top: -10,
-                      backgroundColor: theme.RED,
-                      borderRadius: 100,
-                      height: 20,
-                      width: 20,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Body
-                      adjustsFontSizeToFit={true}
-                      bold={true}
-                      style={{ color: theme.PRIMARY }}
+          header: () => (
+            <Header
+              {...headerProps}
+              onPressRight={() => router.push("/friends")}
+              imageRight={
+                <View>
+                  <FriendsIcon
+                    height={HEADER_ICON_DIMENSION}
+                    width={HEADER_ICON_DIMENSION}
+                    style={{ color: theme.PRIMARY }}
+                  />
+                  {friendRequests.length > 0 && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        right: -12,
+                        top: -10,
+                        backgroundColor: theme.RED,
+                        borderRadius: 100,
+                        height: 20,
+                        width: 20,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
                     >
-                      {friendRequests.length}
-                    </Body>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
+                      <Body
+                        adjustsFontSizeToFit={true}
+                        bold={true}
+                        style={{ color: theme.PRIMARY }}
+                      >
+                        {friendRequests.length}
+                      </Body>
+                    </View>
+                  )}
+                </View>
+              }
+            />
           ),
         }}
       />

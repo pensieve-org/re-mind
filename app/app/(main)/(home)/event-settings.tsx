@@ -25,6 +25,7 @@ import CameraIcon from "../../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
 import uploadImageAsync from "../../../utils/uploadImageAsync";
 import updateThumbnail from "../../../apis/updateThumbnail";
+import Animated from "react-native-reanimated";
 
 export default function EventSettings() {
   const {
@@ -170,21 +171,25 @@ export default function EventSettings() {
                 width: PROFILE_ICON_DIMENSION,
                 height: PROFILE_ICON_DIMENSION,
                 borderRadius: 100,
-                backgroundColor: theme.PLACEHOLDER,
+                backgroundColor: selectedEvent.thumbnail
+                  ? "transparent"
+                  : theme.PLACEHOLDER,
                 alignItems: "center",
                 justifyContent: "center",
+                overflow: "hidden",
               }}
             >
               {isThumbnailLoading ? (
                 <ActivityIndicator size={"large"} color={theme.PRIMARY} />
               ) : selectedEvent.thumbnail ? (
-                <Image
+                <Animated.Image
                   source={{ uri: selectedEvent.thumbnail }}
                   style={{
                     width: PROFILE_ICON_DIMENSION,
                     height: PROFILE_ICON_DIMENSION,
-                    borderRadius: 100,
+                    borderRadius: 0,
                   }}
+                  sharedTransitionTag={`event-${selectedEvent.eventId}`}
                 />
               ) : (
                 <ImageIcon
