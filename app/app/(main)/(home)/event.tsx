@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import BackArrow from "../../../assets/arrow-left.svg";
 import ThreeDots from "../../../assets/three-dots.svg";
@@ -30,6 +31,7 @@ import { db } from "../../../firebase.js";
 import GradientScrollView from "../../../components/GradientScrollView";
 import ImageIcon from "../../../assets/image.svg";
 import Animated from "react-native-reanimated";
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 import Header from "../../../components/Header";
 import { useHeaderProps } from "../../../hooks/useHeaderProps";
 
@@ -246,7 +248,7 @@ export default function Event() {
                 }}
               >
                 {selectedEvent.thumbnail ? (
-                  <Animated.Image
+                  <AnimatedImage
                     source={{ uri: selectedEvent.thumbnail }}
                     style={{
                       width: "100%",

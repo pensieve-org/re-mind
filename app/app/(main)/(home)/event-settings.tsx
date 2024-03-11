@@ -27,6 +27,7 @@ import * as ImagePicker from "expo-image-picker";
 import uploadImageAsync from "../../../utils/uploadImageAsync";
 import updateThumbnail from "../../../apis/updateThumbnail";
 import Animated from "react-native-reanimated";
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 export default function EventSettings() {
   const {
@@ -183,7 +184,7 @@ export default function EventSettings() {
               {isThumbnailLoading ? (
                 <ActivityIndicator size={"large"} color={theme.PRIMARY} />
               ) : selectedEvent.thumbnail ? (
-                <Animated.Image
+                <AnimatedImage
                   source={{ uri: selectedEvent.thumbnail }}
                   style={{
                     width: PROFILE_ICON_DIMENSION,

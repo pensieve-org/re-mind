@@ -13,6 +13,7 @@ import theme from "../assets/theme";
 import moment from "moment";
 import Subtitle from "./Subtitle";
 import Animated from "react-native-reanimated";
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 interface Props {
   events: any[];
@@ -104,7 +105,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                     >
                       {event.thumbnail && (
                         <>
-                          <Animated.Image
+                          <AnimatedImage
                             source={{ uri: event.thumbnail }}
                             style={{
                               width: "100%",

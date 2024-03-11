@@ -31,6 +31,7 @@ import GradientScrollView from "../../../components/GradientScrollView";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebase.js";
 import Animated from "react-native-reanimated";
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 import Header from "../../../components/Header";
 
 const blinkAnimation = {
@@ -113,7 +114,7 @@ export default function Home() {
               onPressRight={() => router.push("/create-event")}
               imageLeft={
                 userDetails.profilePicture ? (
-                  <Animated.Image
+                  <AnimatedImage
                     source={{ uri: userDetails.profilePicture }}
                     style={{
                       width: "100%",

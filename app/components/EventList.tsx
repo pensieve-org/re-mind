@@ -13,6 +13,7 @@ import theme from "../assets/theme";
 import ImageIcon from "../assets/image.svg";
 
 import Animated from "react-native-reanimated";
+const AnimatedImage = Animated.createAnimatedComponent(Image);
 
 interface Props {
   events: any[];
@@ -54,7 +55,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
             ]}
           >
             {event.thumbnail ? (
-              <Animated.Image
+              <AnimatedImage
                 source={{ uri: event.thumbnail }}
                 style={{
                   width: "100%",
