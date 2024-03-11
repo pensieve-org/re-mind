@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
-  Image,
   Pressable,
   ActivityIndicator,
   Alert,
 } from "react-native";
+import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, Stack } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";

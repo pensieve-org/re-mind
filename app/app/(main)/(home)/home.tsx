@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
-  Image,
   Pressable,
   RefreshControl,
   StyleSheet,
   View,
   TouchableOpacity,
 } from "react-native";
+import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import {
   View as AnimatedView,

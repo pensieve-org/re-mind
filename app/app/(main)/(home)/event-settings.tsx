@@ -4,10 +4,10 @@ import {
   Alert,
   StyleSheet,
   View,
-  Image,
   Pressable,
   Modal,
 } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import {
   HORIZONTAL_PADDING,
