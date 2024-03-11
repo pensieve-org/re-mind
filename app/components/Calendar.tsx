@@ -12,8 +12,7 @@ import {
 import theme from "../assets/theme";
 import moment from "moment";
 import Subtitle from "./Subtitle";
-import Animated from "react-native-reanimated";
-const AnimatedImage = Animated.createAnimatedComponent(Image);
+import { AnimatedImage } from "../utils/AnimatedImage";
 
 interface Props {
   events: any[];
@@ -113,6 +112,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                               borderRadius: ANIMATED_BORDER_RADIUS,
                             }}
                             sharedTransitionTag={`event-${event.eventId}`}
+                            cachePolicy={"none"}
                           />
                           <View style={styles.overlay} />
                         </>

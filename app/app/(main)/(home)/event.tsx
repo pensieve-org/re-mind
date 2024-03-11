@@ -30,8 +30,7 @@ import { collection, doc, onSnapshot, where, query } from "firebase/firestore";
 import { db } from "../../../firebase.js";
 import GradientScrollView from "../../../components/GradientScrollView";
 import ImageIcon from "../../../assets/image.svg";
-import Animated from "react-native-reanimated";
-const AnimatedImage = Animated.createAnimatedComponent(Image);
+import { AnimatedImage } from "../../../utils/AnimatedImage";
 import Header from "../../../components/Header";
 import { useHeaderProps } from "../../../hooks/useHeaderProps";
 
@@ -256,6 +255,7 @@ export default function Event() {
                       borderRadius: ANIMATED_BORDER_RADIUS,
                     }}
                     sharedTransitionTag={`event-${selectedEvent.eventId}`}
+                    cachePolicy={"memory-disk"}
                   />
                 ) : (
                   <ImageIcon
@@ -358,6 +358,7 @@ export default function Event() {
                         (index + 1) % ROW_IMAGES === 0 ? 0 : IMAGE_GAP,
                     },
                   ]}
+                  cachePolicy={"none"}
                 />
               </TouchableOpacity>
             ))
@@ -413,7 +414,7 @@ export default function Event() {
                     <Image
                       source={{ uri: item.imageUrl }}
                       style={{ width: "100%", height: "100%" }}
-                      resizeMode="contain"
+                      cachePolicy={"none"}
                     />
                   </View>
                 )}

@@ -26,8 +26,7 @@ import CameraIcon from "../../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
 import uploadImageAsync from "../../../utils/uploadImageAsync";
 import updateThumbnail from "../../../apis/updateThumbnail";
-import Animated from "react-native-reanimated";
-const AnimatedImage = Animated.createAnimatedComponent(Image);
+import { AnimatedImage } from "../../../utils/AnimatedImage";
 
 export default function EventSettings() {
   const {
@@ -192,6 +191,7 @@ export default function EventSettings() {
                     borderRadius: ANIMATED_BORDER_RADIUS,
                   }}
                   sharedTransitionTag={`event-${selectedEvent.eventId}`}
+                  cachePolicy={"memory-disk"}
                 />
               ) : (
                 <ImageIcon

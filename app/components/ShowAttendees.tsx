@@ -43,6 +43,7 @@ const ShowAttendees: React.FC<Props> = ({ attendees }) => {
                 <Image
                   source={{ uri: attendee.profilePicture }}
                   style={styles.image}
+                  cachePolicy={"memory-disk"}
                 />
               ) : (
                 <ProfileIcon

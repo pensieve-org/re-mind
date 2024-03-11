@@ -30,7 +30,7 @@ import * as ImagePicker from "expo-image-picker";
 import updateProfilePicture from "../../../apis/updateProfilePicture";
 import uploadImageAsync from "../../../utils/uploadImageAsync";
 import deleteUser from "../../../apis/deleteUser";
-import Animated from "react-native-reanimated";
+import { AnimatedImage } from "../../../utils/AnimatedImage";
 import Header from "../../../components/Header";
 import { useHeaderProps } from "../../../hooks/useHeaderProps";
 
@@ -200,7 +200,7 @@ export default function Profile() {
               {isLoading ? (
                 <ActivityIndicator size={"large"} color={theme.PRIMARY} />
               ) : userDetails.profilePicture ? (
-                <Animated.Image
+                <AnimatedImage
                   source={{ uri: userDetails.profilePicture }}
                   style={{
                     width: "100%",
@@ -208,6 +208,7 @@ export default function Profile() {
                     borderRadius: ANIMATED_BORDER_RADIUS,
                   }}
                   sharedTransitionTag="profile-picture"
+                  cachePolicy={"memory-disk"}
                 />
               ) : (
                 <ProfileIcon

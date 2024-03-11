@@ -12,8 +12,7 @@ import {
 import theme from "../assets/theme";
 import ImageIcon from "../assets/image.svg";
 
-import Animated from "react-native-reanimated";
-const AnimatedImage = Animated.createAnimatedComponent(Image);
+import { AnimatedImage } from "../utils/AnimatedImage";
 
 interface Props {
   events: any[];
@@ -63,6 +62,7 @@ const EventList: React.FC<Props> = ({ events, onPress }) => {
                   borderRadius: ANIMATED_BORDER_RADIUS,
                 }}
                 sharedTransitionTag={`event-${event.eventId}`}
+                cachePolicy={"memory-disk"}
               />
             ) : (
               <ImageIcon

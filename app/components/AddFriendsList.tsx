@@ -56,6 +56,7 @@ const AddFriendsList: React.FC<Props> = ({
               <Image
                 source={{ uri: friend.profilePicture }}
                 style={styles.image}
+                cachePolicy={"memory-disk"}
               />
             ) : (
               <ProfileIcon

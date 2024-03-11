@@ -30,8 +30,7 @@ import Calendar from "../../../components/Calendar";
 import GradientScrollView from "../../../components/GradientScrollView";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebase.js";
-import Animated from "react-native-reanimated";
-const AnimatedImage = Animated.createAnimatedComponent(Image);
+import { AnimatedImage } from "../../../utils/AnimatedImage";
 import Header from "../../../components/Header";
 
 const blinkAnimation = {
@@ -122,6 +121,7 @@ export default function Home() {
                       borderRadius: ANIMATED_BORDER_RADIUS,
                     }}
                     sharedTransitionTag="profile-picture"
+                    cachePolicy={"memory-disk"}
                   />
                 ) : (
                   <ProfileIcon
