@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Title from "./Title";
 import theme from "../assets/theme";
+import { HEADER_ICON_DIMENSION } from "../assets/constants";
 
 export interface HeaderProps {
   onPressLeft?: () => void;
@@ -61,6 +62,10 @@ const styles = StyleSheet.create({
   },
   iconWrapper: {
     position: "absolute",
+    height: HEADER_ICON_DIMENSION,
+    width: HEADER_ICON_DIMENSION,
+    overflow: "hidden",
+    borderRadius: 100,
   },
   left: {
     left: 28,

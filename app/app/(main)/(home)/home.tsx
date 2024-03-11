@@ -116,9 +116,9 @@ export default function Home() {
                   <Animated.Image
                     source={{ uri: userDetails.profilePicture }}
                     style={{
-                      width: HEADER_ICON_DIMENSION,
-                      height: HEADER_ICON_DIMENSION,
-                      borderRadius: 100,
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: ANIMATED_BORDER_RADIUS,
                     }}
                     sharedTransitionTag="profile-picture"
                   />
@@ -132,8 +132,8 @@ export default function Home() {
               }
               imageRight={
                 <Plus
-                  height={HEADER_ICON_DIMENSION}
-                  width={HEADER_ICON_DIMENSION}
+                  height={"100%"}
+                  width={"100%"}
                   style={{ color: theme.PRIMARY }}
                 />
               }
