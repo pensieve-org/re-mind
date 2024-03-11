@@ -256,6 +256,7 @@ export default function Event() {
                     }}
                     sharedTransitionTag={`event-${selectedEvent.eventId}`}
                     cachePolicy={"memory-disk"}
+                    priority={"high"}
                   />
                 ) : (
                   <ImageIcon
@@ -358,7 +359,7 @@ export default function Event() {
                         (index + 1) % ROW_IMAGES === 0 ? 0 : IMAGE_GAP,
                     },
                   ]}
-                  cachePolicy={"none"}
+                  cachePolicy={"disk"}
                 />
               </TouchableOpacity>
             ))
@@ -414,7 +415,7 @@ export default function Event() {
                     <Image
                       source={{ uri: item.imageUrl }}
                       style={{ width: "100%", height: "100%" }}
-                      cachePolicy={"none"}
+                      cachePolicy={"disk"}
                     />
                   </View>
                 )}

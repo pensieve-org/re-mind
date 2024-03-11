@@ -192,6 +192,7 @@ export default function EventSettings() {
                   }}
                   sharedTransitionTag={`event-${selectedEvent.eventId}`}
                   cachePolicy={"memory-disk"}
+                  priority={"high"}
                 />
               ) : (
                 <ImageIcon

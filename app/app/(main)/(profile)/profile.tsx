@@ -209,6 +209,7 @@ export default function Profile() {
                   }}
                   sharedTransitionTag="profile-picture"
                   cachePolicy={"memory-disk"}
+                  priority={"high"}
                 />
               ) : (
                 <ProfileIcon
