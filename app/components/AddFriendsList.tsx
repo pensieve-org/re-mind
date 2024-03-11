@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 import Body from "./Body";
 import {
   FRIEND_ICON_DIAMETER,
@@ -55,6 +56,7 @@ const AddFriendsList: React.FC<Props> = ({
               <Image
                 source={{ uri: friend.profilePicture }}
                 style={styles.image}
+                cachePolicy={"memory-disk"}
               />
             ) : (
               <ProfileIcon

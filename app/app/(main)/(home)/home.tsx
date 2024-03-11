@@ -1,12 +1,12 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
-  Image,
   Pressable,
   RefreshControl,
   StyleSheet,
   View,
   TouchableOpacity,
 } from "react-native";
+import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import {
   View as AnimatedView,
@@ -21,6 +21,7 @@ import {
   HEADER_ICON_DIMENSION,
   HEADER_MARGIN,
   HORIZONTAL_PADDING,
+  ANIMATED_BORDER_RADIUS,
 } from "../../../assets/constants";
 import { AppContext } from "../../_layout";
 import getUserEvents from "../../../apis/getUserEvents";
@@ -29,6 +30,8 @@ import Calendar from "../../../components/Calendar";
 import GradientScrollView from "../../../components/GradientScrollView";
 import { collection, doc, onSnapshot } from "firebase/firestore";
 import { db } from "../../../firebase.js";
+import { AnimatedImage } from "../../../utils/AnimatedImage";
+import Header from "../../../components/Header";
 
 const blinkAnimation = {
   0: { opacity: 1 },
@@ -104,53 +107,39 @@ export default function Home() {
     <View style={styles.page}>
       <Stack.Screen
         options={{
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/profile")}
-              style={{ marginLeft: HEADER_MARGIN }}
-            >
-              <View
-                style={{
-                  width: HEADER_ICON_DIMENSION,
-                  height: HEADER_ICON_DIMENSION,
-                  borderRadius: 100,
-                  backgroundColor: userDetails.profilePicture
-                    ? "transparent"
-                    : theme.PLACEHOLDER,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {userDetails.profilePicture ? (
-                  <Image
+          header: () => (
+            <Header
+              onPressLeft={() => router.push("/profile")}
+              onPressRight={() => router.push("/create-event")}
+              imageLeft={
+                userDetails.profilePicture ? (
+                  <AnimatedImage
                     source={{ uri: userDetails.profilePicture }}
                     style={{
-                      width: HEADER_ICON_DIMENSION,
-                      height: HEADER_ICON_DIMENSION,
-                      borderRadius: 100,
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: ANIMATED_BORDER_RADIUS,
                     }}
+                    sharedTransitionTag="profile-picture"
+                    cachePolicy={"memory-disk"}
+                    priority={"high"}
                   />
                 ) : (
                   <ProfileIcon
-                    height={15}
-                    width={15}
+                    height={"50%"}
+                    width={"50%"}
                     style={{ color: theme.PRIMARY }}
                   />
-                )}
-              </View>
-            </TouchableOpacity>
-          ),
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/create-event")}
-              style={{ marginRight: HEADER_MARGIN }}
-            >
-              <Plus
-                height={HEADER_ICON_DIMENSION}
-                width={HEADER_ICON_DIMENSION}
-                style={{ color: theme.PRIMARY }}
-              />
-            </TouchableOpacity>
+                )
+              }
+              imageRight={
+                <Plus
+                  height={"100%"}
+                  width={"100%"}
+                  style={{ color: theme.PRIMARY }}
+                />
+              }
+            />
           ),
         }}
       />

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import BackArrow from "../../../assets/arrow-left.svg";
 import ThreeDots from "../../../assets/three-dots.svg";
@@ -9,7 +10,8 @@ import {
   HORIZONTAL_PADDING,
   IMAGE_GAP,
   ROW_IMAGES,
-  HEADER_MARGIN,
+  THUMBNAIL_WIDTH,
+  ANIMATED_BORDER_RADIUS,
 } from "../../../assets/constants";
 import theme from "../../../assets/theme";
 import Body from "../../../components/Body";
@@ -27,6 +29,10 @@ import respondEventInvitation from "../../../apis/respondEventInvitation";
 import { collection, doc, onSnapshot, where, query } from "firebase/firestore";
 import { db } from "../../../firebase.js";
 import GradientScrollView from "../../../components/GradientScrollView";
+import ImageIcon from "../../../assets/image.svg";
+import { AnimatedImage } from "../../../utils/AnimatedImage";
+import Header from "../../../components/Header";
+import { useHeaderProps } from "../../../hooks/useHeaderProps";
 
 export default function Event() {
   const { userDetails, selectedEvent, setSelectedEvent, setUserEvents } =
@@ -35,6 +41,7 @@ export default function Event() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [attendees, setAttendees] = useState([]);
   const [images, setImages] = useState([]);
+  const headerProps = useHeaderProps();
 
   useEffect(() => {
     const eventRef = doc(collection(db, "events"), selectedEvent.eventId);
@@ -188,17 +195,18 @@ export default function Event() {
     <View style={styles.page}>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/event-settings")}
-              style={{ marginRight: HEADER_MARGIN }}
-            >
-              <ThreeDots
-                height={HEADER_ICON_DIMENSION}
-                width={HEADER_ICON_DIMENSION}
-                style={{ color: theme.PRIMARY }}
-              />
-            </TouchableOpacity>
+          header: () => (
+            <Header
+              {...headerProps}
+              onPressRight={() => router.push("/event-settings")}
+              imageRight={
+                <ThreeDots
+                  height={HEADER_ICON_DIMENSION}
+                  width={HEADER_ICON_DIMENSION}
+                  style={{ color: theme.PRIMARY }}
+                />
+              }
+            />
           ),
         }}
       />
@@ -212,15 +220,63 @@ export default function Event() {
         // }
       >
         <View style={styles.container}>
-          <Subtitle
-            size={23}
+          <View
             style={{
-              color: theme.PRIMARY,
-              paddingVertical: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              alignContent: "center",
+              paddingBottom: 20,
             }}
           >
-            {selectedEvent.eventName}
-          </Subtitle>
+            <View
+              style={{
+                marginRight: 15,
+              }}
+            >
+              <View
+                style={{
+                  width: THUMBNAIL_WIDTH,
+                  height: THUMBNAIL_WIDTH,
+                  borderRadius: 100,
+                  backgroundColor: selectedEvent.thumbnail
+                    ? "transparent"
+                    : theme.PLACEHOLDER,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              >
+                {selectedEvent.thumbnail ? (
+                  <AnimatedImage
+                    source={{ uri: selectedEvent.thumbnail }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: ANIMATED_BORDER_RADIUS,
+                    }}
+                    sharedTransitionTag={`event-${selectedEvent.eventId}`}
+                    cachePolicy={"memory-disk"}
+                    priority={"high"}
+                  />
+                ) : (
+                  <ImageIcon
+                    height={"50%"}
+                    width={"50%"}
+                    style={{ color: theme.PRIMARY }}
+                  />
+                )}
+              </View>
+            </View>
+
+            <Subtitle
+              size={23}
+              style={{
+                color: theme.PRIMARY,
+              }}
+            >
+              {selectedEvent.eventName}
+            </Subtitle>
+          </View>
 
           {selectedEvent.isInvited && (
             <EventInvitation onPress={handleEventInvitation} />
@@ -303,6 +359,7 @@ export default function Event() {
                         (index + 1) % ROW_IMAGES === 0 ? 0 : IMAGE_GAP,
                     },
                   ]}
+                  cachePolicy={"disk"}
                 />
               </TouchableOpacity>
             ))
@@ -358,7 +415,7 @@ export default function Event() {
                     <Image
                       source={{ uri: item.imageUrl }}
                       style={{ width: "100%", height: "100%" }}
-                      resizeMode="contain"
+                      cachePolicy={"disk"}
                     />
                   </View>
                 )}

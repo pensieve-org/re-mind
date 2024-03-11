@@ -4,14 +4,15 @@ import {
   Alert,
   StyleSheet,
   View,
-  Image,
   Pressable,
   Modal,
 } from "react-native";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import {
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
+  ANIMATED_BORDER_RADIUS,
 } from "../../../assets/constants";
 import theme from "../../../assets/theme";
 import { AppContext } from "../../_layout";
@@ -25,6 +26,7 @@ import CameraIcon from "../../../assets/camera.svg";
 import * as ImagePicker from "expo-image-picker";
 import uploadImageAsync from "../../../utils/uploadImageAsync";
 import updateThumbnail from "../../../apis/updateThumbnail";
+import { AnimatedImage } from "../../../utils/AnimatedImage";
 
 export default function EventSettings() {
   const {
@@ -170,21 +172,27 @@ export default function EventSettings() {
                 width: PROFILE_ICON_DIMENSION,
                 height: PROFILE_ICON_DIMENSION,
                 borderRadius: 100,
-                backgroundColor: theme.PLACEHOLDER,
+                backgroundColor: selectedEvent.thumbnail
+                  ? "transparent"
+                  : theme.PLACEHOLDER,
                 alignItems: "center",
                 justifyContent: "center",
+                overflow: "hidden",
               }}
             >
               {isThumbnailLoading ? (
                 <ActivityIndicator size={"large"} color={theme.PRIMARY} />
               ) : selectedEvent.thumbnail ? (
-                <Image
+                <AnimatedImage
                   source={{ uri: selectedEvent.thumbnail }}
                   style={{
                     width: PROFILE_ICON_DIMENSION,
                     height: PROFILE_ICON_DIMENSION,
-                    borderRadius: 100,
+                    borderRadius: ANIMATED_BORDER_RADIUS,
                   }}
+                  sharedTransitionTag={`event-${selectedEvent.eventId}`}
+                  cachePolicy={"memory-disk"}
+                  priority={"high"}
                 />
               ) : (
                 <ImageIcon

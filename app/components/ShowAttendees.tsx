@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, View, Image, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
+import { Image } from "expo-image";
 import Body from "./Body";
 import {
   FRIEND_ICON_DIAMETER,
@@ -42,6 +43,7 @@ const ShowAttendees: React.FC<Props> = ({ attendees }) => {
                 <Image
                   source={{ uri: attendee.profilePicture }}
                   style={styles.image}
+                  cachePolicy={"memory-disk"}
                 />
               ) : (
                 <ProfileIcon

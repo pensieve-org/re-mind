@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, View, Image, FlatList } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
+import { Image } from "expo-image";
 import Body from "./Body";
 import { PROFILE_ICON_DIAMETER } from "../assets/constants";
 import theme from "../assets/theme";
@@ -44,6 +45,7 @@ const FriendRequestList: React.FC<Props> = ({
               <Image
                 source={{ uri: item.profilePicture }}
                 style={styles.image}
+                cachePolicy={"memory-disk"}
               />
             ) : (
               <ProfileIcon

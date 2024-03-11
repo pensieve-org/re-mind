@@ -1,15 +1,18 @@
 import React from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 import Body from "./Body";
 import {
   EVENT_ICON_DIAMETER,
   ICON_GAP,
   ICON_GAP_BOTTOM,
   ROW_ICONS,
+  ANIMATED_BORDER_RADIUS,
 } from "../assets/constants";
 import theme from "../assets/theme";
 import moment from "moment";
 import Subtitle from "./Subtitle";
+import { AnimatedImage } from "../utils/AnimatedImage";
 
 interface Props {
   events: any[];
@@ -91,6 +94,7 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                             : theme.PLACEHOLDER,
                           alignItems: "center",
                           justifyContent: "center",
+                          overflow: "hidden",
                         },
                         event.isInvited && {
                           borderWidth: 3,
@@ -100,9 +104,15 @@ const Calendar: React.FC<Props> = ({ events, onPress }) => {
                     >
                       {event.thumbnail && (
                         <>
-                          <Image
+                          <AnimatedImage
                             source={{ uri: event.thumbnail }}
-                            style={styles.image}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: ANIMATED_BORDER_RADIUS,
+                            }}
+                            sharedTransitionTag={`event-${event.eventId}`}
+                            cachePolicy={"none"}
                           />
                           <View style={styles.overlay} />
                         </>
@@ -170,11 +180,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     flexWrap: "wrap",
     width: EVENT_ICON_DIAMETER,
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-    borderRadius: 100,
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

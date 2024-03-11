@@ -2,12 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
-  Image,
   Pressable,
   ActivityIndicator,
   Alert,
-  TouchableOpacity,
 } from "react-native";
+import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, Stack } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -17,7 +16,7 @@ import {
   HEADER_ICON_DIMENSION,
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
-  HEADER_MARGIN,
+  ANIMATED_BORDER_RADIUS,
 } from "../../../assets/constants";
 import { auth } from "../../../firebase.js";
 import Body from "../../../components/Body";
@@ -31,6 +30,9 @@ import * as ImagePicker from "expo-image-picker";
 import updateProfilePicture from "../../../apis/updateProfilePicture";
 import uploadImageAsync from "../../../utils/uploadImageAsync";
 import deleteUser from "../../../apis/deleteUser";
+import { AnimatedImage } from "../../../utils/AnimatedImage";
+import Header from "../../../components/Header";
+import { useHeaderProps } from "../../../hooks/useHeaderProps";
 
 export default function Profile() {
   const { userDetails, setUserDetails, setSelectedEvent, setUserEvents } =
@@ -38,6 +40,7 @@ export default function Profile() {
   const [friendRequests, setFriendRequests] = useState([]);
   const insets = useSafeAreaInsets();
   const [isLoading, setIsLoading] = useState(false);
+  const headerProps = useHeaderProps();
 
   const clearContext = () => {
     setUserDetails({});
@@ -137,42 +140,43 @@ export default function Profile() {
     <View style={[styles.page, { paddingBottom: insets.bottom }]}>
       <Stack.Screen
         options={{
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => router.push("/friends")}
-              style={{ marginRight: HEADER_MARGIN }}
-            >
-              <View>
-                <FriendsIcon
-                  height={HEADER_ICON_DIMENSION}
-                  width={HEADER_ICON_DIMENSION}
-                  style={{ color: theme.PRIMARY }}
-                />
-                {friendRequests.length > 0 && (
-                  <View
-                    style={{
-                      position: "absolute",
-                      right: -12,
-                      top: -10,
-                      backgroundColor: theme.RED,
-                      borderRadius: 100,
-                      height: 20,
-                      width: 20,
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Body
-                      adjustsFontSizeToFit={true}
-                      bold={true}
-                      style={{ color: theme.PRIMARY }}
+          header: () => (
+            <Header
+              {...headerProps}
+              onPressRight={() => router.push("/friends")}
+              imageRight={
+                <View>
+                  <FriendsIcon
+                    height={HEADER_ICON_DIMENSION}
+                    width={HEADER_ICON_DIMENSION}
+                    style={{ color: theme.PRIMARY }}
+                  />
+                  {friendRequests.length > 0 && (
+                    <View
+                      style={{
+                        position: "absolute",
+                        right: -12,
+                        top: -10,
+                        backgroundColor: theme.RED,
+                        borderRadius: 100,
+                        height: 20,
+                        width: 20,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
                     >
-                      {friendRequests.length}
-                    </Body>
-                  </View>
-                )}
-              </View>
-            </TouchableOpacity>
+                      <Body
+                        adjustsFontSizeToFit={true}
+                        bold={true}
+                        style={{ color: theme.PRIMARY }}
+                      >
+                        {friendRequests.length}
+                      </Body>
+                    </View>
+                  )}
+                </View>
+              }
+            />
           ),
         }}
       />
@@ -185,26 +189,32 @@ export default function Profile() {
                 width: PROFILE_ICON_DIMENSION,
                 height: PROFILE_ICON_DIMENSION,
                 borderRadius: 100,
-                backgroundColor: theme.PLACEHOLDER,
+                backgroundColor: userDetails.profilePicture
+                  ? "transparent"
+                  : theme.PLACEHOLDER,
                 alignItems: "center",
                 justifyContent: "center",
+                overflow: "hidden",
               }}
             >
               {isLoading ? (
                 <ActivityIndicator size={"large"} color={theme.PRIMARY} />
               ) : userDetails.profilePicture ? (
-                <Image
+                <AnimatedImage
                   source={{ uri: userDetails.profilePicture }}
                   style={{
-                    width: PROFILE_ICON_DIMENSION,
-                    height: PROFILE_ICON_DIMENSION,
-                    borderRadius: 100,
+                    width: "100%",
+                    height: "100%",
+                    borderRadius: ANIMATED_BORDER_RADIUS,
                   }}
+                  sharedTransitionTag="profile-picture"
+                  cachePolicy={"memory-disk"}
+                  priority={"high"}
                 />
               ) : (
                 <ProfileIcon
-                  height={90}
-                  width={90}
+                  height={"50%"}
+                  width={"50%"}
                   style={{ color: theme.PRIMARY }}
                 />
               )}

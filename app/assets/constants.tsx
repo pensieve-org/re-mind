@@ -6,6 +6,7 @@ export const PROFILE_ICON_DIMENSION = 150;
 export const CORNER_RADIUS = 10;
 export const COMPONENT_HEIGHT = 55;
 export const ANIMATION_DURATION = 300;
+export const ANIMATED_BORDER_RADIUS = 0; // TODO: make this 100 when reanimated fix the borderRadius issue
 
 export const FRIEND_ICON_GAP = 10;
 export const FRIEND_ICON_GAP_BOTTOM = 10;
@@ -27,6 +28,7 @@ export const EVENT_ICON_DIAMETER =
   ROW_ICONS;
 
 // For Event Screen
+export const THUMBNAIL_WIDTH = 80;
 export const IMAGE_GAP = 5;
 export const ROW_IMAGES = 3;
 export const EVENT_IMAGE_WIDTH =
