@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import BackArrow from "../../../assets/arrow-left.svg";
 import ThreeDots from "../../../assets/three-dots.svg";
