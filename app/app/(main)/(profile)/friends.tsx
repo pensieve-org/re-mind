@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import theme from "../../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../../assets/constants";
@@ -21,7 +21,34 @@ export default function MyFriends() {
   const [selectedItem, setSelectedItem] = useState("Friends");
   const [friendRequests, setFriendRequests] = useState([]);
 
-  // TODO: remove alerts and do better error display
+  const friendsView = useMemo(
+    () => (
+      <View style={{ flex: 1 }}>
+        <View style={{ paddingBottom: 10 }}>
+          <Body size={14}>MY FRIENDS ({friends.length})</Body>
+        </View>
+        <FriendList friends={friends} onPress={handleRemoveFriend} />
+      </View>
+    ),
+    [friends]
+  );
+
+  const friendRequestsView = useMemo(
+    () => (
+      <View style={{ flex: 1 }}>
+        <View style={{ paddingBottom: 10 }}>
+          <Body size={14}>FRIEND REQUESTS ({friendRequests.length})</Body>
+        </View>
+        <FriendRequestList
+          friendRequests={friendRequests}
+          onPressTick={handleAcceptFriend}
+          onPressCross={handleRejectFriend}
+        />
+      </View>
+    ),
+    [friendRequests]
+  );
+
   const handleSendFriendRequest = async () => {
     if (!friendUsername) return;
     try {
@@ -108,25 +135,7 @@ export default function MyFriends() {
           />
         </View>
 
-        {selectedItem === "Friends" ? (
-          <View style={{ flex: 1 }}>
-            <View style={{ paddingBottom: 10 }}>
-              <Body size={14}>MY FRIENDS ({friends.length})</Body>
-            </View>
-            <FriendList friends={friends} onPress={handleRemoveFriend} />
-          </View>
-        ) : (
-          <View style={{ flex: 1 }}>
-            <View style={{ paddingBottom: 10 }}>
-              <Body size={14}>FRIEND REQUESTS ({friendRequests.length})</Body>
-            </View>
-            <FriendRequestList
-              friendRequests={friendRequests}
-              onPressTick={handleAcceptFriend}
-              onPressCross={handleRejectFriend}
-            />
-          </View>
-        )}
+        {selectedItem === "Friends" ? friendsView : friendRequestsView}
       </View>
       <View
         style={{
@@ -143,8 +152,6 @@ export default function MyFriends() {
           initialSelectedItem={selectedItem}
           friendRequests={friendRequests.length}
           onPressItem={(item) => {
-            fetchFriends();
-            fetchFriendRequests();
             setSelectedItem(item);
           }}
         />
