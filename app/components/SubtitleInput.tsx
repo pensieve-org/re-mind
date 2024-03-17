@@ -20,7 +20,7 @@ const Subtitle: React.FC<SubtitleProps> = ({
     <TextInput
       style={[styles.text, style, { fontSize: size }]}
       placeholder={text}
-      placeholderTextColor={theme.TEXT}
+      placeholderTextColor={theme.PLACEHOLDER}
       onChangeText={onChangeText}
     />
   );

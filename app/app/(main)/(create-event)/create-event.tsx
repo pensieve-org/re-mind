@@ -21,8 +21,8 @@ import CalendarPlus from "../../../assets/calendar-plus-regular.svg";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
-  const [eventName, setEventName] = useState("");
-  const [location, setLocation] = useState("");
+  const [eventName, setEventName] = useState(null);
+  const [location, setLocation] = useState(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [unselectedFriends, setUnselectedFriends] = useState([]);
@@ -103,12 +103,17 @@ export default function CreateEvent() {
           header: () => (
             <Header
               {...headerProps}
-              onPressRight={() => handleCreateEvent}
+              onPressRight={() => handleCreateEvent()}
               imageRight={
                 <CalendarPlus
                   height={"100%"}
                   width={"100%"}
-                  style={{ color: theme.PRIMARY }}
+                  style={{
+                    color:
+                      !startDate || !endDate || !eventName
+                        ? theme.PLACEHOLDER
+                        : theme.TEXT,
+                  }}
                 />
               }
             />
@@ -122,8 +127,8 @@ export default function CreateEvent() {
       )}
 
       <View style={styles.container}>
-        <View style={{}}>
-          <Subtitle size={25}>new event</Subtitle>
+        <View style={{ paddingTop: 10 }}>
+          <Subtitle size={25}>create event</Subtitle>
         </View>
 
         <GradientScrollView
@@ -133,7 +138,6 @@ export default function CreateEvent() {
           <SubtitleInput
             size={20}
             text={"event name..."}
-            style={{ color: eventName ? theme.TEXT : theme.PLACEHOLDER }}
             onChangeText={setEventName}
           />
 
@@ -167,7 +171,14 @@ export default function CreateEvent() {
             selectedEndDate={setEndDate}
           />
 
-          <Subtitle size={20} style={{ paddingBottom: 10 }}>
+          <Subtitle
+            size={20}
+            style={{ paddingBottom: 10 }}
+            style={{
+              color:
+                selectedFriends.length > 0 ? theme.TEXT : theme.PLACEHOLDER,
+            }}
+          >
             attendees
           </Subtitle>
           {selectedFriends.length > 0 ? (
@@ -183,9 +194,12 @@ export default function CreateEvent() {
                 justifyContent: "center",
                 alignItems: "center",
                 paddingVertical: 10,
+                height: 100,
               }}
             >
-              <Body style={{ paddingBottom: 10 }}>no friends invited</Body>
+              <Body style={{ color: theme.PLACEHOLDER }}>
+                no friends invited
+              </Body>
             </View>
           )}
 
@@ -207,7 +221,9 @@ export default function CreateEvent() {
                 paddingVertical: 10,
               }}
             >
-              <Body style={{ paddingBottom: 10 }}>no friends to add</Body>
+              <Body style={{ paddingBottom: 10, color: theme.PLACEHOLDER }}>
+                no friends to add
+              </Body>
             </View>
           )}
         </GradientScrollView>

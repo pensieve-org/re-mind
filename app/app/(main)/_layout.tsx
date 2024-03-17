@@ -36,6 +36,8 @@ export default function Layout() {
         name="(create-event)/location-modal"
         options={{
           presentation: "modal",
+          headerShown: false,
+          gestureEnabled: true,
         }}
       />
     </Stack>
