@@ -64,8 +64,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: HEADER_ICON_DIMENSION,
     width: HEADER_ICON_DIMENSION,
-    overflow: "hidden",
-    borderRadius: 100,
   },
   left: {
     left: 28,

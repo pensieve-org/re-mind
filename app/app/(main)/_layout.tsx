@@ -31,6 +31,13 @@ export default function Layout() {
 
         header: () => <Header {...headerProps} />,
       }}
-    />
+    >
+      <Stack.Screen
+        name="(create-event)/location-modal"
+        options={{
+          presentation: "modal",
+        }}
+      />
+    </Stack>
   );
 }
