@@ -173,8 +173,8 @@ export default function CreateEvent() {
 
           <Subtitle
             size={20}
-            style={{ paddingBottom: 10 }}
             style={{
+              paddingBottom: 10,
               color:
                 selectedFriends.length > 0 ? theme.TEXT : theme.PLACEHOLDER,
             }}
@@ -193,8 +193,7 @@ export default function CreateEvent() {
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                paddingVertical: 10,
-                height: 100,
+                height: 80,
               }}
             >
               <Body style={{ color: theme.PLACEHOLDER }}>
@@ -203,7 +202,14 @@ export default function CreateEvent() {
             </View>
           )}
 
-          <Subtitle size={20} style={{ paddingBottom: 10 }}>
+          <Subtitle
+            size={20}
+            style={{
+              paddingBottom: 10,
+              color:
+                unselectedFriends.length > 0 ? theme.TEXT : theme.PLACEHOLDER,
+            }}
+          >
             invite friends
           </Subtitle>
           {unselectedFriends.length > 0 ? (
@@ -218,10 +224,10 @@ export default function CreateEvent() {
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                paddingVertical: 10,
+                height: 80,
               }}
             >
-              <Body style={{ paddingBottom: 10, color: theme.PLACEHOLDER }}>
+              <Body style={{ color: theme.PLACEHOLDER }}>
                 no friends to add
               </Body>
             </View>
