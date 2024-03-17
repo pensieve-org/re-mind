@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View, Modal, ActivityIndicator } from "react-native";
-import { router, Link } from "expo-router";
+import { router, Link, Stack } from "expo-router";
 import theme from "../../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../../assets/constants";
 import Body from "../../../components/Body";
@@ -12,14 +12,17 @@ import AddFriendsList from "../../../components/AddFriendsList";
 import createEvent from "../../../apis/createEvent";
 import getUserEvents from "../../../apis/getUserEvents";
 import Alert from "../../../components/Alert";
-import Button from "../../../components/Button";
+import Header from "../../../components/Header";
+import { useHeaderProps } from "../../../hooks/useHeaderProps";
 import getFriendDetails from "../../../apis/getFriendDetails";
 import GradientScrollView from "../../../components/GradientScrollView";
 import LocationDot from "../../../assets/location-dot.svg";
+import CalendarPlus from "../../../assets/calendar-plus-regular.svg";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
   const [eventName, setEventName] = useState("");
+  const [location, setLocation] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [unselectedFriends, setUnselectedFriends] = useState([]);
@@ -27,6 +30,7 @@ export default function CreateEvent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const headerProps = useHeaderProps();
 
   const handleCreateEvent = async () => {
     if (isLoading) return;
@@ -94,6 +98,23 @@ export default function CreateEvent() {
 
   return (
     <View style={styles.page}>
+      <Stack.Screen
+        options={{
+          header: () => (
+            <Header
+              {...headerProps}
+              onPressRight={() => handleCreateEvent}
+              imageRight={
+                <CalendarPlus
+                  height={"100%"}
+                  width={"100%"}
+                  style={{ color: theme.PRIMARY }}
+                />
+              }
+            />
+          ),
+        }}
+      />
       {error && (
         <View style={styles.alertContainer}>
           <Alert text={errorMsg} />
@@ -101,7 +122,7 @@ export default function CreateEvent() {
       )}
 
       <View style={styles.container}>
-        <View style={{ paddingTop: 20 }}>
+        <View style={{}}>
           <Subtitle size={25}>new event</Subtitle>
         </View>
 
@@ -112,6 +133,7 @@ export default function CreateEvent() {
           <SubtitleInput
             size={20}
             text={"event name..."}
+            style={{ color: eventName ? theme.TEXT : theme.PLACEHOLDER }}
             onChangeText={setEventName}
           />
 
@@ -128,7 +150,13 @@ export default function CreateEvent() {
                 width={30}
                 style={{ color: theme.RED }}
               />
-              <Subtitle size={20} style={{ paddingLeft: 10 }}>
+              <Subtitle
+                size={20}
+                style={{
+                  paddingLeft: 10,
+                  color: location ? theme.TEXT : theme.PLACEHOLDER,
+                }}
+              >
                 location...
               </Subtitle>
             </View>
@@ -182,15 +210,6 @@ export default function CreateEvent() {
               <Body style={{ paddingBottom: 10 }}>no friends to add</Body>
             </View>
           )}
-          <View style={{ paddingVertical: 20 }}>
-            <Button
-              fill={theme.TEXT}
-              textColor={theme.BACKGROUND}
-              onPress={handleCreateEvent}
-            >
-              create event
-            </Button>
-          </View>
         </GradientScrollView>
       </View>
       <Modal animationType="fade" transparent={true} visible={isLoading}>

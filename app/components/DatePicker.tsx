@@ -67,7 +67,7 @@ const DatePicker: React.FC<Props> = ({
         onPress={() => setStartVisibility(true)}
       >
         {!startDate && (
-          <Body bold={true} size={18}>
+          <Body bold={true} size={18} style={{ color: theme.PLACEHOLDER }}>
             start
           </Body>
         )}
@@ -95,7 +95,7 @@ const DatePicker: React.FC<Props> = ({
         onPress={() => setEndVisibility(true)}
       >
         {!endDate && (
-          <Body bold={true} size={18}>
+          <Body bold={true} size={18} style={{ color: theme.PLACEHOLDER }}>
             end
           </Body>
         )}
