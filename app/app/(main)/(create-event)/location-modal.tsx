@@ -11,6 +11,9 @@ import { Stack } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import debounce from "lodash.debounce";
+import LocationSearchBar from "../../../components/LocationSearchBar"; // Adjust the path as necessary
+import theme from "../../../assets/theme";
+import { HORIZONTAL_PADDING } from "../../../assets/constants";
 
 export default function Modal() {
   const [location, setLocation] = useState(null);
@@ -90,12 +93,14 @@ export default function Modal() {
           headerShown: false,
         }}
       />
-      <TextInput
-        placeholder="Search"
-        value={search}
-        onChangeText={handleSearchChange}
-        style={styles.searchBar}
-      />
+      <View style={{ paddingTop: 30, paddingBottom: 10, width: "100%" }}>
+        <LocationSearchBar
+          label="location"
+          placeholder="enter a postcode or address"
+          value={search}
+          onChangeText={handleSearchChange}
+        />
+      </View>
       <MapView
         style={styles.map}
         region={{
@@ -132,19 +137,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-  },
-  searchBar: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: "#FFF",
-    borderRadius: 5,
-    width: "90%",
-    marginTop: 20,
+    backgroundColor: theme.TEXT,
+    paddingHorizontal: HORIZONTAL_PADDING,
   },
   map: {
-    width: "90%",
-    height: 400,
+    width: "100%",
+    height: 300,
     borderRadius: 10,
-    marginTop: 20,
   },
 });

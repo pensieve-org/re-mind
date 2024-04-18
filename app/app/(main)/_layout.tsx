@@ -38,6 +38,7 @@ export default function Layout() {
           presentation: "modal",
           headerShown: false,
           gestureEnabled: true,
+          animation: "slide_from_bottom",
         }}
       />
     </Stack>
