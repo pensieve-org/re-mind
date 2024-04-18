@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
+  Image,
 } from "react-native";
 import { Stack } from "expo-router";
 import MapView, { Marker } from "react-native-maps";
@@ -37,28 +38,42 @@ export default function Modal() {
   const searchLocations = useCallback(
     debounce(async (searchText) => {
       if (searchText.length < 3) return;
+
+      // Check if user's location is available
+      const userLocation = location?.coords;
+      const locationParam = userLocation
+        ? `&location=${userLocation.latitude},${userLocation.longitude}&radius=50000`
+        : "";
+
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${process.env.EXPO_PUBLIC_GOOGLE_API}&input=${searchText}`
+        `https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${process.env.EXPO_PUBLIC_GOOGLE_API}&input=${searchText}${locationParam}`
       );
       const data = await response.json();
       setMarkers(
         data.predictions.map((prediction) => ({
           id: prediction.place_id,
-          description: prediction.description,
+          name: prediction.structured_formatting.main_text, // Assuming this as the name
+          description: prediction.description, // Full address
+          image: null, // Placeholder for image URL, to be fetched or assigned later
           lat: null,
           lng: null,
         }))
       );
     }, 500),
-    []
+    [location] // Add location to the dependency array to ensure the callback is updated with the current location
   );
 
   const selectLocation = async (placeId) => {
-    const response = await fetch(
+    const detailsResponse = await fetch(
       `https://maps.googleapis.com/maps/api/place/details/json?key=${process.env.EXPO_PUBLIC_GOOGLE_API}&placeid=${placeId}`
     );
-    const data = await response.json();
-    const selectedLocation = data.result.geometry.location;
+    const detailsData = await detailsResponse.json();
+    const selectedLocation = detailsData.result.geometry.location;
+    const photoReference = detailsData.result.photos?.[0]?.photo_reference;
+    const imageUrl = photoReference
+      ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photoReference}&key=${process.env.EXPO_PUBLIC_GOOGLE_API}`
+      : null;
+
     setLocation({
       ...location,
       coords: {
@@ -67,13 +82,17 @@ export default function Modal() {
       },
     });
 
-    setMarkers(
-      markers.map((marker) =>
-        marker.id === placeId
-          ? { ...marker, lat: selectedLocation.lat, lng: selectedLocation.lng }
-          : marker
-      )
-    );
+    // Assuming you want to update the markers here to include the selected location only
+    setMarkers([
+      {
+        id: placeId,
+        name: detailsData.result.name,
+        description: detailsData.result.formatted_address,
+        image: imageUrl,
+        lat: selectedLocation.lat,
+        lng: selectedLocation.lng,
+      },
+    ]);
   };
 
   const confirmLocation = async (placeId) => {
@@ -106,8 +125,8 @@ export default function Modal() {
         region={{
           latitude: location?.coords?.latitude || 0,
           longitude: location?.coords?.longitude || 0,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
         }}
       >
         {markers
@@ -123,8 +142,29 @@ export default function Modal() {
         data={markers}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => selectLocation(item.id)}>
-            <Text>{item.description}</Text>
+          <TouchableOpacity
+            onPress={() => selectLocation(item.id)}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 10,
+            }}
+          >
+            {item.image && (
+              <Image
+                source={{ uri: item.image }}
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 10,
+                  marginRight: 10,
+                }}
+              />
+            )}
+            <View>
+              <Text style={{ fontWeight: "bold" }}>{item.name}</Text>
+              <Text>{item.description}</Text>
+            </View>
           </TouchableOpacity>
         )}
       />

@@ -51,7 +51,7 @@ const LocationSearchBar: React.FC<InputProps> = ({
         textColor={theme.BACKGROUND}
         theme={{
           colors: {
-            primary: theme.BACKGROUND,
+            primary: "blue",
             secondary: theme.PLACEHOLDER,
             error: theme.ERROR_TEXT,
           },
