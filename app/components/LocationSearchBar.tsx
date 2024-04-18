@@ -5,6 +5,7 @@ import Body from "./Body";
 import theme from "../assets/theme";
 import { COMPONENT_HEIGHT, CORNER_RADIUS } from "../assets/constants";
 import MagnifyingGlass from "../assets/magnifying-glass-solid.svg";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 interface InputProps {
   label?: string;
@@ -19,12 +20,6 @@ const LocationSearchBar: React.FC<InputProps> = ({
   value,
   onChangeText,
 }) => {
-  const Label = (
-    <Body style={[styles.textInput, { color: theme.PLACEHOLDER }]}>
-      {label}
-    </Body>
-  );
-
   return (
     <View style={styles.container}>
       <View
@@ -40,23 +35,40 @@ const LocationSearchBar: React.FC<InputProps> = ({
           style={{ color: theme.PLACEHOLDER }}
         />
       </View>
-      <PaperTextInput
-        label={Label}
-        mode="flat"
+      <GooglePlacesAutocomplete
         placeholder={placeholder}
-        placeholderTextColor={theme.PLACEHOLDER}
-        value={value}
-        onChangeText={onChangeText}
-        style={styles.textInput}
-        textColor={theme.BACKGROUND}
-        theme={{
-          colors: {
-            primary: "blue",
-            secondary: theme.PLACEHOLDER,
-            error: theme.ERROR_TEXT,
+        onPress={() => {}}
+        query={{
+          key: process.env.EXPO_PUBLIC_GOOGLE_API,
+          language: "en",
+        }}
+        fetchDetails={true}
+        styles={{
+          textInputContainer: {
+            backgroundColor: "white",
+            borderRadius: 10,
+            width: "100%",
+          },
+          textInput: {
+            height: 38,
+            color: "#5d5d5d",
+            fontSize: 16,
+            fontFamily: "MontserratRegular",
+            backgroundColor: "transparent",
+          },
+          predefinedPlacesDescription: {
+            color: "#1faadb",
+          },
+          listView: {
+            backgroundColor: "white",
+            position: "absolute",
+            top: 50,
+            width: "100%",
           },
         }}
-        underlineStyle={{ display: "none" }}
+        textInputProps={{
+          placeholderTextColor: theme.PLACEHOLDER,
+        }}
       />
     </View>
   );
