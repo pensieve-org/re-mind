@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View, Modal, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Modal,
+  ActivityIndicator,
+  TextInput,
+} from "react-native";
 import { router, Link, Stack } from "expo-router";
 import theme from "../../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../../assets/constants";
@@ -142,6 +148,27 @@ export default function CreateEvent() {
             text={"event name..."}
             onChangeText={setEventName}
           />
+
+          <View
+            style={{
+              paddingTop: 5,
+            }}
+          >
+            <TextInput
+              multiline
+              numberOfLines={4}
+              onChangeText={setDescription}
+              value={description}
+              placeholderTextColor={theme.PLACEHOLDER}
+              placeholder="description..."
+              style={{
+                color: theme.TEXT,
+                fontSize: 14,
+                fontFamily: "MontserratRegular",
+                letterSpacing: -0.408,
+              }}
+            />
+          </View>
         </View>
 
         <View
