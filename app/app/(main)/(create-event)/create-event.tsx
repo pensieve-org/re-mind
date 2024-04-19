@@ -92,6 +92,9 @@ export default function CreateEvent() {
       setError(true);
       setIsLoading(false);
       setErrorMsg(error.message || "An error occurred");
+      alert(
+        `start time: ${startDate}, end time: ${endDate}, event name: ${eventName}, status: ${status}, upload flag: ${uploadFlag}, description: ${description}, geo point: ${geoPoint}, address: ${address}`
+      );
     }
   };
 
@@ -143,6 +146,7 @@ export default function CreateEvent() {
             paddingTop: 20,
           }}
         >
+          {/* TODO: maybe add in thumbnail in a row with event name, same as it shows on the event screen */}
           <SubtitleInput
             size={20}
             text={"event name..."}
@@ -192,10 +196,9 @@ export default function CreateEvent() {
           <LocationSearchBar
             placeholder="location..."
             onPress={(data, details) => {
-              const latitude = details.geometry.location.lat();
-              const longitude = details.geometry.location.lng();
-              setGeoPoint(new GeoPoint(latitude, longitude));
-              setAddress(details.description);
+              const { lat, lng } = details.geometry.location;
+              setGeoPoint(new GeoPoint(lat, lng));
+              setAddress(details.name);
             }}
           />
         </View>
