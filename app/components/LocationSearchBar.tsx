@@ -37,7 +37,7 @@ const LocationSearchBar: React.FC<InputProps> = ({ placeholder, onPress }) => {
             height: 38,
             color: theme.TEXT,
             fontSize: 20,
-            fontFamily: "MontserratSemibold",
+            fontFamily: "MontserratSemiBold",
             letterSpacing: -0.408,
             backgroundColor: "transparent",
           },

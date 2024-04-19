@@ -143,12 +143,12 @@ export default function CreateEvent() {
       <View style={styles.container}>
         <View
           style={{
-            paddingTop: 20,
+            paddingTop: 10,
           }}
         >
           {/* TODO: maybe add in thumbnail in a row with event name, same as it shows on the event screen */}
           <SubtitleInput
-            size={20}
+            size={25}
             text={"event name..."}
             onChangeText={setEventName}
           />
@@ -198,7 +198,7 @@ export default function CreateEvent() {
             onPress={(data, details) => {
               const { lat, lng } = details.geometry.location;
               setGeoPoint(new GeoPoint(lat, lng));
-              setAddress(details.name);
+              setAddress(details.formatted_address);
             }}
           />
         </View>
