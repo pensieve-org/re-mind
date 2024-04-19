@@ -1,43 +1,28 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { TextInput as PaperTextInput } from "react-native-paper";
-import Body from "./Body";
 import theme from "../assets/theme";
 import { COMPONENT_HEIGHT, CORNER_RADIUS } from "../assets/constants";
-import MagnifyingGlass from "../assets/magnifying-glass-solid.svg";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-
+import LocationDot from "../assets/location-dot.svg";
 interface InputProps {
-  label?: string;
   placeholder?: string;
-  value?: string;
-  onChangeText?: (text: string) => void;
+  onPress?: (data: any, details: any) => void;
 }
 
-const LocationSearchBar: React.FC<InputProps> = ({
-  label,
-  placeholder,
-  value,
-  onChangeText,
-}) => {
+const LocationSearchBar: React.FC<InputProps> = ({ placeholder, onPress }) => {
   return (
     <View style={styles.container}>
       <View
         style={{
-          paddingLeft: 10,
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <MagnifyingGlass
-          height={20}
-          width={20}
-          style={{ color: theme.PLACEHOLDER }}
-        />
+        <LocationDot height={30} width={30} style={{ color: theme.RED }} />
       </View>
       <GooglePlacesAutocomplete
         placeholder={placeholder}
-        onPress={() => {}}
+        onPress={(data, details) => onPress(data, details)}
         query={{
           key: process.env.EXPO_PUBLIC_GOOGLE_API,
           language: "en",
@@ -45,15 +30,15 @@ const LocationSearchBar: React.FC<InputProps> = ({
         fetchDetails={true}
         styles={{
           textInputContainer: {
-            backgroundColor: "white",
-            borderRadius: 10,
+            backgroundColor: "transparent",
             width: "100%",
           },
           textInput: {
             height: 38,
-            color: "#5d5d5d",
-            fontSize: 16,
-            fontFamily: "MontserratRegular",
+            color: theme.TEXT,
+            fontSize: 20,
+            fontFamily: "MontserratSemiBold",
+            letterSpacing: -0.408,
             backgroundColor: "transparent",
           },
           predefinedPlacesDescription: {
@@ -62,8 +47,10 @@ const LocationSearchBar: React.FC<InputProps> = ({
           listView: {
             backgroundColor: "white",
             position: "absolute",
-            top: 50,
+            top: 40,
             width: "100%",
+            zIndex: 1000,
+            borderRadius: CORNER_RADIUS,
           },
         }}
         textInputProps={{
@@ -78,16 +65,9 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: COMPONENT_HEIGHT,
-    borderWidth: 1,
-    borderColor: theme.PLACEHOLDER,
     flexDirection: "row",
     alignItems: "center",
-    borderRadius: CORNER_RADIUS,
-  },
-  textInput: {
-    backgroundColor: "transparent",
-    fontSize: 16,
-    fontFamily: "MontserratRegular",
+    zIndex: 1000,
   },
 });
 

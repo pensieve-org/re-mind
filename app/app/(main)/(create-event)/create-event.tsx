@@ -9,6 +9,7 @@ import Subtitle from "../../../components/Subtitle";
 import SubtitleInput from "../../../components/SubtitleInput";
 import DatePicker from "../../../components/DatePicker";
 import AddFriendsList from "../../../components/AddFriendsList";
+import LocationSearchBar from "../../../components/LocationSearchBar";
 import createEvent from "../../../apis/createEvent";
 import getUserEvents from "../../../apis/getUserEvents";
 import Alert from "../../../components/Alert";
@@ -16,7 +17,6 @@ import Header from "../../../components/Header";
 import { useHeaderProps } from "../../../hooks/useHeaderProps";
 import getFriendDetails from "../../../apis/getFriendDetails";
 import GradientScrollView from "../../../components/GradientScrollView";
-import LocationDot from "../../../assets/location-dot.svg";
 import CalendarPlus from "../../../assets/calendar-plus-regular.svg";
 
 export default function CreateEvent() {
@@ -131,46 +131,46 @@ export default function CreateEvent() {
           <Subtitle size={25}>create event</Subtitle>
         </View>
 
-        <GradientScrollView
-          contentContainerStyle={{ paddingBottom: 80 }}
-          showsVerticalScrollIndicator={false}
+        <View
+          style={{
+            paddingTop: 20,
+          }}
         >
           <SubtitleInput
             size={20}
             text={"event name..."}
             onChangeText={setEventName}
           />
+        </View>
 
-          <Link href="/location-modal">
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingTop: 20,
-              }}
-            >
-              <LocationDot
-                height={30}
-                width={30}
-                style={{ color: theme.RED }}
-              />
-              <Subtitle
-                size={20}
-                style={{
-                  paddingLeft: 10,
-                  color: location ? theme.TEXT : theme.PLACEHOLDER,
-                }}
-              >
-                location...
-              </Subtitle>
-            </View>
-          </Link>
+        <View
+          style={{
+            paddingTop: 20,
+            zIndex: 1000,
+          }}
+        >
+          <LocationSearchBar
+            placeholder="location..."
+            onPress={(data, details) => setLocation(data.description)}
+          />
+        </View>
 
+        <View
+          style={{
+            paddingTop: 20,
+          }}
+        >
           <DatePicker
             selectedStartDate={setStartDate}
             selectedEndDate={setEndDate}
           />
+        </View>
 
+        <View
+          style={{
+            paddingTop: 20,
+          }}
+        >
           <Subtitle
             size={20}
             style={{
@@ -201,7 +201,13 @@ export default function CreateEvent() {
               </Body>
             </View>
           )}
+        </View>
 
+        <View
+          style={{
+            paddingTop: 20,
+          }}
+        >
           <Subtitle
             size={20}
             style={{
@@ -232,7 +238,7 @@ export default function CreateEvent() {
               </Body>
             </View>
           )}
-        </GradientScrollView>
+        </View>
       </View>
       <Modal animationType="fade" transparent={true} visible={isLoading}>
         <View
@@ -256,7 +262,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    flex: 1,
     marginHorizontal: HORIZONTAL_PADDING,
   },
   alertContainer: {
