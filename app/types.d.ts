@@ -18,7 +18,10 @@ declare type EventDetails = {
     eventName: string,
     startTime: Date,
     endTime: Date,
-    thumbnail: string,
+    thumbnail?: string,
+    description?: string,
+    geoPoint?: GeoPoint,
+    address?: string,
     status: "past" | "live" | "future",
     uploadFlag: boolean
 }

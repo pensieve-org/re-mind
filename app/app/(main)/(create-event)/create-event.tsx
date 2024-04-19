@@ -16,13 +16,15 @@ import Alert from "../../../components/Alert";
 import Header from "../../../components/Header";
 import { useHeaderProps } from "../../../hooks/useHeaderProps";
 import getFriendDetails from "../../../apis/getFriendDetails";
-import GradientScrollView from "../../../components/GradientScrollView";
 import CalendarPlus from "../../../assets/calendar-plus-regular.svg";
+import { GeoPoint } from "firebase/firestore";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
   const [eventName, setEventName] = useState(null);
-  const [location, setLocation] = useState(null);
+  const [geoPoint, setGeoPoint] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [description, setDescription] = useState(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [unselectedFriends, setUnselectedFriends] = useState([]);
@@ -67,6 +69,9 @@ export default function CreateEvent() {
           status: status,
           thumbnail: null,
           uploadFlag: uploadFlag,
+          description: description,
+          geoPoint: geoPoint,
+          address: address,
         },
         selectedFriends,
         userDetails
@@ -127,10 +132,6 @@ export default function CreateEvent() {
       )}
 
       <View style={styles.container}>
-        <View style={{ paddingTop: 10 }}>
-          <Subtitle size={25}>create event</Subtitle>
-        </View>
-
         <View
           style={{
             paddingTop: 20,
@@ -145,21 +146,10 @@ export default function CreateEvent() {
 
         <View
           style={{
-            paddingTop: 20,
-            zIndex: 1000,
+            paddingVertical: 20,
           }}
         >
-          <LocationSearchBar
-            placeholder="location..."
-            onPress={(data, details) => setLocation(data.description)}
-          />
-        </View>
-
-        <View
-          style={{
-            paddingTop: 20,
-          }}
-        >
+          {/* TODO: Make this a modal with a full calendar and time picker */}
           <DatePicker
             selectedStartDate={setStartDate}
             selectedEndDate={setEndDate}
@@ -169,6 +159,25 @@ export default function CreateEvent() {
         <View
           style={{
             paddingTop: 20,
+            zIndex: 1000,
+          }}
+        >
+          <LocationSearchBar
+            placeholder="location..."
+            onPress={(data, details) => {
+              const latitude = details.geometry.location.lat();
+              const longitude = details.geometry.location.lng();
+              setGeoPoint(new GeoPoint(latitude, longitude));
+              setAddress(details.description);
+            }}
+          />
+        </View>
+
+        {/* TODO: Make this a modal where friends are selected from a list (like whatsapp) and displayed in a carousel */}
+        <View
+          style={{
+            paddingTop: 20,
+            height: 170,
           }}
         >
           <Subtitle
@@ -193,7 +202,7 @@ export default function CreateEvent() {
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                height: 80,
+                height: 100,
               }}
             >
               <Body style={{ color: theme.PLACEHOLDER }}>
@@ -206,6 +215,7 @@ export default function CreateEvent() {
         <View
           style={{
             paddingTop: 20,
+            height: 170,
           }}
         >
           <Subtitle
@@ -230,7 +240,7 @@ export default function CreateEvent() {
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                height: 80,
+                height: 100,
               }}
             >
               <Body style={{ color: theme.PLACEHOLDER }}>

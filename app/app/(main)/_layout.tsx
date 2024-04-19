@@ -32,7 +32,8 @@ export default function Layout() {
         header: () => <Header {...headerProps} />,
       }}
     >
-      <Stack.Screen
+      {/* TODO: add the add friends and date picker modals in when ready */}
+      {/* <Stack.Screen
         name="(create-event)/location-modal"
         options={{
           presentation: "modal",
@@ -40,7 +41,7 @@ export default function Layout() {
           gestureEnabled: true,
           animation: "slide_from_bottom",
         }}
-      />
+      /> */}
     </Stack>
   );
 }
