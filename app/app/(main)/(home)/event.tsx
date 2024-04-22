@@ -30,6 +30,7 @@ import { collection, doc, onSnapshot, where, query } from "firebase/firestore";
 import { db } from "../../../firebase.js";
 import GradientScrollView from "../../../components/GradientScrollView";
 import ImageIcon from "../../../assets/image.svg";
+import LocationDot from "../../../assets/location-dot.svg";
 import { AnimatedImage } from "../../../utils/AnimatedImage";
 import Header from "../../../components/Header";
 import { useHeaderProps } from "../../../hooks/useHeaderProps";
@@ -328,16 +329,63 @@ export default function Event() {
             )
           )}
 
-          <Subtitle
-            size={20}
-            style={{
-              color: theme.PRIMARY,
-              paddingVertical: 10,
-            }}
-          >
-            shared with
-          </Subtitle>
-          <ShowAttendees attendees={attendees} />
+          {selectedEvent.address && (
+            <View
+              style={{
+                flexDirection: "row",
+                paddingVertical: 5,
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginRight: 5,
+                }}
+              >
+                <LocationDot
+                  height={30}
+                  width={30}
+                  style={{ color: theme.RED }}
+                />
+              </View>
+              <Subtitle
+                size={18}
+                style={{
+                  color: theme.PRIMARY,
+                }}
+              >
+                {selectedEvent.address}
+              </Subtitle>
+            </View>
+          )}
+
+          {selectedEvent.description && (
+            <View style={{ flexDirection: "row", paddingTop: 10 }}>
+              <View style={{ flexDirection: "row" }}>
+                <Subtitle size={14}>description: </Subtitle>
+                <Body numberOfLines={5} size={14}>
+                  {selectedEvent.description}
+                </Body>
+              </View>
+            </View>
+          )}
+
+          {attendees.length > 0 && (
+            <>
+              <Subtitle
+                size={20}
+                style={{
+                  color: theme.PRIMARY,
+                  paddingVertical: 10,
+                }}
+              >
+                shared with
+              </Subtitle>
+              <ShowAttendees attendees={attendees} />
+            </>
+          )}
         </View>
 
         <View style={styles.imageContainer}>
@@ -441,6 +489,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
+    paddingTop: 10,
   },
   image: {
     width: EVENT_IMAGE_WIDTH,
