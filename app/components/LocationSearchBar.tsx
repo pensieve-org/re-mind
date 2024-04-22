@@ -1,15 +1,38 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import theme from "../assets/theme";
 import { COMPONENT_HEIGHT, CORNER_RADIUS } from "../assets/constants";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import LocationDot from "../assets/location-dot.svg";
+import * as Location from "expo-location";
+
 interface InputProps {
   placeholder?: string;
   onPress?: (data: any, details: any) => void;
 }
 
 const LocationSearchBar: React.FC<InputProps> = ({ placeholder, onPress }) => {
+  const [location, setLocation] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+    })();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View
@@ -26,6 +49,10 @@ const LocationSearchBar: React.FC<InputProps> = ({ placeholder, onPress }) => {
         query={{
           key: process.env.EXPO_PUBLIC_GOOGLE_API,
           language: "en",
+          location: location
+            ? `${location.latitude},${location.longitude}`
+            : undefined,
+          radius: 500,
         }}
         fetchDetails={true}
         styles={{
