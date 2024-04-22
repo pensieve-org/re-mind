@@ -248,14 +248,14 @@ export default function Event() {
                 }}
               >
                 {selectedEvent.thumbnail ? (
-                  <AnimatedImage
+                  <Image
                     source={{ uri: selectedEvent.thumbnail }}
                     style={{
                       width: "100%",
                       height: "100%",
                       borderRadius: ANIMATED_BORDER_RADIUS,
                     }}
-                    sharedTransitionTag={`event-${selectedEvent.eventId}`}
+                    // sharedTransitionTag={`event-${selectedEvent.eventId}`}
                     cachePolicy={"memory-disk"}
                     priority={"high"}
                   />
