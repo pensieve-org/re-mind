@@ -8,6 +8,7 @@ import {
   Modal,
 } from "react-native";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 import {
   HORIZONTAL_PADDING,
   PROFILE_ICON_DIMENSION,
@@ -182,14 +183,14 @@ export default function EventSettings() {
               {isThumbnailLoading ? (
                 <ActivityIndicator size={"large"} color={theme.PRIMARY} />
               ) : selectedEvent.thumbnail ? (
-                <AnimatedImage
+                <Image
                   source={{ uri: selectedEvent.thumbnail }}
                   style={{
                     width: PROFILE_ICON_DIMENSION,
                     height: PROFILE_ICON_DIMENSION,
                     borderRadius: ANIMATED_BORDER_RADIUS,
                   }}
-                  sharedTransitionTag={`event-${selectedEvent.eventId}`}
+                  // sharedTransitionTag={`event-${selectedEvent.eventId}`}
                   cachePolicy={"memory-disk"}
                   priority={"high"}
                 />

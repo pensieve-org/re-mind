@@ -121,14 +121,14 @@ export default function Home() {
                       overflow: "hidden",
                     }}
                   >
-                    <AnimatedImage
+                    <Image
                       source={{ uri: userDetails.profilePicture }}
                       style={{
                         width: "100%",
                         height: "100%",
                         borderRadius: ANIMATED_BORDER_RADIUS,
                       }}
-                      sharedTransitionTag="profile-picture"
+                      // sharedTransitionTag="profile-picture"
                       cachePolicy={"memory-disk"}
                       priority={"high"}
                     />
