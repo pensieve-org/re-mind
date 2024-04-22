@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { AppState } from "react-native";
-import { Stack, router } from "expo-router";
+import { Stack } from "expo-router";
 import theme from "../../assets/theme";
-import { HEADER_ICON_DIMENSION } from "../../assets/constants";
-import BackArrow from "../../assets/arrow-left.svg";
 import handleImageUpload from "../../utils/handleImageUpload";
 import { ANIMATION_DURATION } from "../../assets/constants";
 import Header from "../../components/Header";
@@ -33,6 +31,17 @@ export default function Layout() {
 
         header: () => <Header {...headerProps} />,
       }}
-    />
+    >
+      {/* TODO: add the add friends and date picker modals in when ready */}
+      {/* <Stack.Screen
+        name="(create-event)/location-modal"
+        options={{
+          presentation: "modal",
+          headerShown: false,
+          gestureEnabled: true,
+          animation: "slide_from_bottom",
+        }}
+      /> */}
+    </Stack>
   );
 }

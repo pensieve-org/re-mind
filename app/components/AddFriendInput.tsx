@@ -44,7 +44,6 @@ const AddFriend: React.FC<InputProps> = ({
     <View style={styles.container}>
       <PaperTextInput
         label={Label}
-        testID="inputTest"
         mode="flat"
         placeholder={placeholder}
         placeholderTextColor={theme.PLACEHOLDER}

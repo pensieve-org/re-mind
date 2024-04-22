@@ -67,7 +67,7 @@ const DatePicker: React.FC<Props> = ({
         onPress={() => setStartVisibility(true)}
       >
         {!startDate && (
-          <Body bold={true} size={18}>
+          <Body bold={true} size={18} style={{ color: theme.PLACEHOLDER }}>
             start
           </Body>
         )}
@@ -79,15 +79,25 @@ const DatePicker: React.FC<Props> = ({
         )}
       </Pressable>
 
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <BackArrow
-          height={20}
-          width={20}
-          style={{
-            color: theme.PRIMARY,
-            transform: [{ rotate: "180deg" }],
-          }}
-        />
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          height: 20,
+          width: 20,
+          paddingTop: 10,
+        }}
+      >
+        {startDate && endDate && (
+          <BackArrow
+            height={20}
+            width={20}
+            style={{
+              color: theme.PRIMARY,
+              transform: [{ rotate: "180deg" }],
+            }}
+          />
+        )}
       </View>
 
       <Pressable
@@ -95,7 +105,7 @@ const DatePicker: React.FC<Props> = ({
         onPress={() => setEndVisibility(true)}
       >
         {!endDate && (
-          <Body bold={true} size={18}>
+          <Body bold={true} size={18} style={{ color: theme.PLACEHOLDER }}>
             end
           </Body>
         )}

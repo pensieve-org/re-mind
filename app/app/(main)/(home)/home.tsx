@@ -113,17 +113,26 @@ export default function Home() {
               onPressRight={() => router.push("/create-event")}
               imageLeft={
                 userDetails.profilePicture ? (
-                  <AnimatedImage
-                    source={{ uri: userDetails.profilePicture }}
+                  <View
                     style={{
-                      width: "100%",
                       height: "100%",
-                      borderRadius: ANIMATED_BORDER_RADIUS,
+                      width: "100%",
+                      borderRadius: 100,
+                      overflow: "hidden",
                     }}
-                    sharedTransitionTag="profile-picture"
-                    cachePolicy={"memory-disk"}
-                    priority={"high"}
-                  />
+                  >
+                    <AnimatedImage
+                      source={{ uri: userDetails.profilePicture }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: ANIMATED_BORDER_RADIUS,
+                      }}
+                      sharedTransitionTag="profile-picture"
+                      cachePolicy={"memory-disk"}
+                      priority={"high"}
+                    />
+                  </View>
                 ) : (
                   <ProfileIcon
                     height={"50%"}

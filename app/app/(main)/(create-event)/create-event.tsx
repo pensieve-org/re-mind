@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { StyleSheet, View, Modal, ActivityIndicator } from "react-native";
-import { router, Link } from "expo-router";
+import {
+  StyleSheet,
+  View,
+  Modal,
+  ActivityIndicator,
+  TextInput,
+} from "react-native";
+import { router, Link, Stack } from "expo-router";
 import theme from "../../../assets/theme";
 import { HORIZONTAL_PADDING } from "../../../assets/constants";
 import Body from "../../../components/Body";
@@ -9,17 +15,22 @@ import Subtitle from "../../../components/Subtitle";
 import SubtitleInput from "../../../components/SubtitleInput";
 import DatePicker from "../../../components/DatePicker";
 import AddFriendsList from "../../../components/AddFriendsList";
+import LocationSearchBar from "../../../components/LocationSearchBar";
 import createEvent from "../../../apis/createEvent";
 import getUserEvents from "../../../apis/getUserEvents";
 import Alert from "../../../components/Alert";
-import Button from "../../../components/Button";
+import Header from "../../../components/Header";
+import { useHeaderProps } from "../../../hooks/useHeaderProps";
 import getFriendDetails from "../../../apis/getFriendDetails";
-import GradientScrollView from "../../../components/GradientScrollView";
-import LocationDot from "../../../assets/location-dot.svg";
+import CalendarPlus from "../../../assets/calendar-plus-regular.svg";
+import { GeoPoint } from "firebase/firestore";
 
 export default function CreateEvent() {
   const { userDetails, setUserEvents } = useContext(AppContext);
-  const [eventName, setEventName] = useState("");
+  const [eventName, setEventName] = useState(null);
+  const [geoPoint, setGeoPoint] = useState(null);
+  const [address, setAddress] = useState(null);
+  const [description, setDescription] = useState(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [unselectedFriends, setUnselectedFriends] = useState([]);
@@ -27,6 +38,7 @@ export default function CreateEvent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const headerProps = useHeaderProps();
 
   const handleCreateEvent = async () => {
     if (isLoading) return;
@@ -63,6 +75,9 @@ export default function CreateEvent() {
           status: status,
           thumbnail: null,
           uploadFlag: uploadFlag,
+          description: description,
+          geoPoint: geoPoint,
+          address: address,
         },
         selectedFriends,
         userDetails
@@ -77,6 +92,9 @@ export default function CreateEvent() {
       setError(true);
       setIsLoading(false);
       setErrorMsg(error.message || "An error occurred");
+      alert(
+        `start time: ${startDate}, end time: ${endDate}, event name: ${eventName}, status: ${status}, upload flag: ${uploadFlag}, description: ${description}, geo point: ${geoPoint}, address: ${address}`
+      );
     }
   };
 
@@ -94,6 +112,28 @@ export default function CreateEvent() {
 
   return (
     <View style={styles.page}>
+      <Stack.Screen
+        options={{
+          header: () => (
+            <Header
+              {...headerProps}
+              onPressRight={() => handleCreateEvent()}
+              imageRight={
+                <CalendarPlus
+                  height={"100%"}
+                  width={"100%"}
+                  style={{
+                    color:
+                      !startDate || !endDate || !eventName
+                        ? theme.PLACEHOLDER
+                        : theme.TEXT,
+                  }}
+                />
+              }
+            />
+          ),
+        }}
+      />
       {error && (
         <View style={styles.alertContainer}>
           <Alert text={errorMsg} />
@@ -101,45 +141,83 @@ export default function CreateEvent() {
       )}
 
       <View style={styles.container}>
-        <View style={{ paddingTop: 20 }}>
-          <Subtitle size={25}>new event</Subtitle>
-        </View>
-
-        <GradientScrollView
-          contentContainerStyle={{ paddingBottom: 80 }}
-          showsVerticalScrollIndicator={false}
+        <View
+          style={{
+            paddingTop: 10,
+          }}
         >
+          {/* TODO: maybe add in thumbnail in a row with event name, same as it shows on the event screen */}
           <SubtitleInput
-            size={20}
+            size={25}
             text={"event name..."}
             onChangeText={setEventName}
           />
 
-          <Link href="/location-modal">
-            <View
+          <View
+            style={{
+              paddingTop: 5,
+            }}
+          >
+            <TextInput
+              multiline
+              numberOfLines={4}
+              onChangeText={setDescription}
+              value={description}
+              placeholderTextColor={theme.PLACEHOLDER}
+              placeholder="description..."
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                paddingTop: 20,
+                color: theme.TEXT,
+                fontSize: 14,
+                fontFamily: "MontserratRegular",
+                letterSpacing: -0.408,
               }}
-            >
-              <LocationDot
-                height={30}
-                width={30}
-                style={{ color: theme.RED }}
-              />
-              <Subtitle size={20} style={{ paddingLeft: 10 }}>
-                location...
-              </Subtitle>
-            </View>
-          </Link>
+            />
+          </View>
+        </View>
 
+        <View
+          style={{
+            paddingVertical: 20,
+          }}
+        >
+          {/* TODO: Make this a modal with a full calendar and time picker */}
           <DatePicker
             selectedStartDate={setStartDate}
             selectedEndDate={setEndDate}
           />
+        </View>
 
-          <Subtitle size={20} style={{ paddingBottom: 10 }}>
+        <View
+          style={{
+            paddingTop: 20,
+            zIndex: 1000,
+          }}
+        >
+          <LocationSearchBar
+            placeholder="location..."
+            onPress={(data, details) => {
+              const { lat, lng } = details.geometry.location;
+              setGeoPoint(new GeoPoint(lat, lng));
+              setAddress(details.formatted_address);
+            }}
+          />
+        </View>
+
+        {/* TODO: Make this a modal where friends are selected from a list (like whatsapp) and displayed in a carousel */}
+        <View
+          style={{
+            paddingTop: 20,
+            height: 170,
+          }}
+        >
+          <Subtitle
+            size={20}
+            style={{
+              paddingBottom: 10,
+              color:
+                selectedFriends.length > 0 ? theme.TEXT : theme.PLACEHOLDER,
+            }}
+          >
             attendees
           </Subtitle>
           {selectedFriends.length > 0 ? (
@@ -154,14 +232,30 @@ export default function CreateEvent() {
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                paddingVertical: 10,
+                height: 100,
               }}
             >
-              <Body style={{ paddingBottom: 10 }}>no friends invited</Body>
+              <Body style={{ color: theme.PLACEHOLDER }}>
+                no friends invited
+              </Body>
             </View>
           )}
+        </View>
 
-          <Subtitle size={20} style={{ paddingBottom: 10 }}>
+        <View
+          style={{
+            paddingTop: 20,
+            height: 170,
+          }}
+        >
+          <Subtitle
+            size={20}
+            style={{
+              paddingBottom: 10,
+              color:
+                unselectedFriends.length > 0 ? theme.TEXT : theme.PLACEHOLDER,
+            }}
+          >
             invite friends
           </Subtitle>
           {unselectedFriends.length > 0 ? (
@@ -176,22 +270,15 @@ export default function CreateEvent() {
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                paddingVertical: 10,
+                height: 100,
               }}
             >
-              <Body style={{ paddingBottom: 10 }}>no friends to add</Body>
+              <Body style={{ color: theme.PLACEHOLDER }}>
+                no friends to add
+              </Body>
             </View>
           )}
-          <View style={{ paddingVertical: 20 }}>
-            <Button
-              fill={theme.TEXT}
-              textColor={theme.BACKGROUND}
-              onPress={handleCreateEvent}
-            >
-              create event
-            </Button>
-          </View>
-        </GradientScrollView>
+        </View>
       </View>
       <Modal animationType="fade" transparent={true} visible={isLoading}>
         <View
@@ -215,7 +302,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    flex: 1,
     marginHorizontal: HORIZONTAL_PADDING,
   },
   alertContainer: {

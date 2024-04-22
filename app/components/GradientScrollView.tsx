@@ -5,12 +5,13 @@ const GradientScrollView = ({
   children,
   gradientHeight = 20,
   gradientColors = ["rgba(0,0,0,1)", "rgba(0,0,0,0)"],
-  ...scrollViewProps // Capture all other props
+  ...scrollViewProps
 }) => {
   return (
     <View style={[styles.container, scrollViewProps.style]}>
       <ScrollView
         {...scrollViewProps}
+        contentContainerStyle={{ paddingBottom: gradientHeight }}
         style={[styles.scrollView, { paddingTop: gradientHeight }]}
       >
         {children}
