@@ -1,12 +1,11 @@
 import React from "react";
-import { StyleSheet, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList, TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
 import Body from "./Body";
 import { PROFILE_ICON_DIAMETER } from "../assets/constants";
 import theme from "../assets/theme";
 import Plus from "../assets/plus.svg";
 import Check from "../assets/check-solid.svg";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import ProfileIcon from "../assets/profile.svg";
 interface Props {
   friendRequests: any[];

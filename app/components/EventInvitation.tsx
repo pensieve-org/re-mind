@@ -1,10 +1,9 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import Body from "./Body";
 import theme from "../assets/theme";
 import Plus from "../assets/plus.svg";
 import Check from "../assets/check-solid.svg";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 interface Props {
   onPress: (bool) => void;
