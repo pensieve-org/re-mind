@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 import { TextInput as PaperTextInput } from "react-native-paper";
 import Body from "./Body";
 import theme from "../assets/theme";
 import { COMPONENT_HEIGHT, CORNER_RADIUS } from "../assets/constants";
 import Show from "../assets/eye-solid.svg";
 import Hide from "../assets/eye-slash-solid.svg";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 interface InputProps {
   label?: string;
