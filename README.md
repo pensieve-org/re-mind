@@ -5,7 +5,7 @@ Welcome to the prototype of re:mind, a new-age social media app.
 ## Demo
 
 <div align="center">
-  <img src="assets/remind.gif" alt="re:mind demo" width="100%" style="border-radius: 15px; overflow: hidden;">
+  <img src="assets/remind.gif" alt="re:mind demo" width="60%" style="border-radius: 15px; overflow: hidden;">
 </div>
 
 ## Prerequisites
