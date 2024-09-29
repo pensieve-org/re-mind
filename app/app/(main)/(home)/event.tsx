@@ -1,5 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  GestureHandlerRootView,
+  PanGestureHandler,
+  State,
+} from "react-native-gesture-handler";
 import { Image } from "expo-image";
 import { router, Stack } from "expo-router";
 import BackArrow from "../../../assets/arrow-left.svg";
@@ -21,7 +26,6 @@ import ShowAttendees from "../../../components/ShowAttendees";
 import CountdownTimer from "../../../components/CountdownTimer";
 import Carousel from "react-native-reanimated-carousel";
 import { Dimensions } from "react-native";
-import { PanGestureHandler, State } from "react-native-gesture-handler";
 import getEventAttendees from "../../../apis/getEventAttendees";
 import getEventImages from "../../../apis/getEventImages";
 import EventInvitation from "../../../components/EventInvitation";
@@ -192,236 +196,240 @@ export default function Event() {
   };
 
   return (
-    <View style={styles.page}>
-      <Stack.Screen
-        options={{
-          header: () => (
-            <Header
-              {...headerProps}
-              onPressRight={() => router.push("/event-settings")}
-              imageRight={
-                <ThreeDots
-                  height={HEADER_ICON_DIMENSION}
-                  width={HEADER_ICON_DIMENSION}
-                  style={{ color: theme.PRIMARY }}
-                />
-              }
-            />
-          ),
-        }}
-      />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={styles.page}>
+        <Stack.Screen
+          options={{
+            header: () => (
+              <Header
+                {...headerProps}
+                onPressRight={() => router.push("/event-settings")}
+                imageRight={
+                  <ThreeDots
+                    height={HEADER_ICON_DIMENSION}
+                    width={HEADER_ICON_DIMENSION}
+                    style={{ color: theme.PRIMARY }}
+                  />
+                }
+              />
+            ),
+          }}
+        />
 
-      <GradientScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 80 }}
-        showsVerticalScrollIndicator={false}
-        // refreshControl={
-        //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        // }
-      >
-        <View style={styles.container}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              alignContent: "center",
-              paddingBottom: 20,
-            }}
-          >
+        <GradientScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 80 }}
+          showsVerticalScrollIndicator={false}
+          // refreshControl={
+          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // }
+        >
+          <View style={styles.container}>
             <View
               style={{
-                marginRight: 15,
+                flexDirection: "row",
+                alignItems: "center",
+                alignContent: "center",
+                paddingBottom: 20,
               }}
             >
               <View
                 style={{
-                  width: THUMBNAIL_WIDTH,
-                  height: THUMBNAIL_WIDTH,
-                  borderRadius: 100,
-                  backgroundColor: selectedEvent.thumbnail
-                    ? "transparent"
-                    : theme.PLACEHOLDER,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
+                  marginRight: 15,
                 }}
               >
-                {selectedEvent.thumbnail ? (
-                  <Animated.Image
-                    source={{ uri: selectedEvent.thumbnail }}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      borderRadius: ANIMATED_BORDER_RADIUS,
-                    }}
-                    sharedTransitionTag={`event-${selectedEvent.eventId}`}
-                  />
-                ) : (
-                  <ImageIcon
-                    height={"50%"}
-                    width={"50%"}
-                    style={{ color: theme.PRIMARY }}
-                  />
-                )}
+                <View
+                  style={{
+                    width: THUMBNAIL_WIDTH,
+                    height: THUMBNAIL_WIDTH,
+                    borderRadius: 100,
+                    backgroundColor: selectedEvent.thumbnail
+                      ? "transparent"
+                      : theme.PLACEHOLDER,
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  {selectedEvent.thumbnail ? (
+                    <Animated.Image
+                      source={{ uri: selectedEvent.thumbnail }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: ANIMATED_BORDER_RADIUS,
+                      }}
+                      sharedTransitionTag={`event-${selectedEvent.eventId}`}
+                    />
+                  ) : (
+                    <ImageIcon
+                      height={"50%"}
+                      width={"50%"}
+                      style={{ color: theme.PRIMARY }}
+                    />
+                  )}
+                </View>
               </View>
+
+              <Subtitle
+                size={23}
+                style={{
+                  color: theme.PRIMARY,
+                }}
+              >
+                {selectedEvent.eventName}
+              </Subtitle>
             </View>
 
+            {selectedEvent.isInvited && (
+              <EventInvitation onPress={handleEventInvitation} />
+            )}
+
+            {/* TODO: Replace this with a timeline with length = event duration and split into 
+              mins if event < 1hr, hours if event < 1 day, otherwise days
+              have a line graph for umber of photos uploaded in each segment */}
+            {selectedEvent.status !== "live" ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                  paddingVertical: 10,
+                }}
+              >
+                <View style={{ alignItems: "center" }}>
+                  <Body size={18}>
+                    {formatDate(selectedEvent.startTime.toDate())}
+                  </Body>
+                  <Body size={18}>
+                    {formatTime(selectedEvent.startTime.toDate())}
+                  </Body>
+                </View>
+
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
+                  <BackArrow
+                    height={20}
+                    width={20}
+                    style={{
+                      color: theme.PRIMARY,
+                      transform: [{ rotate: "180deg" }],
+                    }}
+                  />
+                </View>
+
+                <View style={{ alignItems: "center" }}>
+                  <Body size={18}>
+                    {formatDate(new Date(selectedEvent.endTime.toDate()))}
+                  </Body>
+                  <Body size={18}>
+                    {formatTime(new Date(selectedEvent.endTime.toDate()))}
+                  </Body>
+                </View>
+              </View>
+            ) : (
+              selectedEvent.status === "live" && (
+                <CountdownTimer endTime={selectedEvent.endTime} />
+              )
+            )}
+
             <Subtitle
-              size={23}
+              size={20}
               style={{
                 color: theme.PRIMARY,
-              }}
-            >
-              {selectedEvent.eventName}
-            </Subtitle>
-          </View>
-
-          {selectedEvent.isInvited && (
-            <EventInvitation onPress={handleEventInvitation} />
-          )}
-
-          {/* TODO: Replace this with a timeline with length = event duration and split into 
-            mins if event < 1hr, hours if event < 1 day, otherwise days
-            have a line graph for umber of photos uploaded in each segment */}
-          {selectedEvent.status !== "live" ? (
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-around",
                 paddingVertical: 10,
               }}
             >
-              <View style={{ alignItems: "center" }}>
-                <Body size={18}>
-                  {formatDate(selectedEvent.startTime.toDate())}
-                </Body>
-                <Body size={18}>
-                  {formatTime(selectedEvent.startTime.toDate())}
-                </Body>
-              </View>
+              shared with
+            </Subtitle>
+            <ShowAttendees attendees={attendees} />
+          </View>
 
-              <View style={{ alignItems: "center", justifyContent: "center" }}>
-                <BackArrow
-                  height={20}
-                  width={20}
-                  style={{
-                    color: theme.PRIMARY,
-                    transform: [{ rotate: "180deg" }],
+          <View style={styles.imageContainer}>
+            {images.length > 0 ? (
+              images.map((image, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    setSelectedImageIndex(index);
+                    setModalVisible(true);
                   }}
-                />
+                >
+                  <Image
+                    source={{ uri: image.imageUrl }}
+                    style={[
+                      styles.image,
+                      {
+                        marginRight:
+                          (index + 1) % ROW_IMAGES === 0 ? 0 : IMAGE_GAP,
+                      },
+                    ]}
+                  />
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View style={{ paddingVertical: 20, justifyContent: "center" }}>
+                <Body>No images yet</Body>
               </View>
+            )}
+          </View>
 
-              <View style={{ alignItems: "center" }}>
-                <Body size={18}>
-                  {formatDate(new Date(selectedEvent.endTime.toDate()))}
-                </Body>
-                <Body size={18}>
-                  {formatTime(new Date(selectedEvent.endTime.toDate()))}
-                </Body>
-              </View>
-            </View>
-          ) : (
-            selectedEvent.status === "live" && (
-              <CountdownTimer endTime={selectedEvent.endTime} />
-            )
-          )}
-
-          <Subtitle
-            size={20}
-            style={{
-              color: theme.PRIMARY,
-              paddingVertical: 10,
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
             }}
           >
-            shared with
-          </Subtitle>
-          <ShowAttendees attendees={attendees} />
-        </View>
-
-        <View style={styles.imageContainer}>
-          {images.length > 0 ? (
-            images.map((image, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  setSelectedImageIndex(index);
-                  setModalVisible(true);
+            <PanGestureHandler onGestureEvent={onSwipeUp}>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0, 0, 0, 0.8)",
                 }}
               >
-                <Image
-                  source={{ uri: image.imageUrl }}
-                  style={[
-                    styles.image,
-                    {
-                      marginRight:
-                        (index + 1) % ROW_IMAGES === 0 ? 0 : IMAGE_GAP,
-                    },
-                  ]}
+                <Carousel
+                  loop
+                  mode="parallax"
+                  modeConfig={{
+                    parallaxScrollingScale: 0.9,
+                    parallaxScrollingOffset: 50,
+                    parallaxAdjacentItemScale: 0.8,
+                  }}
+                  defaultIndex={selectedImageIndex}
+                  width={Dimensions.get("window").width}
+                  height={Dimensions.get("window").height}
+                  autoPlay={false}
+                  data={images}
+                  scrollAnimationDuration={1000}
+                  onSnapToItem={(index) => console.log("current index:", index)}
+                  panGestureHandlerProps={{
+                    activeOffsetX: [-10, 10],
+                  }}
+                  renderItem={({ item }) => (
+                    <View
+                      style={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Image
+                        source={{ uri: item.imageUrl }}
+                        style={{ width: "100%", height: "100%" }}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  )}
                 />
-              </TouchableOpacity>
-            ))
-          ) : (
-            <View style={{ paddingVertical: 20, justifyContent: "center" }}>
-              <Body>No images yet</Body>
-            </View>
-          )}
-        </View>
-
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <PanGestureHandler onGestureEvent={onSwipeUp}>
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.8)",
-              }}
-            >
-              <Carousel
-                loop
-                mode="parallax"
-                modeConfig={{
-                  parallaxScrollingScale: 0.9,
-                  parallaxScrollingOffset: 50,
-                  parallaxAdjacentItemScale: 0.8,
-                }}
-                defaultIndex={selectedImageIndex}
-                width={Dimensions.get("window").width}
-                height={Dimensions.get("window").height}
-                autoPlay={false}
-                data={images}
-                scrollAnimationDuration={1000}
-                onSnapToItem={(index) => console.log("current index:", index)}
-                panGestureHandlerProps={{
-                  activeOffsetX: [-10, 10],
-                }}
-                renderItem={({ item }) => (
-                  <View
-                    style={{
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Image
-                      source={{ uri: item.imageUrl }}
-                      style={{ width: "100%", height: "100%" }}
-                      resizeMode="contain"
-                    />
-                  </View>
-                )}
-              />
-            </View>
-          </PanGestureHandler>
-        </Modal>
-      </GradientScrollView>
-    </View>
+              </View>
+            </PanGestureHandler>
+          </Modal>
+        </GradientScrollView>
+      </View>
+    </GestureHandlerRootView>
   );
 }
 
