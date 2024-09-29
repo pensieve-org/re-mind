@@ -6,14 +6,13 @@ import { getStorage } from "firebase/storage";
 
 // TODO: MOVE ALL THIS TO .ENV
 const firebaseConfig = {
-  apiKey: "AIzaSyC-ehMsfdg4SPCpcT3m09AhtW-ucnRQPCY",
-  authDomain: "re-mind-405009.firebaseapp.com",
-  databaseURL:
-    "https://re-mind-405009-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "re-mind-405009",
-  storageBucket: "re-mind-405009.appspot.com",
-  messagingSenderId: "309656006737",
-  appId: "1:309656006737:ios:b848ad596edd71638bc870",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
